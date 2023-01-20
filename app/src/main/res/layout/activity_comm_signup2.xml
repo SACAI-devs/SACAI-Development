@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/teal_700"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CommSignupActivity"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    >
+    <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
+    <Button
+        style="@style/OutlineBtn"
+        android:id="@+id/commSignup_btnSwitchUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:insetTop="20dp"
+        android:insetRight="20dp"
+        android:text="@string/label_operator" />
+
+    <!--    FORM GROUP-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="40dp">
+        <TextView
+            style="@style/DarkTitleTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/label_signup"
+            />
+
+        <!--    NEEDS ASSESSMENT-->
+        <TextView
+            style="@style/DarkSubheadingTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/msg_identifyNeeds" />
+                <!--    MOBILITY IMPAIRMENT-->
+                <CheckBox
+                    style="@style/DarkCheckbox"
+                    android:id="@+id/commSignup_cbMobility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="12dp"
+                    android:text="@string/label_mobility"/>
+                <!--    AUDITORY IMPAIRMENT-->
+                <CheckBox
+                    style="@style/DarkCheckbox"
+                    android:id="@+id/commSignup_cbAuditory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="12dp"
+                    android:text="@string/label_auditory" />
+                <!--    WHEELCHAIR NEED-->
+                <CheckBox
+                    style="@style/DarkCheckbox"
+                    android:id="@+id/commSignup_cbWheelchair"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="12dp"
+                    android:text="@string/label_wheelchair"
+                    />
+        <!--    BUTTON SIGNUP-->
+        <Button
+            style="@style/PrimaryBtn"
+            android:id="@+id/commSignup_btnSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginHorizontal="60dp"
+            android:text="@string/label_signup" />
+        <Button
+            style="@style/OutlineBtn"
+            android:id="@+id/commSignup_btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="60dp"
+            android:text="@string/label_back" />
+
+        <TextView
+            style="@style/DarkBodyTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="@string/msg_signupAgree"/>
+    </LinearLayout>
+</LinearLayout>

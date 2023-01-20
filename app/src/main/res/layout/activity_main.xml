@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="40dp"
+        android:paddingTop="60dp"
+        android:background="@color/white"
+        >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        style="@style/TitleTxt"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/app_tagline"
+        style="@style/BodyTxt"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/ImageLayout"
+        android:layout_marginTop="-50dp"
+        android:background="@color/teal_100"
+        android:orientation="vertical"
+        android:gravity="center">
+        <Button
+            android:id="@+id/nav_btnLogout"
+            style="@style/PrimaryBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="60dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/label_logout" />
+
+        <Button
+            android:id="@+id/nav_btnSignup"
+            style="@style/PrimaryBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="60dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/label_signup" />
+
+        <Button
+            android:id="@+id/nav_btnSwitchLogin"
+            style="@style/TextBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_switchToOperator" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ImageLayout"
+        android:layout_width="275dp"
+        android:layout_height="275dp"
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/onboarding1" />
+</RelativeLayout>

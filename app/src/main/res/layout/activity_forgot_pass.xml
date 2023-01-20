@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/teal_700"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ForgotPassActivity"
+    android:orientation="vertical"
+    android:paddingHorizontal="40dp"
+    android:gravity="center_vertical"
+    >
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/lock"
+        android:layout_gravity="center"/>
+    <TextView
+        style="@style/DarkTitleTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_forgetPass" />
+    <TextView
+        style="@style/DarkBodyTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/msg_forgetPass" />
+<!--    INPUT EMAIL-->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/BasicInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="40dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/InputTxt"
+            android:id="@+id/forgot_etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        style="@style/PrimaryBtn"
+        android:id="@+id/forgot_btnReset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="60dp"
+        android:text="@string/label_forgetPassBtn"
+        />
+</LinearLayout>

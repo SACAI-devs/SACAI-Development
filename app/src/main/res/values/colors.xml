@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF2C2C2C</color>
+    <color name="true_black">#FF000000</color>
+    <color name="white">#FFFAFAFA</color>
+    <color name="true_white">#FFFFFFFF</color>
+    <color name="grey">#FFAAAAAA</color>
+
+    <!--theme colors -->
+    <color name="teal_100">#FFD7F9ED</color>
+    <color name="teal">#FF4BCEB8</color>
+    <color name="teal_600">#FF0E977F</color>
+    <color name="teal_700">#FF457A77</color>
+    <color name="ochre_100">#FFFFFEF3</color>
+    <color name="ochre_200">#FFF1EDC2</color>
+    <color name="ochre">#FFE2D348</color>
+    <color name="ochre_700">#FF9B9441</color>
+    <color name="error">#FFEC7979</color>
+    <color name="warning">#FFFCB471</color>
+    <color name="valid">#FF9EF38A</color>
+</resources>

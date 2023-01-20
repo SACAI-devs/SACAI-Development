@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "517359712658",
+    "firebase_url": "https://sacai-7342d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sacai-7342d",
+    "storage_bucket": "sacai-7342d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517359712658:android:c4540a67682d2bc64b294b",
+        "android_client_info": {
+          "package_name": "com.example.sacai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517359712658-tt6ol7l0h6id0f77rvm0vk3n5s6l60u8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6ZKmgg3TN3gbK36mN6sjRicovg4UikrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517359712658-tt6ol7l0h6id0f77rvm0vk3n5s6l60u8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
