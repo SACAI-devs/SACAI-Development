@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.dataclasses;
 
 public class Operator {
     private String drivername;

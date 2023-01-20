@@ -10,8 +10,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.example.sacai.dao.DAOCommuter;
+import com.example.sacai.dataclasses.Commuter;
+import com.example.sacai.dataclasses.User;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -128,7 +130,7 @@ public class CommSignup2Activity extends AppCompatActivity {
                                             }
                                         });
                             } else {
-                                Toast.makeText(CommSignup2Activity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CommSignup2Activity.this, R.string.err_emailExists, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

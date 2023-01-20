@@ -136,7 +136,7 @@ public class CommLoginActivity extends AppCompatActivity {
     }
 
     private void showMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CommMapActivity.class);
         startActivity(intent);
         finish();
     }

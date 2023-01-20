@@ -98,7 +98,7 @@ public class OperLoginActivity extends AppCompatActivity {
     }
 
     private void showMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, OperMapActivity.class);
         startActivity(intent);
         finish();
     }
