@@ -5,22 +5,25 @@ public class Commuter {
     private String firstname;
     private String lastname;
     private String email;
+    private String username;
     private boolean mobility;
     private boolean auditory;
     private boolean wheelchair;
-    private String username;
-
+    private String homeAddress;
+    private String workAddress;
     public Commuter() {
     }
 
-    public Commuter(String firstname, String lastname, String email, boolean mobility, boolean auditory, boolean wheelchair) {
+    public Commuter(String firstname, String lastname, String email, String username, boolean mobility, boolean auditory, boolean wheelchair, String homeAddress, String workAddress) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        this.username = username;
         this.mobility = mobility;
         this.auditory = auditory;
         this.wheelchair = wheelchair;
-        this.username = firstname + lastname;
+        this.homeAddress = homeAddress;
+        this.workAddress = workAddress;
     }
 
     public String getFirstname() {
@@ -47,6 +50,14 @@ public class Commuter {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public boolean isMobility() {
         return mobility;
     }
@@ -71,11 +82,19 @@ public class Commuter {
         this.wheelchair = wheelchair;
     }
 
-    public String getUsername() {
-        return username;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public String getWorkAddress() {
+        return workAddress;
+    }
+
+    public void setWorkAddress(String workAddress) {
+        this.workAddress = workAddress;
     }
 }

@@ -13,14 +13,14 @@ public class Operator {
     public Operator() {
     }
 
-    public Operator(String drivername, String conductorname, String franchise, String plate, boolean wheelchairCapacity, String email) {
+    public Operator(String drivername, String conductorname, String franchise, String plate, boolean wheelchairCapacity, String email, String username) {
         this.drivername = drivername;
         this.conductorname = conductorname;
         this.franchise = franchise;
         this.plate = plate;
         this.wheelchairCapacity = wheelchairCapacity;
         this.email = email;
-        this.username = franchise + plate;
+        this.username = username;
     }
 
     public String getDrivername() {

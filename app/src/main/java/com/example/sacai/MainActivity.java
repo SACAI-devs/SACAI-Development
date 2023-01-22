@@ -17,11 +17,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.net.CookieManager;
-
 public class MainActivity extends AppCompatActivity {
 
-    Button btnLogout;
+    Button btnLogin;
     Button btnSignup;
 
     private DatabaseReference databaseReference;
@@ -40,13 +38,21 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "It executed", Toast.LENGTH_LONG).show();
         }
 
-
-        btnLogout = findViewById(R.id.nav_btnLogout);
-        btnSignup = findViewById(R.id.nav_btnSignup);
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+//        OPEN LOGIN PAGE WHEN BTN IS CLICKED
+        btnLogin = findViewById(R.id.nav_btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout();
+                showLogin();
+            }
+        });
+
+//        OPEN SIGN PAGE WHEN BTN IS CLICKED
+        btnSignup = findViewById(R.id.nav_btnSignup);
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSignup();
             }
         });
     }
@@ -54,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private void showMainActivity (String uid){
 //        GET USERTYPE FROM USER TABLE
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        databaseReference = db.getReference("users");
+        databaseReference = db.getReference("Users");
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -72,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void showLogin() {
@@ -81,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void logout() {
+    private void showSignup() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);

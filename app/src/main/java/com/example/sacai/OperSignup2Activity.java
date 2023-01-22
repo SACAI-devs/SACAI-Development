@@ -114,7 +114,8 @@ public class OperSignup2Activity extends AppCompatActivity {
                            if (task.isSuccessful()){
 //                            CREATE A NEW USER AND STORE IT INTO FIREBASE
                                User user = new User(email, password, userType);
-                               FirebaseDatabase.getInstance().getReference("users")
+                               FirebaseUser currentUser = mAuth.getCurrentUser();
+                               FirebaseDatabase.getInstance().getReference("Users")
                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                            @Override
@@ -122,7 +123,7 @@ public class OperSignup2Activity extends AppCompatActivity {
 //                                               IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
                                                if (task.isSuccessful()) {
 //                                                ADD NEW OPERATOR RECORD
-                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email);
+                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email, currentUser.getUid());
                                                    daoOperator.add(operator);
                                                    showOperLogin();
                                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

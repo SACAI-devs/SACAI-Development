@@ -56,4 +56,7 @@
     <string name="hint_workAddress">Enter your work address</string>
     <string name="hint_userName">Enter your username</string>
     <string name="label_save">SAVE CHANGES</string>
+    <string name="msg_loginToEdit">Please login to edit your profile!</string>
+    <string name="err_userDoesNotExist">Error: User is not registered.</string>
+    <string name="err_failedToReadData">Error: Failed to read data.</string>
 </resources>

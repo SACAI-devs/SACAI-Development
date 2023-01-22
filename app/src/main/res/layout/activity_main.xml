@@ -38,13 +38,13 @@
         android:orientation="vertical"
         android:gravity="center">
         <Button
-            android:id="@+id/nav_btnLogout"
+            android:id="@+id/nav_btnLogin"
             style="@style/PrimaryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="60dp"
             android:layout_marginTop="30dp"
-            android:text="@string/label_logout" />
+            android:text="@string/label_login" />
 
         <Button
             android:id="@+id/nav_btnSignup"

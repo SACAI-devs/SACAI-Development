@@ -85,10 +85,10 @@ public class OperSignupActivity extends AppCompatActivity {
     }
 
     private void showNextPage() {
-        String driverFn = etDriverName.getText().toString();
-        String conductorFn = etCondName.getText().toString();
-        String franchise = etFranchise.getText().toString();
-        String plate = etPlate.getText().toString();
+        String driverFn = etDriverName.getText().toString().trim();
+        String conductorFn = etCondName.getText().toString().trim();
+        String franchise = etFranchise.getText().toString().trim();
+        String plate = etPlate.getText().toString().trim();
 
         boolean wheelchair = cbWheelchair.isChecked();
 

@@ -110,7 +110,8 @@ public class CommSignup2Activity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 //                          CREATE A NEW USER AND STORE IT INTO FIREBASE
                                 User user = new User(email, password, userType);
-                                FirebaseDatabase.getInstance().getReference("users")
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -118,7 +119,7 @@ public class CommSignup2Activity extends AppCompatActivity {
 //                                                IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
                                                 if (task.isSuccessful()) {
 //                                                    ADDS A NEW COMMUTER RECORD
-                                                        Commuter commuter = new Commuter(firstname, lastname, email, mobility, auditory, wheelchair);
+                                                        Commuter commuter = new Commuter(firstname, lastname, email, currentUser.getUid(), mobility, auditory, wheelchair,"", "");
                                                         daoCommuter.add(commuter);
                                                         showCommLogin();
                                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

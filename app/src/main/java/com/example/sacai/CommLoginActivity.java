@@ -38,6 +38,7 @@ public class CommLoginActivity extends AppCompatActivity {
             return;
         }
 
+//        Initialize components
         etEmail = findViewById(R.id.commLogin_etEmail);
         etPassword = findViewById(R.id.commLogin_etPassword);
 
@@ -136,7 +137,7 @@ public class CommLoginActivity extends AppCompatActivity {
     }
 
     private void showMainActivity() {
-        Intent intent = new Intent(this, CommMapActivity.class);
+        Intent intent = new Intent(this, EditProfileActivity.class);
         startActivity(intent);
         finish();
     }
