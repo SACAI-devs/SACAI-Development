@@ -12,7 +12,7 @@
     <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
     <Button
         style="@style/OutlineBtn"
-        android:id="@+id/operLogin_btnSwitchCommuter"
+        android:id="@+id/btnSwitchUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -41,7 +41,7 @@
             android:layout_marginVertical="5dp" >
             <com.google.android.material.textfield.TextInputEditText
                 style="@style/InputTxt"
-                android:id="@+id/operLogin_etEmail"
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_email"
@@ -57,7 +57,7 @@
             app:endIconMode="password_toggle" >
             <com.google.android.material.textfield.TextInputEditText
                 style="@style/InputTxt"
-                android:id="@+id/operLogin_etPassword"
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_password"
@@ -68,7 +68,7 @@
     <!--    BUTTON LOGIN-->
         <Button
             style="@style/PrimaryBtn"
-            android:id="@+id/operLogin_btnLogin"
+            android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -78,7 +78,7 @@
 <!--        BUTTON FORGOT PASSWORD-->
         <Button
             style="@style/DarkTextBtn"
-            android:id="@+id/nav_btnPassReset"
+            android:id="@+id/btnForgotPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_forgetPass"
@@ -86,7 +86,7 @@
 <!--        BUTTON SWITCH TO SIGNUP-->
         <Button
             style="@style/DarkTextBtn"
-            android:id="@+id/nav_btnSwitchSignup"
+            android:id="@+id/btnSwitchSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"

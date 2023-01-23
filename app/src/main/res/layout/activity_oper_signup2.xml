@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context=".OperSignup2Activity"
     >
-    <!--    FORM GROUP-->
+<!--    FORM GROUP-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,40 +22,41 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/label_signup" />
-        <!--        INPUT OPERATOR EMAIL -->
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/BasicInput"
+
+<!--            INPUT OPERATOR EMAIL -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp" >
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/InputTxt"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="5dp" >
-                    <com.google.android.material.textfield.TextInputEditText
-                        style="@style/InputTxt"
-                        android:id="@+id/operSignup_etEmail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_email" />
-                </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/BasicInput"
+                    android:hint="@string/hint_email" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            INPUT OPERATOR PASSWORD-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                app:endIconMode="password_toggle"
+                app:passwordToggleTint="@color/grey" >
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/InputTxt"
+                   android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="5dp"
-                    app:endIconMode="password_toggle"
-                    app:passwordToggleTint="@color/grey"
-                    >
-                    <com.google.android.material.textfield.TextInputEditText
-                        style="@style/InputTxt"
-                       android:id="@+id/operSignup_etPassword"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_password"
-                        android:inputType="textPassword" />
-                </com.google.android.material.textfield.TextInputLayout>
-        -->
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
         <!--   BUTTON SIGNUP-->
         <Button
             style="@style/PrimaryBtn"
-            android:id="@+id/operSignup_btnSignup"
+            android:id="@+id/btnSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -63,7 +64,7 @@
             android:text="@string/label_signup" />
 <!--        BUTTON BACK-->
         <Button
-            android:id="@+id/operSignup_btnBack"
+            android:id="@+id/btnBack"
             style="@style/OutlineBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

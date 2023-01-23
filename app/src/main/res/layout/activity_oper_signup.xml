@@ -12,7 +12,7 @@
     <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
     <Button
         style="@style/OutlineBtn"
-        android:id="@+id/operSignup_btnSwitchUser"
+        android:id="@+id/btnSwitchUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -48,7 +48,7 @@
             android:layout_marginVertical="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/operSignup_etDriverName"
+                android:id="@+id/etDriverName"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             android:layout_marginVertical="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/operSignup_etCondName"
+                android:id="@+id/etConductorName"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             app:startIconDrawable="@android:drawable/ic_menu_search">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/operSignup_etFranchise"
+                android:id="@+id/etFranchise"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,51 +98,25 @@
             android:layout_marginVertical="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/operSignup_etPlate"
+                android:id="@+id/etPlate"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_licensePlate" />
         </com.google.android.material.textfield.TextInputLayout>
-        <!--        INPUT OPERATOR EMAIL
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp" >
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/InputTxt"
-                android:id="@+id/operSignup_etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_email" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            app:endIconMode="password_toggle" >
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/InputTxt"
-               android:id="@+id/operSignup_etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_password"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
--->
+
         <!--   CHECKBOX FOR WHEELCHAIR CAPACITY-->
         <com.google.android.material.checkbox.MaterialCheckBox
             style="@style/DarkCheckbox"
-            android:id="@+id/operSignup_cbWheelchair"
+            android:id="@+id/cbWheelchair"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Wheelchair Capacity" />
+            android:text="@string/label_wheelchairCapacity" />
+
         <!--   BUTTON SIGNUP-->
         <Button
-            android:id="@+id/operSignup_btnNext"
+            android:id="@+id/btnNext"
             style="@style/PrimaryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,8 +124,9 @@
             android:layout_marginTop="12dp"
             android:text="@string/label_next" />
 
+<!--        BUTTON SWITCH TO OPERATOR LOGIN-->
         <Button
-            android:id="@+id/operSignup_btnSwitchLogin"
+            android:id="@+id/btnSwitchLogin"
             style="@style/DarkTextBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

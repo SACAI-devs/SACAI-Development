@@ -10,30 +10,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.databinding.ActivityForgotPassBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassActivity extends AppCompatActivity {
 
-    EditText etEmail;
-    Button btnReset;
-
+//    BIND ACTIVITY TO LAYOUT
+    ActivityForgotPassBinding binding;
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_pass);
+        binding = ActivityForgotPassBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-//        Initialize FirebaseAuth
+//        INITIALIZE FIREBASE AUTH
         mAuth = FirebaseAuth.getInstance();
 
-        etEmail = findViewById(R.id.forgot_etEmail);
 
 //        SEND RESET LINK WHEN BTN CLICKED
-        btnReset = findViewById(R.id.forgot_btnReset);
-        btnReset.setOnClickListener(new View.OnClickListener() {
+        binding.btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sentResetLink();
@@ -42,16 +41,16 @@ public class ForgotPassActivity extends AppCompatActivity {
     }
 
     private void sentResetLink() {
-        String email = etEmail.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
 
         if (email.isEmpty()) {
-            etEmail.setError(getString(R.string.err_fieldRequired));
-            etEmail.requestFocus();
+            binding.etEmail.setError(getString(R.string.err_fieldRequired));
+            binding.etEmail.requestFocus();
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.setError(getString(R.string.err_pleaseEnterEmail));
+            binding.etEmail.setError(getString(R.string.err_pleaseEnterEmail));
             return;
         }
 

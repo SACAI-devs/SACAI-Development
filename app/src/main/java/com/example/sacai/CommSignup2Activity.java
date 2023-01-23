@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.sacai.dao.DAOCommuter;
+import com.example.sacai.databinding.ActivityCommSignup2Binding;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,17 +23,18 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CommSignup2Activity extends AppCompatActivity {
 
-    CheckBox cbMobility, cbAuditory, cbWheelchair;
-    Button btnSignup, btnSwitch, btnBack;
-
-    DAOCommuter daoCommuter = new DAOCommuter();
+//    BIND ACTIVITY TO LAYOUT
+    ActivityCommSignup2Binding binding;
     private FirebaseAuth mAuth;
+    DAOCommuter daoCommuter = new DAOCommuter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comm_signup2);
-//        Initialize FirebaseAuth
+        binding = ActivityCommSignup2Binding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -40,14 +42,8 @@ public class CommSignup2Activity extends AppCompatActivity {
             return;
         }
 
-        cbMobility = findViewById(R.id.commSignup_cbMobility);
-        cbAuditory = findViewById(R.id.commSignup_cbAuditory);
-        cbWheelchair = findViewById(R.id.commSignup_cbWheelchair);
-
-
 //        REGISTER USER WHEN BTN IS CLICKED
-        btnSignup = findViewById(R.id.commSignup_btnSignup);
-        btnSignup.setOnClickListener(new View.OnClickListener() {
+        binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registerUser();
@@ -55,8 +51,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         });
 
 //        SHOW OPERATOR SIGNUP
-        btnSwitch = findViewById(R.id.commSignup_btnSwitchUser);
-        btnSwitch.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showOpSignup();
@@ -64,9 +59,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         });
 
 //        SHOW PREVIOUS PAGE
-//        TODO: DO THIS BETTER
-        btnBack = findViewById(R.id.commSignup_btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPrevious();
@@ -94,9 +87,9 @@ public class CommSignup2Activity extends AppCompatActivity {
         String password = intent.getStringExtra(CommSignupActivity.EXTRA_PASS);
         String userType = getString(R.string.userCommuter);
 
-        boolean mobility = cbMobility.isChecked();
-        boolean auditory = cbAuditory.isChecked();
-        boolean wheelchair = cbWheelchair.isChecked();
+        boolean mobility = binding.cbMobility.isChecked();
+        boolean auditory = binding.cbAuditory.isChecked();
+        boolean wheelchair = binding.cbWheelchair.isChecked();
 
 //        CHECK IF FIELDS ARE EMPTY
         if ((mobility == false) && (auditory == false) && (wheelchair == false)) {
@@ -119,7 +112,7 @@ public class CommSignup2Activity extends AppCompatActivity {
 //                                                IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
                                                 if (task.isSuccessful()) {
 //                                                    ADDS A NEW COMMUTER RECORD
-                                                        Commuter commuter = new Commuter(firstname, lastname, email, currentUser.getUid(), mobility, auditory, wheelchair,"", "");
+                                                        Commuter commuter = new Commuter(firstname, lastname, email, "", mobility, auditory, wheelchair,"", "", currentUser.getUid());
                                                         daoCommuter.add(commuter);
                                                         showCommLogin();
                                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

@@ -38,7 +38,7 @@
         android:orientation="vertical"
         android:gravity="center">
         <Button
-            android:id="@+id/nav_btnLogin"
+            android:id="@+id/btnLogin"
             style="@style/PrimaryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:text="@string/label_login" />
 
         <Button
-            android:id="@+id/nav_btnSignup"
+            android:id="@+id/btnSignup"
             style="@style/PrimaryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             android:text="@string/label_signup" />
 
         <Button
-            android:id="@+id/nav_btnSwitchLogin"
+            android:id="@+id/btnSwitchUser"
             style="@style/TextBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

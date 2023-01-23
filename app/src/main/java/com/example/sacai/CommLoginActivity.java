@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.databinding.ActivityCommLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,16 +22,16 @@ import java.util.regex.Pattern;
 
 public class CommLoginActivity extends AppCompatActivity {
 
-    EditText etEmail, etPassword;
-    Button btnSwitchUser, btnLogin, btnForgot, btnSwitchSignup;
-
+//    BIND ACTIVITY TO LAYOUT
+    ActivityCommLoginBinding binding;
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comm_login);
+        binding = ActivityCommLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-//        Initialize FirebaseAuth
+//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -38,13 +39,9 @@ public class CommLoginActivity extends AppCompatActivity {
             return;
         }
 
-//        Initialize components
-        etEmail = findViewById(R.id.commLogin_etEmail);
-        etPassword = findViewById(R.id.commLogin_etPassword);
 
 //        SHOW OPERATOR LOGIN WHEN BTN IS CLICKED
-        btnSwitchUser = findViewById(R.id.commLogin_btnSwitchUser);
-        btnSwitchUser.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showOperLogin();
@@ -52,8 +49,7 @@ public class CommLoginActivity extends AppCompatActivity {
         });
 
 //        LOGIN USER WHEN BTN IS CLICKED
-        btnLogin = findViewById(R.id.commLogin_btnLogin);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginUser();
@@ -61,8 +57,7 @@ public class CommLoginActivity extends AppCompatActivity {
         });
 
 //        SHOW PASSWORD RESET PAGE WHEN BTN IS CLICKED
-        btnForgot = findViewById(R.id.commLogin_btnForgot);
-        btnForgot.setOnClickListener(new View.OnClickListener() {
+        binding.btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showForgotPass();
@@ -70,8 +65,7 @@ public class CommLoginActivity extends AppCompatActivity {
         });
 
 //        SHOW COMMUTER SIGNUP WHEN BTN IS CLICKED
-        btnSwitchSignup = findViewById(R.id.commLogin_btnSwitchSignup);
-        btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showCommSignup();
@@ -92,18 +86,18 @@ public class CommLoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString();
+        String email = binding.etEmail.getText().toString().trim();
+        String password = binding.etPassword.getText().toString();
 
 //        CHECK IF FIELDS ARE EMPTY
         if (email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
-                etEmail.setError(getString(R.string.err_fieldRequired));
-                etEmail.requestFocus();
+                binding.etEmail.setError(getString(R.string.err_fieldRequired));
+                binding.etEmail.requestFocus();
             }
             if (password.isEmpty()) {
-                etPassword.setError(getString(R.string.err_fieldRequired));
-                etPassword.requestFocus();
+                binding.etPassword.setError(getString(R.string.err_fieldRequired));
+                binding.etPassword.requestFocus();
             }
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         } else {
@@ -121,15 +115,13 @@ public class CommLoginActivity extends AppCompatActivity {
                                 } else {
                                     user.sendEmailVerification();
                                     Toast.makeText(CommLoginActivity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
-                                    return;
                                 }
                             } else {
                                 Toast.makeText(CommLoginActivity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
-                                etEmail.setError("");
-                                etEmail.requestFocus();
-                                etPassword.setError("");
-                                etPassword.requestFocus();
-                                return;
+                                binding.etEmail.setError("");
+                                binding.etEmail.requestFocus();
+                                binding.etPassword.setError("");
+                                binding.etPassword.requestFocus();
                             }
                         }
                     });

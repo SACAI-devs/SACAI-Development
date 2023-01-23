@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.databinding.ActivityOperLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -18,23 +19,18 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class OperLoginActivity extends AppCompatActivity {
 
-    EditText etEmail;
-    EditText etPassword;
-    Button btnLogin;
-    Button btnSwitchSignup;
-    Button btnPassReset;
-    Button btnSwitchComm;
+//    BIND ACTIVITY TO LAYOUT
+    ActivityOperLoginBinding binding;
+
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_oper_login);
+        binding = ActivityOperLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        etEmail = findViewById(R.id.operLogin_etEmail);
-        etPassword = findViewById(R.id.operLogin_etPassword);
-
-//        Initialization Firebase Auth
+//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -43,8 +39,7 @@ public class OperLoginActivity extends AppCompatActivity {
         }
 
 //        SHOW OPERATOR SIGNUP PAGE WHEN BTN IS CLICKED
-        btnSwitchSignup = findViewById(R.id.nav_btnSwitchSignup);
-        btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOperSignup();
@@ -52,8 +47,7 @@ public class OperLoginActivity extends AppCompatActivity {
         });
 
 //        LOGIN USER WHEN BTN IS CLICKED
-        btnLogin = findViewById(R.id.operLogin_btnLogin);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginUser();
@@ -61,8 +55,7 @@ public class OperLoginActivity extends AppCompatActivity {
         });
 
 //        SHOWS PASSWORD RESET PAGE WHEN BTN IS CLICKED
-        btnPassReset = findViewById(R.id.nav_btnPassReset);
-        btnPassReset.setOnClickListener(new View.OnClickListener() {
+        binding.btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPassReset();
@@ -70,8 +63,7 @@ public class OperLoginActivity extends AppCompatActivity {
         });
 
 //        SHOWS COMMUTER SIGNUP WHEN BTN IS CLICKED
-        btnSwitchComm = findViewById(R.id.operLogin_btnSwitchCommuter);
-        btnSwitchComm.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showSwitchComm();
@@ -104,21 +96,20 @@ public class OperLoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
+        String email = binding.etEmail.getText().toString();
+        String password = binding.etPassword.getText().toString();
 
 //        CHECK IF FIELDS EMPTY
         if (email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
-                etEmail.setError(getString(R.string.err_fieldRequired));
-                etEmail.requestFocus();
+                binding.etEmail.setError(getString(R.string.err_fieldRequired));
+                binding.etEmail.requestFocus();
             }
             if (password.isEmpty()) {
-                etPassword.setError(getString(R.string.err_fieldRequired));
-                etPassword.requestFocus();
+                binding.etPassword.setError(getString(R.string.err_fieldRequired));
+                binding.etPassword.requestFocus();
             }
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
-            return;
         } else {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -133,11 +124,10 @@ public class OperLoginActivity extends AppCompatActivity {
                                 }
                             } else {
                                 Toast.makeText(OperLoginActivity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
-                                etEmail.setError("");
-                                etEmail.requestFocus();
-                                etPassword.setError("");
-                                etPassword.requestFocus();
-                                return;
+                                binding.etEmail.setError("");
+                                binding.etEmail.requestFocus();
+                                binding.etPassword.setError("");
+                                binding.etPassword.requestFocus();
                             }
                         }
                     });

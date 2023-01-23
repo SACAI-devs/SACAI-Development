@@ -12,7 +12,7 @@
     <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
     <Button
         style="@style/OutlineBtn"
-        android:id="@+id/commSignup_btnSwitchUser"
+        android:id="@+id/btnSwitchUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -44,7 +44,7 @@
                 <!--    MOBILITY IMPAIRMENT-->
                 <CheckBox
                     style="@style/DarkCheckbox"
-                    android:id="@+id/commSignup_cbMobility"
+                    android:id="@+id/cbMobility"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="12dp"
@@ -52,7 +52,7 @@
                 <!--    AUDITORY IMPAIRMENT-->
                 <CheckBox
                     style="@style/DarkCheckbox"
-                    android:id="@+id/commSignup_cbAuditory"
+                    android:id="@+id/cbAuditory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="12dp"
@@ -60,7 +60,7 @@
                 <!--    WHEELCHAIR NEED-->
                 <CheckBox
                     style="@style/DarkCheckbox"
-                    android:id="@+id/commSignup_cbWheelchair"
+                    android:id="@+id/cbWheelchair"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="12dp"
@@ -69,7 +69,7 @@
         <!--    BUTTON SIGNUP-->
         <Button
             style="@style/PrimaryBtn"
-            android:id="@+id/commSignup_btnSignup"
+            android:id="@+id/btnSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -77,7 +77,7 @@
             android:text="@string/label_signup" />
         <Button
             style="@style/OutlineBtn"
-            android:id="@+id/commSignup_btnBack"
+            android:id="@+id/btnBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

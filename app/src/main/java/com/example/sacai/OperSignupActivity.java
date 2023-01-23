@@ -10,33 +10,31 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.databinding.ActivityOperSignup2Binding;
+import com.example.sacai.databinding.ActivityOperSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class OperSignupActivity extends AppCompatActivity {
 
-    EditText etDriverName,  etCondName, etFranchise, etPlate;
-
-    CheckBox cbWheelchair;
-    Button btnSwitchUser, btnNext, btnSwitchLogin;
+//    BIND ACTIVITY TO LAYOUT
+    ActivityOperSignupBinding binding;
+    private FirebaseAuth mAuth;
 
     public static String EXTRA_DR_NAME = "driver's name";
     public static String EXTRA_CON_NAME = "conductor's name";
-
     public static String EXTRA_FRANCHISE = "franchise name";
-
     public static String EXTRA_PLATE = "plate number";
-
     public static boolean EXTRA_WHEELCHAIR = false;
 
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_oper_signup);
+        binding = ActivityOperSignupBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-//        Initialize FirebaseAuth
+//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -44,15 +42,9 @@ public class OperSignupActivity extends AppCompatActivity {
             return;
         }
 
-        etDriverName = findViewById(R.id.operSignup_etDriverName);
-        etCondName = findViewById(R.id.operSignup_etCondName);
-        etFranchise = findViewById(R.id.operSignup_etFranchise);
-        etPlate = findViewById(R.id.operSignup_etPlate);
-        cbWheelchair = findViewById(R.id.operSignup_cbWheelchair);
 
 //        SWITCH TO COMMUTER SIGNUP WHEN BTN IS CLICKED
-        btnSwitchUser = findViewById(R.id.operSignup_btnSwitchUser);
-        btnSwitchUser.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showCommSignup();
@@ -60,8 +52,7 @@ public class OperSignupActivity extends AppCompatActivity {
         });
 
 //        SHOW SECOND PAGE OF OPERATOR SIGNUP WHEN BTN IS CLICKED
-        btnNext = findViewById(R.id.operSignup_btnNext);
-        btnNext.setOnClickListener(new View.OnClickListener() {
+        binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showNextPage();
@@ -69,8 +60,7 @@ public class OperSignupActivity extends AppCompatActivity {
         });
 
 //        SHOW OPERATOR LOGIN PAGE WHEN BTN IS CLICKED
-        btnSwitchLogin = findViewById(R.id.operSignup_btnSwitchLogin);
-        btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showOperLogin();
@@ -85,30 +75,30 @@ public class OperSignupActivity extends AppCompatActivity {
     }
 
     private void showNextPage() {
-        String driverFn = etDriverName.getText().toString().trim();
-        String conductorFn = etCondName.getText().toString().trim();
-        String franchise = etFranchise.getText().toString().trim();
-        String plate = etPlate.getText().toString().trim();
+        String driverFn = binding.etDriverName.getText().toString().trim();
+        String conductorFn = binding.etConductorName.getText().toString().trim();
+        String franchise = binding.etFranchise.getText().toString().trim();
+        String plate = binding.etPlate.getText().toString().trim();
 
-        boolean wheelchair = cbWheelchair.isChecked();
+        boolean wheelchair = binding.cbWheelchair.isChecked();
 
 //        CHECK FOR EMPTY REQUIRED FIELDS
         if (driverFn.isEmpty() || conductorFn.isEmpty() ) {
             if (driverFn.isEmpty()) {
-                etDriverName.setError(getString(R.string.err_fieldRequired));
-                etDriverName.requestFocus();
+                binding.etDriverName.setError(getString(R.string.err_fieldRequired));
+                binding.etDriverName.requestFocus();
             }
             if (conductorFn.isEmpty()) {
-                etDriverName.setError(getString(R.string.err_fieldRequired));
-                etDriverName.requestFocus();
+                binding.etDriverName.setError(getString(R.string.err_fieldRequired));
+                binding.etDriverName.requestFocus();
             }
             if (franchise.isEmpty()) {
-                etFranchise.setError(getString(R.string.err_fieldRequired));
-                etFranchise.requestFocus();
+                binding.etFranchise.setError(getString(R.string.err_fieldRequired));
+                binding.etFranchise.requestFocus();
             }
             if (plate.isEmpty()) {
-                etPlate.setError(getString(R.string.err_fieldRequired));
-                etPlate.requestFocus();
+                binding.etPlate.setError(getString(R.string.err_fieldRequired));
+                binding.etPlate.requestFocus();
             }
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         } else {

@@ -59,4 +59,5 @@
     <string name="msg_loginToEdit">Please login to edit your profile!</string>
     <string name="err_userDoesNotExist">Error: User is not registered.</string>
     <string name="err_failedToReadData">Error: Failed to read data.</string>
+    <string name="label_wheelchairCapacity">Wheelchair Capacity</string>
 </resources>

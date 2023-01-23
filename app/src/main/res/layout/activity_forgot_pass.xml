@@ -35,7 +35,7 @@
         >
         <com.google.android.material.textfield.TextInputEditText
             style="@style/InputTxt"
-            android:id="@+id/forgot_etEmail"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint_email"
@@ -45,7 +45,7 @@
 
     <Button
         style="@style/PrimaryBtn"
-        android:id="@+id/forgot_btnReset"
+        android:id="@+id/btnReset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="60dp"

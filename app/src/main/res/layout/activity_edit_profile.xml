@@ -37,7 +37,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etFirstname"
+                    android:id="@+id/etFirstname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_firstName"
@@ -52,7 +52,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etLastname"
+                    android:id="@+id/etLastname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_lastName" />
@@ -66,7 +66,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etUsername"
+                    android:id="@+id/etUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_userName" />
@@ -80,7 +80,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etEmail"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_email"
@@ -96,7 +96,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etHomeAddress"
+                    android:id="@+id/etHomeAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_homeAddress"
@@ -112,7 +112,7 @@
                 android:layout_marginVertical="5dp" >
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/InputTxt"
-                    android:id="@+id/commEdit_etWorkAddress"
+                    android:id="@+id/etWorkAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_workAddress"
@@ -129,7 +129,7 @@
             <!--    MOBILITY IMPAIRMENT-->
             <CheckBox
                 style="@style/Checkbox"
-                android:id="@+id/commEdit_cbMobility"
+                android:id="@+id/cbMobility"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
@@ -137,7 +137,7 @@
             <!--    AUDITORY IMPAIRMENT-->
             <CheckBox
                 style="@style/Checkbox"
-                android:id="@+id/commEdit_cbAuditory"
+                android:id="@+id/cbAuditory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
@@ -145,7 +145,7 @@
             <!--    WHEELCHAIR NEED-->
             <CheckBox
                 style="@style/Checkbox"
-                android:id="@+id/commEdit_cbWheelchair"
+                android:id="@+id/cbWheelchair"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
@@ -155,7 +155,7 @@
             <!-- BUTTON SIGNUP -->
             <Button
                 style="@style/PrimaryBtn"
-                android:id="@+id/commEdit_btnSave"
+                android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
