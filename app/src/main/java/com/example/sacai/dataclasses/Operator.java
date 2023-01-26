@@ -7,13 +7,12 @@ public class Operator {
     private String plate;
     private boolean wheelchairCapacity;
     private String email;
-
     private String username;
-
+    private String uid;
     public Operator() {
     }
 
-    public Operator(String drivername, String conductorname, String franchise, String plate, boolean wheelchairCapacity, String email, String username) {
+    public Operator(String drivername, String conductorname, String franchise, String plate, boolean wheelchairCapacity, String email, String username, String uid) {
         this.drivername = drivername;
         this.conductorname = conductorname;
         this.franchise = franchise;
@@ -21,6 +20,7 @@ public class Operator {
         this.wheelchairCapacity = wheelchairCapacity;
         this.email = email;
         this.username = username;
+        this.uid = uid;
     }
 
     public String getDrivername() {
@@ -77,5 +77,13 @@ public class Operator {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

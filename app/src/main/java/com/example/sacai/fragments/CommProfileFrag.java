@@ -1,16 +1,21 @@
-package com.example.sacai;
+package com.example.sacai.fragments;
+
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Intent;
-import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
-import com.example.sacai.dao.DAOCommuter;
-import com.example.sacai.databinding.ActivityEditProfileBinding;
+import com.example.sacai.R;
+import com.example.sacai.databinding.FragmentCommProfileBinding;
 import com.example.sacai.dataclasses.Commuter;
+import com.example.sacai.dataclasses.User;
+import com.example.sacai.viewmodels.CommMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,33 +24,37 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.lang.ref.Reference;
 import java.util.HashMap;
 
-public class EditProfileActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
-    ActivityEditProfileBinding binding;
+public class CommProfileFrag extends Fragment {
 
-    DAOCommuter daoCommuter = new DAOCommuter();
+//    BIND FRAGMENT TO LAYOUT
+    FragmentCommProfileBinding binding;
+
+    CommMainViewModel viewModel;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentCommProfileBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityEditProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
+
+        //        INITIALIZE FIREBASE AUTH
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
-            showCommLogin();
-        }
 
-//        READ USER DATA AND DISPLAY
+        //        READ USER DATA AND DISPLAY
         readData(currentUser.getUid());
 
+//        SAVE CHANGES TO PROFILE WHEN BTN IS CLICKED
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,14 +74,15 @@ public class EditProfileActivity extends AppCompatActivity {
                         String firstname = String.valueOf(dataSnapshot.child("firstname").getValue());
                         String lastname = String.valueOf(dataSnapshot.child("lastname").getValue());
                         String username = String.valueOf(dataSnapshot.child("username").getValue());
-                        String email = String.valueOf(dataSnapshot.child("email").getValue());
                         String homeAddress = String.valueOf(dataSnapshot.child("homeAddress").getValue());
                         String workAddress = String.valueOf(dataSnapshot.child("workAddress").getValue());
                         String mobility = String.valueOf(dataSnapshot.child("mobility").getValue());
                         String auditory = String.valueOf(dataSnapshot.child("auditory").getValue());
                         String wheelchair = String.valueOf(dataSnapshot.child("wheelchair").getValue());
+//                        TODO: UPDATE EMAIL FEATURE
+                        String email = String.valueOf(dataSnapshot.child("email").getValue());
 
-                        if (username.equals(uid)) {
+                        if (username.equals("null")) {
                             username = "";
                         }
 
@@ -94,10 +104,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         binding.cbAuditory.setChecked(Boolean.parseBoolean(auditory));
                         binding.cbWheelchair.setChecked(Boolean.parseBoolean(wheelchair));
                     } else {
-                        Toast.makeText(EditProfileActivity.this, R.string.err_userDoesNotExist, Toast.LENGTH_SHORT).show();
+                        viewModel.setData(false);
+
                     }
                 } else {
-                    Toast.makeText(EditProfileActivity.this, R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
+                        viewModel.setData(false);
                 }
             }
         });
@@ -116,33 +127,41 @@ public class EditProfileActivity extends AppCompatActivity {
         boolean auditory = binding.cbAuditory.isChecked();
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-        HashMap User = new HashMap();
-        User.put("firstname", firstname);
-        User.put("lastname", lastname);
-        User.put("username", username);
-        User.put("homeAddress", home);
-        User.put("workAddress", work);
-        User.put("mobility", mobility);
-        User.put("auditory", auditory);
-        User.put("wheelchair", wheelchair);
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(EditProfileActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(EditProfileActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                }
+//        CHECK IF REQUIRED INPUTS ARE EMPTY
+        if (firstname.isEmpty() || lastname.isEmpty()) {
+            viewModel.setData(false);
+            viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
+            if (firstname.isEmpty()) {
+                binding.etFirstname.setError(getString(R.string.err_fieldRequired));
+                binding.etFirstname.requestFocus();
             }
-        });
+            if (lastname.isEmpty()) {
+                binding.etLastname.setError(getString(R.string.err_fieldRequired));
+                binding.etLastname.requestFocus();
+            }
+        } else {
+            HashMap User = new HashMap();
+            User.put("firstname", firstname);
+            User.put("lastname", lastname);
+            User.put("username", username);
+            User.put("homeAddress", home);
+            User.put("workAddress", work);
+            User.put("mobility", mobility);
+            User.put("auditory", auditory);
+            User.put("wheelchair", wheelchair);
 
-    }
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+            databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        viewModel.setData(true);
+                    } else {
+                        viewModel.setData(false);
+                    }
+                }
+            });
+        }
 
-    private void showCommLogin() {
-        Intent intent = new Intent(this, CommLoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

@@ -5,10 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sacai.databinding.ActivityCommLoginBinding;
@@ -17,8 +14,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.regex.Pattern;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class CommLoginActivity extends AppCompatActivity {
 
@@ -109,9 +107,8 @@ public class CommLoginActivity extends AppCompatActivity {
 //                                CHECK IF USER EMAIL IS VERIFIED
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user.isEmailVerified()) {
-                                    Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
-                                    showMainActivity();
-                                    finish();
+
+                                    showMainActivity(user.getUid());
                                 } else {
                                     user.sendEmailVerification();
                                     Toast.makeText(CommLoginActivity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
@@ -128,10 +125,26 @@ public class CommLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void showMainActivity() {
-        Intent intent = new Intent(this, EditProfileActivity.class);
-        startActivity(intent);
-        finish();
+    private void showMainActivity(String uid) {
+//        GET USERTYPE FROM USER TABLE
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = db.getReference("Users");
+        databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                DataSnapshot dataSnapshot = task.getResult();
+                String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
+//                REDIRECT USER TO RESPECTIVE SCREENS
+                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                    Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(CommLoginActivity.this, CommMainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
+                    Toast.makeText(CommLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void showOperLogin() {

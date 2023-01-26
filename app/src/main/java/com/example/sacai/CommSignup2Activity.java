@@ -132,6 +132,7 @@ public class CommSignup2Activity extends AppCompatActivity {
     }
 
     private void showCommLogin() {
+        FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
         finish();

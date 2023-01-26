@@ -119,7 +119,7 @@ public class OperSignup2Activity extends AppCompatActivity {
 //                                               IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
                                                if (task.isSuccessful()) {
 //                                                ADD NEW OPERATOR RECORD
-                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email, currentUser.getUid());
+                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email,"" , currentUser.getUid());
                                                    daoOperator.add(operator);
                                                    showOperLogin();
                                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -143,6 +143,7 @@ public class OperSignup2Activity extends AppCompatActivity {
     }
 
     private void showOperLogin() {
+        FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
         finish();

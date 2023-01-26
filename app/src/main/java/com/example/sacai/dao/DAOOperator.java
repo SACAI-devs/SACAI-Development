@@ -13,7 +13,7 @@ public class DAOOperator {
     }
 
     public boolean add(Operator operator) {
-        if ((databaseReference.child(operator.getUsername()).setValue(operator)).isSuccessful()){
+        if ((databaseReference.child(operator.getUid()).setValue(operator)).isSuccessful()){
             return true;
         } else {
             return false;

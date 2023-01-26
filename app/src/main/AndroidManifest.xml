@@ -13,16 +13,12 @@
         android:theme="@style/Theme.SACAI"
         tools:targetApi="31">
         <activity
-            android:name=".OperMapActivity"
+            android:name=".OperMainActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CommMapActivity"
-            android:exported="false"
-            android:label="@string/title_activity_comm_map"
-            android:theme="@style/Theme.SACAI.NoActionBar" />
+            android:name=".CommMainActivity"
+            android:exported="true">
+        </activity>
         <activity
             android:name=".CommSignup2Activity"
             android:exported="false" />
@@ -65,7 +61,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".LandingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
