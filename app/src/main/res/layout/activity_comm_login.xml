@@ -8,6 +8,15 @@
     android:gravity="center_vertical"
     android:orientation="vertical"
     tools:context=".CommLoginActivity">
+    <!--    TOOLBAR     -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/BasicToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/app_name"
+        app:menu="@menu/switch_to_oper_menu"
+        app:navigationIcon="@drawable/ic_back"  />
 
     <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
     <Button

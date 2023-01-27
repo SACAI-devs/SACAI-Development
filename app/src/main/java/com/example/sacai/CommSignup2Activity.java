@@ -2,6 +2,7 @@ package com.example.sacai;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,6 +66,18 @@ public class CommSignup2Activity extends AppCompatActivity {
                 showPrevious();
             }
         });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
     }
 
     private void showPrevious() {
@@ -76,7 +89,6 @@ public class CommSignup2Activity extends AppCompatActivity {
     private void showOpSignup() {
         Intent intent = new Intent(this, OperSignupActivity.class);
         startActivity(intent);
-        finish();
     }
 
     private void registerUser() {
@@ -135,6 +147,5 @@ public class CommSignup2Activity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
-        finish();
     }
 }

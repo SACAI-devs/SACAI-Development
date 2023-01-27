@@ -2,6 +2,7 @@ package com.example.sacai;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,6 +60,18 @@ public class OperSignup2Activity extends AppCompatActivity {
                 showPrevious();
             }
         });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
 
     }
 
@@ -146,6 +159,5 @@ public class OperSignup2Activity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
-        finish();
     }
 }

@@ -2,9 +2,13 @@ package com.example.sacai;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -70,24 +74,53 @@ public class OperLoginActivity extends AppCompatActivity {
                 showSwitchComm();
             }
         });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+
+//  TOOLBAR MENU ACTIONS
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.switch_to_comm_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_switch:
+                Intent intent = new Intent (this, CommLoginActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showSwitchComm() {
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
-        finish();
     }
 
     private void showPassReset() {
         Intent intent  = new Intent(this, ForgotPassActivity.class);
         startActivity(intent);
-        finish();
     }
 
     private void showOperSignup() {
         Intent intent = new Intent(this, OperSignupActivity.class);
         startActivity(intent);
-        finish();
     }
 
     private void showMainActivity(String uid) {

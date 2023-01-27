@@ -9,7 +9,16 @@
     android:orientation="vertical"
     tools:context=".OperSignup2Activity"
     >
-<!--    FORM GROUP-->
+    <!--    TOOLBAR     -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/BasicToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/app_name"
+        app:navigationIcon="@drawable/ic_back"  />
+
+    <!--    FORM GROUP  -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,7 +32,7 @@
             android:layout_marginBottom="10dp"
             android:text="@string/label_signup" />
 
-<!--            INPUT OPERATOR EMAIL -->
+    <!--    INPUT OPERATOR EMAIL    -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/BasicInput"
                 android:layout_width="match_parent"

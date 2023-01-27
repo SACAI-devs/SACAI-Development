@@ -2,6 +2,7 @@ package com.example.sacai;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Patterns;
@@ -38,6 +39,18 @@ public class ForgotPassActivity extends AppCompatActivity {
                 sentResetLink();
             }
         });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
     }
 
     private void sentResetLink() {

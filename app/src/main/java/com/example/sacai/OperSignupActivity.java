@@ -1,9 +1,13 @@
 package com.example.sacai;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -66,12 +70,43 @@ public class OperSignupActivity extends AppCompatActivity {
                 showOperLogin();
             }
         });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+
+    //  TOOLBAR MENU ACTIONS
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.switch_to_comm_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_switch:
+                Intent intent = new Intent (this, CommSignupActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showOperLogin() {
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
-        finish();
     }
 
     private void showNextPage() {
@@ -117,6 +152,5 @@ public class OperSignupActivity extends AppCompatActivity {
     private void showCommSignup() {
         Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);
-        finish();
     }
 }

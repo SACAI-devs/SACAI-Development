@@ -1,6 +1,7 @@
 package com.example.sacai;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,12 +9,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.sacai.databinding.ActivityCommMainBinding;
 import com.example.sacai.fragments.CommMapFrag;
 import com.example.sacai.fragments.CommProfileFrag;
+import com.example.sacai.fragments.OperMapFrag;
+import com.example.sacai.fragments.OperProfileFrag;
 import com.example.sacai.viewmodels.CommMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,29 +60,60 @@ public class CommMainActivity extends AppCompatActivity {
 //        LOAD MAP FRAGMENT
         replaceFragment(new CommMapFrag());
 
-//        SHOW HOME VIEW WHEN BTN IS CLICKED
-        binding.btnHomeNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(new CommMapFrag());
-            }
-        });
+//        SHOW HOME VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
+//        binding.btnHomeNav.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                replaceFragment(new CommMapFrag());
+//            }
+//        });
         
-//        SHOW PROFILE VIEW WHEN BTN IS CLICKED
-        binding.btnProfileNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(new CommProfileFrag());
-            }
-        });
+//        SHOW PROFILE VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
+//        binding.btnProfileNav.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                replaceFragment(new CommProfileFrag());
+//            }
+//        });
 
-//        LOGOUT USER
-        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        LOGOUT USER - HIDE FOR NOW
+//        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                logout();
+//            }
+//        });
+
+//        TOOLBAR ACTION HANDLING
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+    }
+
+    //  TOOLBAR MENU ACTIONS
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_showHome:
+                replaceFragment(new CommMapFrag());
+                return true;
+            case R.id.action_showEditProfile:
+                replaceFragment(new CommProfileFrag());
+                return true;
+            case R.id.action_logout:
                 logout();
-            }
-        });
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void logout() {

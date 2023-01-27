@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_showHome"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_home">
+    </item>
+    <item
+        android:id="@+id/action_showEditProfile"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_editProfile">
+    </item>
+    <item
+        android:id="@+id/action_logout"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_logout">
+    </item>
+</menu>

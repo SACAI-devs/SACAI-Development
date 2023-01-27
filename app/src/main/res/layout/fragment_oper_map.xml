@@ -3,12 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.OperMapFrag">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        android:background="@color/ochre_100">
+        <!--    ROUTE SELECTION MENU -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="50dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="10dp"
+            app:cardMaxElevation="12dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:orientation="vertical"
+                android:background="@color/teal_100">
+                <!-- INPUT LOCATION -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/BasicInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="@style/InputTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_route" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!-- BUTTON SELECT ROUTE -->
+                <Button
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/label_goNow"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 </FrameLayout>
