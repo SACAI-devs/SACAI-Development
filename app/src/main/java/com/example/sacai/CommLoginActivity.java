@@ -141,7 +141,6 @@ public class CommLoginActivity extends AppCompatActivity {
 //                                CHECK IF USER EMAIL IS VERIFIED
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user.isEmailVerified()) {
-
                                     showMainActivity(user.getUid());
                                 } else {
                                     user.sendEmailVerification();
@@ -169,12 +168,13 @@ public class CommLoginActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(CommLoginActivity.this, CommMainActivity.class);
                     startActivity(intent);
                     finish();
                 } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
+                    FirebaseAuth.getInstance().signOut();
                     Toast.makeText(CommLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
                 }
             }

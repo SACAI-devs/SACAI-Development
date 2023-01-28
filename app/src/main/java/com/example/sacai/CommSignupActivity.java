@@ -45,7 +45,7 @@ public class CommSignupActivity extends AppCompatActivity {
             return;
         }
 
-//          SHOW OPERATOR SIGNUP WHEN BTN IS CLICKED
+//        SHOW OPERATOR SIGNUP WHEN BTN IS CLICKED
         binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +82,7 @@ public class CommSignupActivity extends AppCompatActivity {
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+//  TOOLBAR MENU ACTIONS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -107,7 +107,6 @@ public class CommSignupActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //    SHOW NEXT PAGE
     private void showNextPage() {
         String firstname = binding.etFirstname.getText().toString().trim();
         String lastname = binding.etLastname.getText().toString().trim();
@@ -130,6 +129,17 @@ public class CommSignupActivity extends AppCompatActivity {
             if (password.isEmpty()) {
                 binding.etPassword.setError(getString(R.string.err_fieldRequired));
                 binding.etPassword.requestFocus();
+            }
+            Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
+//        CHECK FOR INVALID CHARACTERS IN THE FIRST AND LAST NAME FIELDS
+        } else if (!isAlphabetical(firstname) || !isAlphabetical(lastname)) {
+            if (!isAlphabetical(firstname)){
+                binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etFirstname.requestFocus();
+            }
+            if (!isAlphabetical(lastname)){
+                binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etLastname.requestFocus();
             }
         } else if ((password.length() < 6)) {
 //            CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
@@ -156,6 +166,10 @@ public class CommSignupActivity extends AppCompatActivity {
     }
     public static boolean isAlphaNumeric(String s) {
         return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+    }
+
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
     }
 
     private void showOpSignup() {

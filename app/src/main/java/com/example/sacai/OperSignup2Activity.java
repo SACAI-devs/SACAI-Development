@@ -91,7 +91,6 @@ public class OperSignup2Activity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString();
         String userType = getString(R.string.label_operator);
 
-
 //        CHECK IF FIELDS ARE EMPTY
         if (franchise.isEmpty() || plate.isEmpty() || email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
@@ -102,27 +101,28 @@ public class OperSignup2Activity extends AppCompatActivity {
                 binding.etPassword.setError(getString(R.string.err_fieldRequired));
                 binding.etPassword.requestFocus();
             }
+//        CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
         } else if ((password.length() < 6)) {
-//            CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
             binding.etPassword.setError(getString(R.string.err_passCharCount));
             binding.etPassword.requestFocus();
+//        CHECK IF PASSWORD HAS BOTH LETTERS AND NUMBERS
         } else if (!isAlphaNumeric(password)) {
-//            CHECK IF PASSWORD HAS BOTH LETTERS AND NUMBERS
             binding.etPassword.setError(getString(R.string.err_passShouldBeAlphanumeric));
             binding.etPassword.requestFocus();
+//        CHECK IF EMAIL IS A VALID EMAIL FORMAT
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-//            CHECK IF EMAIL IS A VALID EMAIL FORMAT
             Toast.makeText(this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
             binding.etEmail.setError(getString(R.string.err_invalidEmail));
             binding.etEmail.requestFocus();
         } else {
+//        PROCEED WITH USER REGISTRATION
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                            if (task.isSuccessful()){
 //                            CREATE A NEW USER AND STORE IT INTO FIREBASE
-                               User user = new User(email, password, userType);
+                               User user = new User(email, userType);
                                FirebaseUser currentUser = mAuth.getCurrentUser();
                                FirebaseDatabase.getInstance().getReference("Users")
                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -134,10 +134,9 @@ public class OperSignup2Activity extends AppCompatActivity {
 //                                                ADD NEW OPERATOR RECORD
                                                    Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email,"" , currentUser.getUid());
                                                    daoOperator.add(operator);
-                                                   showOperLogin();
-                                                   FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                   user.sendEmailVerification();
+                                                   sendVerificationEmail(email, password);
                                                    Toast.makeText(OperSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
+                                                   showOperLogin();
                                                } else {
                                                    Toast.makeText(OperSignup2Activity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                                }
@@ -149,6 +148,22 @@ public class OperSignup2Activity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void sendVerificationEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.sendEmailVerification();
+                            FirebaseAuth.getInstance().signOut();
+                        } else {
+                            Toast.makeText(OperSignup2Activity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     public static boolean isAlphaNumeric(String s) {

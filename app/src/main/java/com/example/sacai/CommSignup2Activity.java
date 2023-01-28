@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.example.sacai.dao.DAOCommuter;
@@ -42,6 +43,15 @@ public class CommSignup2Activity extends AppCompatActivity {
             finish();
             return;
         }
+//        CHECKS MOBILITY IMPAIRMENT WHENEVER WHEELCHAIR USER IS CHECKED
+        binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                }
+            }
+        });
 
 //        REGISTER USER WHEN BTN IS CLICKED
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +124,7 @@ public class CommSignup2Activity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
 //                          CREATE A NEW USER AND STORE IT INTO FIREBASE
-                                User user = new User(email, password, userType);
+                                User user = new User(email, userType);
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -126,10 +136,9 @@ public class CommSignup2Activity extends AppCompatActivity {
 //                                                    ADDS A NEW COMMUTER RECORD
                                                         Commuter commuter = new Commuter(firstname, lastname, email, "", mobility, auditory, wheelchair,"", "", currentUser.getUid());
                                                         daoCommuter.add(commuter);
-                                                        showCommLogin();
-                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                        user.sendEmailVerification();
+                                                        sendVerificationEmail(email, password);
                                                         Toast.makeText(CommSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
+                                                        showCommLogin();
                                                 } else {
                                                     Toast.makeText(CommSignup2Activity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                                 }
@@ -141,6 +150,26 @@ public class CommSignup2Activity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    public static boolean isAlphaNumeric(String s) {
+        return s != null && s.matches("/^[A-Za-z]+$/");
+    }
+
+    private void sendVerificationEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.sendEmailVerification();
+                            FirebaseAuth.getInstance().signOut();
+                        } else {
+                            Toast.makeText(CommSignup2Activity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void showCommLogin() {

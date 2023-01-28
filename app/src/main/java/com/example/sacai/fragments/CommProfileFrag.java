@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentCommProfileBinding;
@@ -47,11 +48,24 @@ public class CommProfileFrag extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
 
-        //        INITIALIZE FIREBASE AUTH
+//        INITIALIZE FIREBASE AUTH
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+//        DISABLES EMAIL EDITING TEMPORARILY
+        binding.etEmail.setFocusableInTouchMode(false);
+        binding.etEmail.setFocusable(false);
 
-        //        READ USER DATA AND DISPLAY
+//        CHECKS MOBILITY IMPAIRMENT WHENEVER WHEELCHAIR USER IS CHECKED
+        binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                }
+            }
+        });
+
+//        READ USER DATA AND DISPLAY
         readData(currentUser.getUid());
 
 //        SAVE CHANGES TO PROFILE WHEN BTN IS CLICKED
@@ -139,7 +153,22 @@ public class CommProfileFrag extends Fragment {
                 binding.etLastname.setError(getString(R.string.err_fieldRequired));
                 binding.etLastname.requestFocus();
             }
-        } else {
+//        CHECK FOR INVALID CHARACTERS IN THE FIRST AND LAST NAME FIELDS
+        } else if (!isAlphabetical(firstname) || !isAlphabetical(lastname) || !isAlphabetical(username)) {
+                if (!isAlphabetical(firstname)){
+                    binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
+                    binding.etFirstname.requestFocus();
+                }
+                if (!isAlphabetical(lastname)){
+                    binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
+                    binding.etLastname.requestFocus();
+                }
+                if (!isAlphabetical(username)){
+                    binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
+                    binding.etUsername.requestFocus();
+                }
+            }
+        else {
             HashMap User = new HashMap();
             User.put("firstname", firstname);
             User.put("lastname", lastname);
@@ -162,6 +191,8 @@ public class CommProfileFrag extends Fragment {
                 }
             });
         }
-
+    }
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
     }
 }

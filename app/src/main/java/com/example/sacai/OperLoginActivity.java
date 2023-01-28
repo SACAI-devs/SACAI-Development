@@ -133,11 +133,12 @@ public class OperLoginActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
+                    FirebaseAuth.getInstance().signOut();
                     Toast.makeText(OperLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
                 } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
                     Toast.makeText(OperLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(OperLoginActivity.this, CommMainActivity.class);
+                    Intent intent = new Intent(OperLoginActivity.this, OperMainActivity.class);
                     startActivity(intent);
                     finish();
                 }

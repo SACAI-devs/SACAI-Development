@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.sacai.databinding.ActivityLandingBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,8 +61,6 @@ public class LandingActivity extends AppCompatActivity {
         });
     }
 
-
-
     private void showMainActivity (String uid){
 //        GET USERTYPE FROM USER TABLE
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -72,14 +71,10 @@ public class LandingActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
-                    Intent intent = new Intent(LandingActivity.this, CommMainActivity.class);
-                    startActivity(intent);
-                    finish();
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
+                    showMainComm();
                 } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
-                    Intent intent = new Intent(LandingActivity.this, OperMainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    showMainOper();
                 }
             }
         });
@@ -104,5 +99,45 @@ public class LandingActivity extends AppCompatActivity {
         Intent intent = new Intent(LandingActivity.this, OperLoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void showMainComm(){
+//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
+            logout();
+//        CHECK IF USER IS EMAIL VERIFIED
+        } else if (!currentUser.isEmailVerified()){
+            Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
+            logout();
+        } else {
+            Intent intent = new Intent(LandingActivity.this, CommMainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    public void showMainOper(){
+        //        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
+            logout();
+//        CHECK IF USER IS EMAIL VERIFIED
+        } else if (!currentUser.isEmailVerified()){
+            Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
+            logout();
+        } else {
+            Intent intent = new Intent(LandingActivity.this, OperMainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
     }
 }

@@ -44,6 +44,10 @@ public class OperMainActivity extends AppCompatActivity {
         if (currentUser == null) {
             Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
             logout();
+//        CHECK IF USER IS EMAIL VERIFIED
+        } else if (!currentUser.isEmailVerified()){
+            Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
+            logout();
         }
 
 

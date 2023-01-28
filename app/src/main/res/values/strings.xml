@@ -21,7 +21,6 @@
     <string name="label_mobility">Mobility Impairment</string>
     <string name="label_placeholder">TEMP</string>
     <string name="err_emptyRequiredFields">Invalid inputs. Fill out all necessary fields.</string>
-    <string name="choice_commuter">Commuter</string>
     <string name="msg_success">Success!</string>
     <string name="label_operator">Operator</string>
     <string name="label_commuter">Commuter</string>
@@ -61,11 +60,12 @@
     <string name="hint_workAddress">Enter your work address</string>
     <string name="hint_userName">Enter your username</string>
     <string name="label_save">Save Changes</string>
-    <string name="msg_loginToEdit">Please login to edit your profile!</string>
+    <string name="msg_loginToEdit">Please login!</string>
     <string name="err_userDoesNotExist">Error: User is not registered.</string>
     <string name="err_failedToReadData">Error: Failed to read data.</string>
     <string name="label_wheelchairCapacity">Wheelchair Capacity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="err_wrongUserType">Account is registered as an Operator. Please switch to Operator to login, or signup as a commuter.</string>
+    <string name="err_invalidCharacterInput">Numbers and special characters are not allowed.</string>
 </resources>

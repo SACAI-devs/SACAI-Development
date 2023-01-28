@@ -9,12 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.sacai.databinding.ActivityOperSignup2Binding;
 import com.example.sacai.databinding.ActivityOperSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -110,20 +106,20 @@ public class OperSignupActivity extends AppCompatActivity {
     }
 
     private void showNextPage() {
-        String driverFn = binding.etDriverName.getText().toString().trim();
-        String conductorFn = binding.etConductorName.getText().toString().trim();
+        String driverName = binding.etDriverName.getText().toString().trim();
+        String conductorName = binding.etConductorName.getText().toString().trim();
         String franchise = binding.etFranchise.getText().toString().trim();
         String plate = binding.etPlate.getText().toString().trim();
 
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
 //        CHECK FOR EMPTY REQUIRED FIELDS
-        if (driverFn.isEmpty() || conductorFn.isEmpty() ) {
-            if (driverFn.isEmpty()) {
+        if (driverName.isEmpty() || conductorName.isEmpty() ) {
+            if (driverName.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
                 binding.etDriverName.requestFocus();
             }
-            if (conductorFn.isEmpty()) {
+            if (conductorName.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
                 binding.etDriverName.requestFocus();
             }
@@ -136,17 +132,31 @@ public class OperSignupActivity extends AppCompatActivity {
                 binding.etPlate.requestFocus();
             }
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
+        } else if (!isAlphabetical(driverName) || !isAlphabetical(conductorName)) {
+            if (!isAlphabetical(driverName)){
+                binding.etDriverName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etDriverName.requestFocus();
+            }
+            if (!isAlphabetical(conductorName)){
+                binding.etConductorName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etConductorName.requestFocus();
+            }
         } else {
             Intent intent = new Intent(this, OperSignup2Activity.class);
 
-            intent.putExtra(EXTRA_DR_NAME, driverFn);
-            intent.putExtra(EXTRA_CON_NAME, conductorFn);
+            intent.putExtra(EXTRA_DR_NAME, driverName);
+            intent.putExtra(EXTRA_CON_NAME, conductorName);
             intent.putExtra(EXTRA_FRANCHISE, franchise);
             intent.putExtra(EXTRA_PLATE, plate);
             intent.putExtra(String.valueOf(EXTRA_WHEELCHAIR),wheelchair);
             startActivity(intent);
             finish();
         }
+    }
+
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
+
     }
 
     private void showCommSignup() {

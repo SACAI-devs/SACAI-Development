@@ -5,7 +5,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentOperProfileBinding;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Operator;
+import com.example.sacai.viewmodels.CommMainViewModel;
 import com.example.sacai.viewmodels.OperMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,7 +30,7 @@ import java.util.HashMap;
 
 public class OperProfileFrag extends Fragment {
 
-//BIND FRAGMENT TO LAYOUT
+//  BIND FRAGMENT TO LAYOUT
     FragmentOperProfileBinding binding;
 
 //    TODO: Create viewModel
@@ -38,7 +41,6 @@ public class OperProfileFrag extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentOperProfileBinding.inflate(inflater, container, false);
-
         return binding.getRoot();
     }
 
@@ -46,14 +48,27 @@ public class OperProfileFrag extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        viewModel = new ViewModelProvider(requireActivity()).get(OperMainViewModel.class);
+
 //        INITIALIZE FIREBASE AUTH
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        binding.etEmail.setFocusableInTouchMode(false);
+        binding.etEmail.setFocusable(false);
 
 //        READ USER DATA AND DISPLAY
         readData(currentUser.getUid());
+
+        binding.btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveChanges(currentUser.getUid());
+            }
+        });
+
     }
 
+//    METHOD TO READ DATA AND DISPLAY IT ON THE PAGE
     private void readData(String uid) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -87,6 +102,7 @@ public class OperProfileFrag extends Fragment {
         });
     }
 
+//    METHOD TO SAVE CHANGES INTO FIREBASE
     private void saveChanges(String uid) {
         String username = binding.etUsername.getText().toString().trim();
         String driverName = binding.etDriverName.getText().toString().trim();
@@ -104,6 +120,19 @@ public class OperProfileFrag extends Fragment {
             if (conductorName.isEmpty()) {
                 binding.etConductorName.setError(getString(R.string.err_fieldRequired));
                 binding.etConductorName.requestFocus();
+            }
+        } else if (!isAlphabetical(driverName) || !isAlphabetical(conductorName) || !isAlphabetical(username)) {
+            if (!isAlphabetical(driverName)){
+                binding.etDriverName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etDriverName.requestFocus();
+            }
+            if (!isAlphabetical(conductorName)){
+                binding.etConductorName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etConductorName.requestFocus();
+            }
+            if (!isAlphabetical(username)){
+                binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etUsername.requestFocus();
             }
         } else {
             HashMap User = new HashMap();
@@ -124,5 +153,9 @@ public class OperProfileFrag extends Fragment {
                 }
             });
         }
+    }
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
+
     }
 }

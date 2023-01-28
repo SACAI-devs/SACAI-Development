@@ -38,12 +38,16 @@ public class CommMainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 //        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-    if (currentUser == null) {
-        Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
-        logout();
-    }
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
+            logout();
+//        CHECK IF USER IS EMAIL VERIFIED
+        } else if (!currentUser.isEmailVerified()){
+            Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
+            logout();
+        }
 
 //    VIEWMODEL LOGIC
         viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
