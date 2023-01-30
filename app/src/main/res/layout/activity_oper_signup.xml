@@ -55,28 +55,35 @@
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="5dp"
+            android:hint="@string/hint_driverName"
+            android:textColorHint="@color/grey"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDriverName"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_driverName" />
+                />
         </com.google.android.material.textfield.TextInputLayout>
         <!--    INPUT CONDUCTOR NAME-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="5dp"
+            android:hint="@string/hint_conductorName"
+            android:textColorHint="@color/grey"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConductorName"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_conductorName" />
+
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -91,28 +98,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            app:startIconDrawable="@android:drawable/ic_menu_search">
-
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            android:hint="@string/hint_franchiseSelect"
+            android:textColorHint="@color/grey"
+            >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFranchise"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_franchiseSelect" />
+                />
         </com.google.android.material.textfield.TextInputLayout>
+
         <!--        INPUT LICENSE PLATE-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="5dp"
+            android:hint="@string/hint_licensePlate"
+            android:textColorHint="@color/grey"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPlate"
                 style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_licensePlate" />
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!--   CHECKBOX FOR WHEELCHAIR CAPACITY-->

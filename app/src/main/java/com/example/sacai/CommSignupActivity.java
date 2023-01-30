@@ -165,7 +165,8 @@ public class CommSignupActivity extends AppCompatActivity {
         }
     }
     public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+//        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$&()\\-`.+,/\"]+$");
     }
 
     public static boolean isAlphabetical(String s){

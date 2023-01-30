@@ -1,8 +1,8 @@
 package com.example.sacai.dataclasses;
 
 public class Operator {
-    private String drivername;
-    private String conductorname;
+    private String driver;
+    private String conductor;
     private String franchise;
     private String plate;
     private boolean wheelchairCapacity;
@@ -12,9 +12,9 @@ public class Operator {
     public Operator() {
     }
 
-    public Operator(String drivername, String conductorname, String franchise, String plate, boolean wheelchairCapacity, String email, String username, String uid) {
-        this.drivername = drivername;
-        this.conductorname = conductorname;
+    public Operator(String driver, String conductor, String franchise, String plate, boolean wheelchairCapacity, String email, String username, String uid) {
+        this.driver = driver;
+        this.conductor = conductor;
         this.franchise = franchise;
         this.plate = plate;
         this.wheelchairCapacity = wheelchairCapacity;
@@ -23,20 +23,20 @@ public class Operator {
         this.uid = uid;
     }
 
-    public String getDrivername() {
-        return drivername;
+    public String getDriver() {
+        return driver;
     }
 
-    public void setDrivername(String drivername) {
-        this.drivername = drivername;
+    public void setDriver(String driver) {
+        this.driver = driver;
     }
 
-    public String getConductorname() {
-        return conductorname;
+    public String getConductor() {
+        return conductor;
     }
 
-    public void setConductorname(String conductorname) {
-        this.conductorname = conductorname;
+    public void setConductor(String conductor) {
+        this.conductor = conductor;
     }
 
     public String getFranchise() {
@@ -55,7 +55,7 @@ public class Operator {
         this.plate = plate;
     }
 
-    public boolean getWheelchairCapacity() {
+    public boolean isWheelchairCapacity() {
         return wheelchairCapacity;
     }
 

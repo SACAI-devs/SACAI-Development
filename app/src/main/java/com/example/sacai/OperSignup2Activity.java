@@ -82,8 +82,8 @@ public class OperSignup2Activity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String drivername = getIntent().getStringExtra(OperSignupActivity.EXTRA_DR_NAME);
-        String conductorname = getIntent().getStringExtra(OperSignupActivity.EXTRA_CON_NAME);
+        String driver = getIntent().getStringExtra(OperSignupActivity.EXTRA_DR_NAME);
+        String conductor = getIntent().getStringExtra(OperSignupActivity.EXTRA_CON_NAME);
         String franchise = getIntent().getStringExtra(OperSignupActivity.EXTRA_FRANCHISE);
         String plate = getIntent().getStringExtra(OperSignupActivity.EXTRA_PLATE);
         boolean wheelchair = getIntent().getBooleanExtra("wheelchair", OperSignupActivity.EXTRA_WHEELCHAIR);
@@ -132,7 +132,7 @@ public class OperSignup2Activity extends AppCompatActivity {
 //                                               IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
                                                if (task.isSuccessful()) {
 //                                                ADD NEW OPERATOR RECORD
-                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email,"" , currentUser.getUid());
+                                                   Operator operator = new Operator(driver, conductor, franchise, plate, wheelchair, email,"" , currentUser.getUid());
                                                    daoOperator.add(operator);
                                                    sendVerificationEmail(email, password);
                                                    Toast.makeText(OperSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
@@ -167,7 +167,8 @@ public class OperSignup2Activity extends AppCompatActivity {
     }
 
     public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+//        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$&()\\-`.+,/\"]+$");
     }
 
     private void showOperLogin() {

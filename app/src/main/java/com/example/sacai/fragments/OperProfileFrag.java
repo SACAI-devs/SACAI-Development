@@ -78,8 +78,8 @@ public class OperProfileFrag extends Fragment {
                     if (task.getResult().exists()) {
 //                        GET THE DATA FROM THE DATABASE
                         DataSnapshot dataSnapshot = task.getResult();
-                        String driverName = String.valueOf(dataSnapshot.child("drivername").getValue());
-                        String conductorName = String.valueOf(dataSnapshot.child("conductorname").getValue());
+                        String driverName = String.valueOf(dataSnapshot.child("driver").getValue());
+                        String conductorName = String.valueOf(dataSnapshot.child("conductor").getValue());
                         String username = String.valueOf(dataSnapshot.child("username").getValue());
                         String email = String.valueOf(dataSnapshot.child("email").getValue());
 
@@ -105,28 +105,28 @@ public class OperProfileFrag extends Fragment {
 //    METHOD TO SAVE CHANGES INTO FIREBASE
     private void saveChanges(String uid) {
         String username = binding.etUsername.getText().toString().trim();
-        String driverName = binding.etDriverName.getText().toString().trim();
-        String conductorName = binding.etConductorName.getText().toString().trim();
+        String driver = binding.etDriverName.getText().toString().trim();
+        String conductor = binding.etConductorName.getText().toString().trim();
         String email = binding.etEmail.getText().toString().trim();
 
 //        CHECK IF REQUIRED FIELDS ARE EMPTY
-        if (driverName.isEmpty() || conductorName.isEmpty()) {
+        if (driver.isEmpty() || conductor.isEmpty()) {
             viewModel.setData(false);
             viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
-            if (driverName.isEmpty()) {
+            if (driver.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
                 binding.etDriverName.requestFocus();
             }
-            if (conductorName.isEmpty()) {
+            if (conductor.isEmpty()) {
                 binding.etConductorName.setError(getString(R.string.err_fieldRequired));
                 binding.etConductorName.requestFocus();
             }
-        } else if (!isAlphabetical(driverName) || !isAlphabetical(conductorName) || !isAlphabetical(username)) {
-            if (!isAlphabetical(driverName)){
+        } else if (!isAlphabetical(driver) || !isAlphabetical(conductor) || !isAlphabetical(username)) {
+            if (!isAlphabetical(driver)){
                 binding.etDriverName.setError(getString(R.string.err_invalidCharacterInput));
                 binding.etDriverName.requestFocus();
             }
-            if (!isAlphabetical(conductorName)){
+            if (!isAlphabetical(conductor)){
                 binding.etConductorName.setError(getString(R.string.err_invalidCharacterInput));
                 binding.etConductorName.requestFocus();
             }
@@ -136,12 +136,12 @@ public class OperProfileFrag extends Fragment {
             }
         } else {
             HashMap User = new HashMap();
-            User.put("driverName", driverName);
-            User.put("conductorName", conductorName);
+            User.put("driver", driver);
+            User.put("conductor", conductor);
             User.put("username", username);
 
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
             databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
