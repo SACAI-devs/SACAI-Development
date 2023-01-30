@@ -1,4 +1,4 @@
-package com.example.sacai.fragments;
+package com.example.sacai.commuter.fragments;
 
 import android.os.Bundle;
 
@@ -10,13 +10,11 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentCommProfileBinding;
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.User;
-import com.example.sacai.viewmodels.CommMainViewModel;
+import com.example.sacai.commuter.viewmodels.CommMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,12 +7,11 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.example.sacai.dao.DAOCommuter;
+import com.example.sacai.operator.OperSignupActivity;
+import com.example.sacai.R;
+import com.example.sacai.commuter.dao.DAOCommuter;
 import com.example.sacai.databinding.ActivityCommSignup2Binding;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.User;

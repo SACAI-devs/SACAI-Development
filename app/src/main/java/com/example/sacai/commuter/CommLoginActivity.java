@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.sacai.databinding.ActivityOperLoginBinding;
+import com.example.sacai.ForgotPassActivity;
+import com.example.sacai.operator.OperLoginActivity;
+import com.example.sacai.R;
+import com.example.sacai.databinding.ActivityCommLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,17 +25,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class OperLoginActivity extends AppCompatActivity {
+public class CommLoginActivity extends AppCompatActivity {
 
 //    BIND ACTIVITY TO LAYOUT
-    ActivityOperLoginBinding binding;
-
+    ActivityCommLoginBinding binding;
     private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityOperLoginBinding.inflate(getLayoutInflater());
+        binding = ActivityCommLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 //        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
@@ -43,35 +44,36 @@ public class OperLoginActivity extends AppCompatActivity {
             return;
         }
 
-//        SHOW OPERATOR SIGNUP PAGE WHEN BTN IS CLICKED
-        binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
+
+//        SHOW OPERATOR LOGIN WHEN BTN IS CLICKED
+        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showOperSignup();
+            public void onClick(View view) {
+                showOperLogin();
             }
         });
 
 //        LOGIN USER WHEN BTN IS CLICKED
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 loginUser();
             }
         });
 
-//        SHOWS PASSWORD RESET PAGE WHEN BTN IS CLICKED
+//        SHOW PASSWORD RESET PAGE WHEN BTN IS CLICKED
         binding.btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showPassReset();
+            public void onClick(View view) {
+                showForgotPass();
             }
         });
 
-//        SHOWS COMMUTER SIGNUP WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
+//        SHOW COMMUTER SIGNUP WHEN BTN IS CLICKED
+        binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showSwitchComm();
+            public void onClick(View view) {
+                showCommSignup();
             }
         });
 
@@ -88,11 +90,11 @@ public class OperLoginActivity extends AppCompatActivity {
         }
     }
 
-//  TOOLBAR MENU ACTIONS
+    //  TOOLBAR MENU ACTIONS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.switch_to_comm_menu, menu);
+        inflater.inflate(R.menu.switch_to_oper_menu, menu);
         return true;
     }
     @Override
@@ -100,7 +102,7 @@ public class OperLoginActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_switch:
-                Intent intent = new Intent (this, CommLoginActivity.class);
+                Intent intent = new Intent (this, OperLoginActivity.class);
                 startActivity(intent);
                 return true;
             default:
@@ -108,49 +110,21 @@ public class OperLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void showSwitchComm() {
-        Intent intent = new Intent(this, CommLoginActivity.class);
+    private void showCommSignup() {
+        Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);
     }
 
-    private void showPassReset() {
-        Intent intent  = new Intent(this, ForgotPassActivity.class);
+    private void showForgotPass() {
+        Intent intent = new Intent (this, ForgotPassActivity.class);
         startActivity(intent);
-    }
-
-    private void showOperSignup() {
-        Intent intent = new Intent(this, OperSignupActivity.class);
-        startActivity(intent);
-    }
-
-    private void showMainActivity(String uid) {
-//        GET USERTYPE FROM USER TABLE
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = db.getReference("Users");
-        databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                DataSnapshot dataSnapshot = task.getResult();
-                String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
-//                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
-                    FirebaseAuth.getInstance().signOut();
-                    Toast.makeText(OperLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
-                } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
-                    Toast.makeText(OperLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(OperLoginActivity.this, OperMainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
     }
 
     private void loginUser() {
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
 
-//        CHECK IF FIELDS EMPTY
+//        CHECK IF FIELDS ARE EMPTY
         if (email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
                 binding.etEmail.setError(getString(R.string.err_fieldRequired));
@@ -167,15 +141,16 @@ public class OperLoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+//                                CHECK IF USER EMAIL IS VERIFIED
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user.isEmailVerified()) {
                                     showMainActivity(user.getUid());
                                 } else {
                                     user.sendEmailVerification();
-                                    Toast.makeText(OperLoginActivity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(CommLoginActivity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
                                 }
                             } else {
-                                Toast.makeText(OperLoginActivity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CommLoginActivity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                 binding.etEmail.setError("");
                                 binding.etEmail.requestFocus();
                                 binding.etPassword.setError("");
@@ -184,5 +159,33 @@ public class OperLoginActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void showMainActivity(String uid) {
+//        GET USERTYPE FROM USER TABLE
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = db.getReference("Users");
+        databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                DataSnapshot dataSnapshot = task.getResult();
+                String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
+//                REDIRECT USER TO RESPECTIVE SCREENS
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
+                    Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(CommLoginActivity.this, CommMainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
+                    FirebaseAuth.getInstance().signOut();
+                    Toast.makeText(CommLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void showOperLogin() {
+        Intent intent = new Intent(this, OperLoginActivity.class);
+        startActivity(intent);
     }
 }

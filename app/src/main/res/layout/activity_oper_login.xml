@@ -7,7 +7,7 @@
     android:background="@color/teal_700"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".OperLoginActivity"
+    tools:context=".operator.OperLoginActivity"
     >
     <!--    TOOLBAR     -->
     <androidx.appcompat.widget.Toolbar

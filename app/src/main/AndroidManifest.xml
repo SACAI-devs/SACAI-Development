@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+<!--        =========================================================-->
+<!--        ===============BEGINNING OF APP PERMISSIONS==============-->
+<!--        =========================================================-->
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<!--        =========================================================-->
+<!--        ==================END OF APP PERMISSIONS=================-->
+<!--        =========================================================-->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,54 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SACAI"
         tools:targetApi="31">
-        <activity
-            android:name=".OperMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CommMainActivity"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name=".CommSignup2Activity"
-            android:exported="false" />
-        <activity
-            android:name=".OperSignup2Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ForgotPassActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".OperSignupActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".OperLoginActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".CommSignupActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".CommLoginActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
+        <meta-data
+            android:name="com.google.gms.version"
+            android:value="@integer/google_play_services_version"
+            />
+
+<!--        =========================================================-->
+<!--        ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS======-->
+<!--        =========================================================-->
+        <!--        LANDING ACTIVITY-->
         <activity
             android:name=".LandingActivity"
             android:exported="true">
@@ -73,6 +45,85 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-    </application>
 
+        <!--        FORGOT PASSWORD-->
+        <activity
+            android:name=".ForgotPassActivity"
+            android:exported="false"
+            android:parentActivityName=".LandingActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+<!--        MAPS API KEY-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+<!--        =========================================================-->
+<!--        =========END OF NON-USER SPECIFIC CONFIGURATIONS=========-->
+<!--        =========================================================-->
+
+<!--        =========================================================-->
+<!--        ======BEGINNING OF OPERATOR SPECIFIC CONFIGURATIONS======-->
+<!--        =========================================================-->
+<!--        OPERATOR MAIN ACTIVITY-->
+        <activity
+            android:name=".operator.OperMainActivity"
+            android:exported="false" />
+
+<!--        OPERATOR SIGNUP-->
+        <activity
+            android:name=".operator.OperSignupActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".operator.OperSignup2Activity"
+            android:exported="false" />
+
+<!--        OPERATOR LOGIN-->
+        <activity
+            android:name=".operator.OperLoginActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+<!--        =========================================================-->
+<!--        ======BEGINNING OF COMMUTER SPECIFIC CONFIGURATIONS======-->
+<!--        =========================================================-->
+<!--        COMMUTER MAIN ACTIVITY-->
+        <activity
+            android:name=".commuter.CommMainActivity"
+            android:exported="false"/>
+
+<!--        COMMUTER SIGNUP-->
+        <activity
+            android:name=".commuter.CommSignupActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".commuter.CommSignup2Activity"
+            android:exported="false" />
+
+<!--        COMMUTER LOGIN-->
+        <activity
+            android:name=".commuter.CommLoginActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+<!--        =========================================================-->
+<!--        =========END OF COMMUTER SPECIFIC CONFIGURATIONS=========-->
+<!--        =========================================================-->
+    </application>
 </manifest>

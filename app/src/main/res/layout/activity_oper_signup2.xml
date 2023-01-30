@@ -7,7 +7,7 @@
     android:background="@color/teal_700"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".OperSignup2Activity"
+    tools:context=".operator.OperSignup2Activity"
     >
     <!--    TOOLBAR     -->
     <androidx.appcompat.widget.Toolbar

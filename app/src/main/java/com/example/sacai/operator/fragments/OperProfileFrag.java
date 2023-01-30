@@ -1,4 +1,4 @@
-package com.example.sacai.fragments;
+package com.example.sacai.operator.fragments;
 
 import android.os.Bundle;
 
@@ -7,17 +7,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentOperProfileBinding;
-import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Operator;
-import com.example.sacai.viewmodels.CommMainViewModel;
-import com.example.sacai.viewmodels.OperMainViewModel;
+import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,16 +79,17 @@ public class OperProfileFrag extends Fragment {
                         String conductorName = String.valueOf(dataSnapshot.child("conductor").getValue());
                         String username = String.valueOf(dataSnapshot.child("username").getValue());
                         String email = String.valueOf(dataSnapshot.child("email").getValue());
+                        String wheelchair = String.valueOf(dataSnapshot.child("wheelchairCapacity").getValue());
 
                         if (username.equals("null")) {
                             username = "";
                         }
-
 //                        BIND VALUES TO COMPONENTS
                         binding.etDriverName.setText(driverName);
                         binding.etConductorName.setText(conductorName);
                         binding.etUsername.setText(username);
                         binding.etEmail.setText(email);
+                        binding.cbWheelchair.setChecked(Boolean.parseBoolean(wheelchair));
                     } else {
                         viewModel.setData(false);
                     }
@@ -135,14 +133,15 @@ public class OperProfileFrag extends Fragment {
                 binding.etUsername.requestFocus();
             }
         } else {
+
             HashMap User = new HashMap();
             User.put("driver", driver);
             User.put("conductor", conductor);
             User.put("username", username);
 
-
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
             databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
+//                WILL TRIGGER A TOAST FROM THE HOST ACTIVITY
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {

@@ -1,11 +1,10 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -13,15 +12,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import com.example.sacai.LandingActivity;
+import com.example.sacai.R;
 import com.example.sacai.databinding.ActivityOperMainBinding;
-import com.example.sacai.fragments.CommMapFrag;
-import com.example.sacai.fragments.CommProfileFrag;
-import com.example.sacai.fragments.OperMapFrag;
-import com.example.sacai.fragments.OperProfileFrag;
-import com.example.sacai.viewmodels.OperMainViewModel;
+import com.example.sacai.operator.fragments.OperMapFrag;
+import com.example.sacai.operator.fragments.OperProfileFrag;
+import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

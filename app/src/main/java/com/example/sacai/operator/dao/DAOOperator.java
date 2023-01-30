@@ -1,4 +1,4 @@
-package com.example.sacai.dao;
+package com.example.sacai.operator.dao;
 
 import com.example.sacai.dataclasses.Operator;
 import com.google.firebase.database.DatabaseReference;

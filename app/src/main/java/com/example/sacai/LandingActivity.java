@@ -8,7 +8,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.sacai.commuter.CommLoginActivity;
+import com.example.sacai.commuter.CommMainActivity;
+import com.example.sacai.commuter.CommSignupActivity;
 import com.example.sacai.databinding.ActivityLandingBinding;
+import com.example.sacai.operator.OperLoginActivity;
+import com.example.sacai.operator.OperMainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

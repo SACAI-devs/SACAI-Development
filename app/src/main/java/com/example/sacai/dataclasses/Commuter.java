@@ -14,7 +14,6 @@ public class Commuter {
     private String uid;
 
 
-
     public Commuter() {
     }
 

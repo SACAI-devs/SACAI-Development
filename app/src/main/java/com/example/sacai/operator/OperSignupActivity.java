@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.sacai.R;
+import com.example.sacai.commuter.CommSignupActivity;
 import com.example.sacai.databinding.ActivityOperSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

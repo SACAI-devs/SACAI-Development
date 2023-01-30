@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,12 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.sacai.dao.DAOOperator;
+import com.example.sacai.R;
 import com.example.sacai.databinding.ActivityOperSignup2Binding;
+import com.example.sacai.operator.dao.DAOOperator;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.dataclasses.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,7 +42,6 @@ public class OperSignup2Activity extends AppCompatActivity {
             finish();
             return;
         }
-
 
 //        REGISTER USER WHEN BTN IS CLICKED
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {

@@ -72,6 +72,7 @@ public class ForgotPassActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(ForgotPassActivity.this, R.string.msg_resetLinkSent, Toast.LENGTH_SHORT).show();
+//                    showLogin();
                 } else {
                     Toast.makeText(ForgotPassActivity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
                 }

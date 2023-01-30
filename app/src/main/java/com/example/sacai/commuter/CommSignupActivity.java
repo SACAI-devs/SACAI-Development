@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,10 +10,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.operator.OperSignupActivity;
+import com.example.sacai.R;
 import com.example.sacai.databinding.ActivityCommSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
