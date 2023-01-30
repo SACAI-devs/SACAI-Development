@@ -6,12 +6,13 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".commuter.fragments.CommMapsFrag">
+    tools:context=".commuter.fragments.CommMapFrag">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/ochre_100">
+
         <!--    ROUTE SELECTION MENU -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -60,5 +61,11 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+<!--        MAP CONTAINER-->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/commuter_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     </RelativeLayout>
 </FrameLayout>

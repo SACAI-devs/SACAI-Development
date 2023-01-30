@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.example.sacai.LandingActivity;
 import com.example.sacai.R;
-import com.example.sacai.commuter.fragments.CommMapsFrag;
+import com.example.sacai.commuter.fragments.CommMapFrag;
 import com.example.sacai.databinding.ActivityCommMainBinding;
 import com.example.sacai.commuter.fragments.CommProfileFrag;
 import com.example.sacai.commuter.viewmodels.CommMainViewModel;
@@ -39,7 +39,7 @@ public class CommMainActivity extends AppCompatActivity {
 
 
 //    ERROR LOG FOR WHEN USER DOESNT HAVE GOOGLE PLAY SERVICES INSTALLED
-    private static final String TAG = "CommMapsFrag";
+    private static final String TAG = "CommMapFrag";
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -105,7 +105,7 @@ public class CommMainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_showHome:
-                replaceFragment(new CommMapsFrag());
+                replaceFragment(new CommMapFrag());
                 return true;
             case R.id.action_showEditProfile:
                 replaceFragment(new CommProfileFrag());
@@ -134,7 +134,7 @@ public class CommMainActivity extends AppCompatActivity {
 
 
     private void init() {
-        replaceFragment(new CommMapsFrag());
+        replaceFragment(new CommMapFrag());
     }
 
 //    CHECK IF GoogleApiAvailability IS TRUE
@@ -189,7 +189,6 @@ public class CommMainActivity extends AppCompatActivity {
                     }
                     mLocationPermissionsGranted = true;
 //                    INITIALIZE MAP
-
                 }
             }
         }

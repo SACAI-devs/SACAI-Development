@@ -51,5 +51,11 @@
                     android:text="@string/label_goNow"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+<!--        MAP CONTAINER-->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/operator_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 </FrameLayout>

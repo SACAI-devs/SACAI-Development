@@ -1,24 +1,27 @@
-package com.example.sacai.operator.fragments;
-
-import android.os.Bundle;
+package com.example.sacai.commuter.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sacai.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class OperMapFrag extends Fragment implements OnMapReadyCallback {
+public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
-//    CALL VARIABLES BASED ON GOOGLE MAPS DOCUMENTATION
+//       CALL VARIABLES BASED ON GOOGLE MAPS DOCUMENTATION
     GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
@@ -32,8 +35,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
 
-//    REQUIRED EMPTY PUBLIC CONSTRUCTOR
-    public OperMapFrag() {
+//        REQUIRED EMPTY PUBLIC CONSTRUCTOR
+    public CommMapFrag() {
     }
 
 //    CREATE A MAP VIEW INSTANCE
@@ -52,7 +55,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mMapView = (MapView) mView.findViewById(R.id.operator_map);
+        mMapView = (MapView) mView.findViewById(R.id.commuter_map);
         if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();
@@ -60,7 +63,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         }
     }
 
-//    CUSTOM CONFIGURATIONS ON MAPS
+//  CUSTOM CONFIGURATION MAPS
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
@@ -69,6 +72,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 //        TESTING STUFF
-        // TODO: RETRIEVE STATIONS FROM DATABASE AND MAP THEM TO MARKERS TO DISPLAY ON MAPS
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(14.574970139259474, 121.09785961494917)).title("Rainforest Park"));
+        CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
+        googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
     }
+
+
 }
