@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class OperSignup2Activity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperSignup2Binding binding;
     private FirebaseAuth mAuth;
     DAOOperator daoOperator = new DAOOperator();
@@ -35,7 +35,7 @@ public class OperSignup2Activity extends AppCompatActivity {
         binding = ActivityOperSignup2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -43,7 +43,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             return;
         }
 
-//        REGISTER USER WHEN BTN IS CLICKED
+        // Register user when btn is clicked
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +51,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        SHOWS PREVIOUS ACTIVITY WHEN BTN IS CLICKED
+        // Show previous screen when btn is clicked
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +59,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -89,7 +89,7 @@ public class OperSignup2Activity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString();
         String userType = getString(R.string.label_operator);
 
-//        CHECK IF FIELDS ARE EMPTY
+        // Field validation
         if (franchise.isEmpty() || plate.isEmpty() || email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
                 binding.etEmail.setError(getString(R.string.err_fieldRequired));
@@ -99,27 +99,24 @@ public class OperSignup2Activity extends AppCompatActivity {
                 binding.etPassword.setError(getString(R.string.err_fieldRequired));
                 binding.etPassword.requestFocus();
             }
-//        CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
         } else if ((password.length() < 6)) {
             binding.etPassword.setError(getString(R.string.err_passCharCount));
             binding.etPassword.requestFocus();
-//        CHECK IF PASSWORD HAS BOTH LETTERS AND NUMBERS
         } else if (!isAlphaNumeric(password)) {
             binding.etPassword.setError(getString(R.string.err_passShouldBeAlphanumeric));
             binding.etPassword.requestFocus();
-//        CHECK IF EMAIL IS A VALID EMAIL FORMAT
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
             binding.etEmail.setError(getString(R.string.err_invalidEmail));
             binding.etEmail.requestFocus();
         } else {
-//        PROCEED WITH USER REGISTRATION
+            // Proceed with user creation
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                            if (task.isSuccessful()){
-//                            CREATE A NEW USER AND STORE IT INTO FIREBASE
+                               //Create new user and store it into Firebase
                                User user = new User(email, userType);
                                FirebaseUser currentUser = mAuth.getCurrentUser();
                                FirebaseDatabase.getInstance().getReference("Users")
@@ -127,9 +124,8 @@ public class OperSignup2Activity extends AppCompatActivity {
                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                            @Override
                                            public void onComplete(@NonNull Task<Void> task) {
-//                                               IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
+                                               // If successful, send email verification link to the user
                                                if (task.isSuccessful()) {
-//                                                ADD NEW OPERATOR RECORD
                                                    Operator operator = new Operator(driver, conductor, franchise, plate, wheelchair, email,"" , currentUser.getUid());
                                                    daoOperator.add(operator);
                                                    sendVerificationEmail(email, password);
@@ -173,5 +169,6 @@ public class OperSignup2Activity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

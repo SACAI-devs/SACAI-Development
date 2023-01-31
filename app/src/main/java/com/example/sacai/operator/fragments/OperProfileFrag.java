@@ -1,5 +1,6 @@
 package com.example.sacai.operator.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentOperProfileBinding;
 import com.example.sacai.dataclasses.Operator;
+import com.example.sacai.operator.OperUpdateEmailActivity;
 import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,10 +29,9 @@ import java.util.HashMap;
 
 public class OperProfileFrag extends Fragment {
 
-//  BIND FRAGMENT TO LAYOUT
+    // Bind fragment to layout
     FragmentOperProfileBinding binding;
 
-//    TODO: Create viewModel
     OperMainViewModel viewModel;
 
     @Override
@@ -47,16 +48,25 @@ public class OperProfileFrag extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(OperMainViewModel.class);
 
-//        INITIALIZE FIREBASE AUTH
+        // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         binding.etEmail.setFocusableInTouchMode(false);
         binding.etEmail.setFocusable(false);
 
-//        READ USER DATA AND DISPLAY
+        // Read data and display
         readData(currentUser.getUid());
 
-        binding.btnSave.setOnClickListener(new View.OnClickListener() {
+        // User re-authentication to change email
+        binding.etEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUpdateEmail();
+            }
+        });
+
+        // Save changes when btn is clicked
+        binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveChanges(currentUser.getUid());
@@ -64,8 +74,11 @@ public class OperProfileFrag extends Fragment {
         });
 
     }
+    private void showUpdateEmail() {
+        Intent intent = new Intent(getActivity(), OperUpdateEmailActivity.class);
+        startActivity(intent);
+    }
 
-//    METHOD TO READ DATA AND DISPLAY IT ON THE PAGE
     private void readData(String uid) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -73,7 +86,7 @@ public class OperProfileFrag extends Fragment {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-//                        GET THE DATA FROM THE DATABASE
+                        // Get datasnapshot from Firebase and map them to local variables
                         DataSnapshot dataSnapshot = task.getResult();
                         String driverName = String.valueOf(dataSnapshot.child("driver").getValue());
                         String conductorName = String.valueOf(dataSnapshot.child("conductor").getValue());
@@ -84,7 +97,8 @@ public class OperProfileFrag extends Fragment {
                         if (username.equals("null")) {
                             username = "";
                         }
-//                        BIND VALUES TO COMPONENTS
+
+                        // Bind values to components
                         binding.etDriverName.setText(driverName);
                         binding.etConductorName.setText(conductorName);
                         binding.etUsername.setText(username);
@@ -100,14 +114,13 @@ public class OperProfileFrag extends Fragment {
         });
     }
 
-//    METHOD TO SAVE CHANGES INTO FIREBASE
     private void saveChanges(String uid) {
         String username = binding.etUsername.getText().toString().trim();
         String driver = binding.etDriverName.getText().toString().trim();
         String conductor = binding.etConductorName.getText().toString().trim();
         String email = binding.etEmail.getText().toString().trim();
 
-//        CHECK IF REQUIRED FIELDS ARE EMPTY
+        // Field validation
         if (driver.isEmpty() || conductor.isEmpty()) {
             viewModel.setData(false);
             viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
@@ -133,7 +146,7 @@ public class OperProfileFrag extends Fragment {
                 binding.etUsername.requestFocus();
             }
         } else {
-
+            // Map variables to nodes in Firebase
             HashMap User = new HashMap();
             User.put("driver", driver);
             User.put("conductor", conductor);
@@ -141,7 +154,7 @@ public class OperProfileFrag extends Fragment {
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
             databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
-//                WILL TRIGGER A TOAST FROM THE HOST ACTIVITY
+                // Signals Host activity to display a toast
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
@@ -153,6 +166,7 @@ public class OperProfileFrag extends Fragment {
             });
         }
     }
+
     public static boolean isAlphabetical(String s){
         return s != null && s.matches("^[a-zA-Z ]*$");
 

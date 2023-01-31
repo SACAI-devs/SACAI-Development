@@ -13,7 +13,6 @@ public class Commuter {
     private String workAddress;
     private String uid;
 
-
     public Commuter() {
     }
 
@@ -30,6 +29,7 @@ public class Commuter {
         this.uid = uid;
     }
 
+    //====== SETTER AND GETTER FUNCTIONS ======//
     public String getFirstname() {
         return firstname;
     }

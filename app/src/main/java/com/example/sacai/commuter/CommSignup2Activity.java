@@ -23,8 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class CommSignup2Activity extends AppCompatActivity {
-
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityCommSignup2Binding binding;
     private FirebaseAuth mAuth;
     DAOCommuter daoCommuter = new DAOCommuter();
@@ -35,14 +34,15 @@ public class CommSignup2Activity extends AppCompatActivity {
         binding = ActivityCommSignup2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             finish();
             return;
         }
-//        CHECKS MOBILITY IMPAIRMENT WHENEVER WHEELCHAIR USER IS CHECKED
+
+        // Syncs mobility checkbox to wheelchair user checkbox
         binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +52,7 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        REGISTER USER WHEN BTN IS CLICKED
+        // Registers user when btn is clicked
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,15 +60,7 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        SHOW OPERATOR SIGNUP
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOpSignup();
-            }
-        });
-
-//        SHOW PREVIOUS PAGE
+        // Show previous page when btn is clicked
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +68,7 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -112,7 +104,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         boolean auditory = binding.cbAuditory.isChecked();
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-//        CHECK IF FIELDS ARE EMPTY
+        // Field validation
         if ((mobility == false) && (auditory == false) && (wheelchair == false)) {
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
             return;
@@ -122,7 +114,7 @@ public class CommSignup2Activity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-//                          CREATE A NEW USER AND STORE IT INTO FIREBASE
+                                // Create user and store it into Firebase
                                 User user = new User(email, userType);
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 FirebaseDatabase.getInstance().getReference("Users")
@@ -130,9 +122,9 @@ public class CommSignup2Activity extends AppCompatActivity {
                                         .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-//                                                IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
+                                                // If USER CREATION is SUCCESSFUL then it sends a verification email
                                                 if (task.isSuccessful()) {
-//                                                    ADDS A NEW COMMUTER RECORD
+                                                        // Adds a new commuter record
                                                         Commuter commuter = new Commuter(firstname, lastname, email, "", mobility, auditory, wheelchair,"", "", currentUser.getUid());
                                                         daoCommuter.add(commuter);
                                                         sendVerificationEmail(email, password);
@@ -144,15 +136,12 @@ public class CommSignup2Activity extends AppCompatActivity {
                                             }
                                         });
                             } else {
+                                // If user's email is already registered to another user
                                 Toast.makeText(CommSignup2Activity.this, R.string.err_emailExists, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         }
-    }
-
-    public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("/^[A-Za-z]+$/");
     }
 
     private void sendVerificationEmail(String email, String password) {
@@ -175,5 +164,6 @@ public class CommSignup2Activity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

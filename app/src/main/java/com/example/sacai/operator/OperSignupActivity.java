@@ -19,8 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class OperSignupActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperSignupBinding binding;
+
+    // Initialize Firebase Auth
     private FirebaseAuth mAuth;
 
     public static String EXTRA_DR_NAME = "driver's name";
@@ -29,14 +31,13 @@ public class OperSignupActivity extends AppCompatActivity {
     public static String EXTRA_PLATE = "plate number";
     public static boolean EXTRA_WHEELCHAIR = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOperSignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -45,7 +46,7 @@ public class OperSignupActivity extends AppCompatActivity {
         }
 
 
-//        SWITCH TO COMMUTER SIGNUP WHEN BTN IS CLICKED
+        // Switch to COMMUTER SIGNUP when btn is clicked
         binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +54,7 @@ public class OperSignupActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW SECOND PAGE OF OPERATOR SIGNUP WHEN BTN IS CLICKED
+        // Show NEXT PAGE when btn is clicked
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +62,7 @@ public class OperSignupActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW OPERATOR LOGIN PAGE WHEN BTN IS CLICKED
+        // Switch to OPERATOR LOGIN when btn is clicked
         binding.btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +70,7 @@ public class OperSignupActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -82,7 +83,7 @@ public class OperSignupActivity extends AppCompatActivity {
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -115,7 +116,7 @@ public class OperSignupActivity extends AppCompatActivity {
 
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-//        CHECK FOR EMPTY REQUIRED FIELDS
+        // Field validation
         if (driverName.isEmpty() || conductorName.isEmpty() ) {
             if (driverName.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
@@ -164,5 +165,6 @@ public class OperSignupActivity extends AppCompatActivity {
     private void showCommSignup() {
         Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);
+        finish();
     }
 }

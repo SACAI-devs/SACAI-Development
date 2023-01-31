@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-<!--        =========================================================-->
-<!--        ===============BEGINNING OF APP PERMISSIONS==============-->
-<!--        =========================================================-->
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<!--        =========================================================-->
-<!--        ==================END OF APP PERMISSIONS=================-->
-<!--        =========================================================-->
+    <!-- ========================================================= -->
+    <!-- ===============BEGINNING OF APP PERMISSIONS============== -->
+    <!-- ========================================================= -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -25,13 +21,10 @@
 
         <meta-data
             android:name="com.google.gms.version"
-            android:value="@integer/google_play_services_version"
-            />
-
-<!--        =========================================================-->
-<!--        ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS======-->
-<!--        =========================================================-->
-        <!--        LANDING ACTIVITY-->
+            android:value="@integer/google_play_services_version" /> <!-- ========================================================= -->
+        <!-- ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS====== -->
+        <!-- ========================================================= -->
+        <!-- LANDING ACTIVITY -->
         <activity
             android:name=".LandingActivity"
             android:exported="true">
@@ -44,9 +37,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-
-        <!--        FORGOT PASSWORD-->
+        </activity> <!-- FORGOT PASSWORD -->
         <activity
             android:name=".ForgotPassActivity"
             android:exported="false"
@@ -54,26 +45,19 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-
-<!--        MAPS API KEY-->
+        </activity> <!-- MAPS API KEY -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-
-<!--        =========================================================-->
-<!--        =========END OF NON-USER SPECIFIC CONFIGURATIONS=========-->
-<!--        =========================================================-->
-
-<!--        =========================================================-->
-<!--        ======BEGINNING OF OPERATOR SPECIFIC CONFIGURATIONS======-->
-<!--        =========================================================-->
-<!--        OPERATOR MAIN ACTIVITY-->
+            android:value="${MAPS_API_KEY}" /> <!-- ========================================================= -->
+        <!-- =========END OF NON-USER SPECIFIC CONFIGURATIONS========= -->
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <!-- ======BEGINNING OF OPERATOR SPECIFIC CONFIGURATIONS====== -->
+        <!-- ========================================================= -->
+        <!-- OPERATOR MAIN ACTIVITY -->
         <activity
             android:name=".operator.OperMainActivity"
-            android:exported="false" />
-
-<!--        OPERATOR SIGNUP-->
+            android:exported="false" /> <!-- OPERATOR SIGNUP -->
         <activity
             android:name=".operator.OperSignupActivity"
             android:exported="true">
@@ -83,9 +67,7 @@
         </activity>
         <activity
             android:name=".operator.OperSignup2Activity"
-            android:exported="false" />
-
-<!--        OPERATOR LOGIN-->
+            android:exported="false" /> <!-- OPERATOR LOGIN -->
         <activity
             android:name=".operator.OperLoginActivity"
             android:exported="false">
@@ -93,16 +75,17 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".operator.OperUpdateEmailActivity"
+            android:exported="false" />
 
-<!--        =========================================================-->
-<!--        ======BEGINNING OF COMMUTER SPECIFIC CONFIGURATIONS======-->
-<!--        =========================================================-->
-<!--        COMMUTER MAIN ACTIVITY-->
+        <!-- ========================================================= -->
+        <!-- ======BEGINNING OF COMMUTER SPECIFIC CONFIGURATIONS====== -->
+        <!-- ========================================================= -->
+        <!-- COMMUTER MAIN ACTIVITY -->
         <activity
             android:name=".commuter.CommMainActivity"
-            android:exported="false"/>
-
-<!--        COMMUTER SIGNUP-->
+            android:exported="false" /> <!-- COMMUTER SIGNUP -->
         <activity
             android:name=".commuter.CommSignupActivity"
             android:exported="false">
@@ -112,9 +95,7 @@
         </activity>
         <activity
             android:name=".commuter.CommSignup2Activity"
-            android:exported="false" />
-
-<!--        COMMUTER LOGIN-->
+            android:exported="false" /> <!-- COMMUTER LOGIN -->
         <activity
             android:name=".commuter.CommLoginActivity"
             android:exported="false">
@@ -122,8 +103,10 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-<!--        =========================================================-->
-<!--        =========END OF COMMUTER SPECIFIC CONFIGURATIONS=========-->
-<!--        =========================================================-->
+        <activity
+            android:name=".commuter.CommUpdateEmailActivity"
+            android:exported="false" /> <!-- COMMUTER UPDATE EMAIL -->
+
     </application>
+
 </manifest>

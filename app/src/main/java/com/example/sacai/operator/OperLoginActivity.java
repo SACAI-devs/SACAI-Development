@@ -27,7 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class OperLoginActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperLoginBinding binding;
 
     private FirebaseAuth mAuth;
@@ -38,7 +38,7 @@ public class OperLoginActivity extends AppCompatActivity {
         binding = ActivityOperLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize FIrebase and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -46,7 +46,7 @@ public class OperLoginActivity extends AppCompatActivity {
             return;
         }
 
-//        SHOW OPERATOR SIGNUP PAGE WHEN BTN IS CLICKED
+        // Show operator signup when btn is clicked
         binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,7 +54,7 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-//        LOGIN USER WHEN BTN IS CLICKED
+        // Login user when btn is clicked
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +62,7 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-//        SHOWS PASSWORD RESET PAGE WHEN BTN IS CLICKED
+        // Show password reset when btn is clicked
         binding.btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +70,7 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-//        SHOWS COMMUTER SIGNUP WHEN BTN IS CLICKED
+        // Switch to COMMUTER LOGIN when btn is clicked
         binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +78,7 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -91,7 +91,7 @@ public class OperLoginActivity extends AppCompatActivity {
         }
     }
 
-//  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -127,7 +127,7 @@ public class OperLoginActivity extends AppCompatActivity {
     }
 
     private void showMainActivity(String uid) {
-//        GET USERTYPE FROM USER TABLE
+        // Get user type from table
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = db.getReference("Users");
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -135,7 +135,7 @@ public class OperLoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
-//                REDIRECT USER TO RESPECTIVE SCREENS
+                // Redirect user to respective screens
                 if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     FirebaseAuth.getInstance().signOut();
                     Toast.makeText(OperLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
@@ -153,7 +153,7 @@ public class OperLoginActivity extends AppCompatActivity {
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
 
-//        CHECK IF FIELDS EMPTY
+        // Filed validation
         if (email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
                 binding.etEmail.setError(getString(R.string.err_fieldRequired));

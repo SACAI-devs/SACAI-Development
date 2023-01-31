@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/teal_700"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_700"
-    android:gravity="center_vertical"
+    tools:context=".commuter.CommUpdateEmailActivity"
     android:orientation="vertical"
-    tools:context=".operator.OperLoginActivity"
     >
     <!--    TOOLBAR     -->
     <androidx.appcompat.widget.Toolbar
@@ -16,35 +15,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/app_name"
-        app:menu="@menu/switch_to_comm_menu"
-        />
+        app:navigationIcon="@drawable/ic_back"  />
 
-    <!--    USER TYPE LABEL-->
-    <Button
-        style="@style/OutlineBtn"
-        android:id="@+id/btnSwitchUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:insetTop="20dp"
-        android:insetRight="20dp"
-        android:text="@string/label_operator"
-        android:clickable="false"
-        />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="40dp" >
+        android:paddingHorizontal="40dp"
+        android:gravity="center_vertical">
+        <!--    HEADER      -->
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/lock"
+            android:layout_gravity="center"/>
         <TextView
             style="@style/DarkTitleTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/label_login" />
+            android:text="@string/label_update_email" />
+        <TextView
+            style="@style/DarkBodyTxt"
+            android:id="@+id/tvChangeEmailInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/label_re_authenticate"
+            android:textColorHint="@color/grey"
+            />
 
-    <!--    INPUT EMAIL-->
+        <!--        INPUT EMAIL-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
@@ -54,20 +54,19 @@
             android:textColorHint="@color/grey"
             >
             <com.google.android.material.textfield.TextInputEditText
-                style="@style/InputTxt"
                 android:id="@+id/etEmail"
+                style="@style/InputTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    INPUT PASSWORD-->
+        <!--        INPUT PASSWORD-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            app:endIconMode="password_toggle"
             android:hint="@string/hint_password"
             android:textColorHint="@color/grey"
             >
@@ -76,36 +75,47 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                />
+                android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    BUTTON LOGIN-->
+        <!--        INPUT EMAIL-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:hint="@string/hint_new_email"
+            android:textColorHint="@color/grey"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNewEmail"
+                style="@style/InputTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Button
             style="@style/PrimaryBtn"
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginHorizontal="60dp"
-            android:text="@string/label_login"
+            android:layout_marginVertical="4dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="@string/label_changeEmail"
+            android:visibility="visible"
             />
-<!--        BUTTON FORGOT PASSWORD-->
         <Button
-            style="@style/DarkTextBtn"
-            android:id="@+id/btnForgotPass"
+            style="@style/PrimaryBtn"
+            android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_forgetPass"
-            />
-<!--        BUTTON SWITCH TO SIGNUP-->
-        <Button
-            style="@style/DarkTextBtn"
-            android:id="@+id/btnSwitchSignup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/label_switchToSignup"
+            android:layout_marginVertical="4dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="@string/label_save"
+            android:visibility="gone"
             />
     </LinearLayout>
 </LinearLayout>

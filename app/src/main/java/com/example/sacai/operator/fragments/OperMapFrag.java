@@ -11,14 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sacai.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class OperMapFrag extends Fragment implements OnMapReadyCallback {
-
-//    CALL VARIABLES BASED ON GOOGLE MAPS DOCUMENTATION
+    // Call variables based on GoogleMaps Documentation
     GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
@@ -32,11 +35,11 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
 
-//    REQUIRED EMPTY PUBLIC CONSTRUCTOR
+    // Required public constructor
     public OperMapFrag() {
     }
 
-//    CREATE A MAP VIEW INSTANCE
+    // Create a map view
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,7 +50,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         return mView;
     }
 
-//    SHOULD HAVE THE SAME MAP ID FROM THE XML FILE
+    // Should have the same MAP ID as XML file
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -60,7 +63,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         }
     }
 
-//    CUSTOM CONFIGURATIONS ON MAPS
+    // Custom map logic and configuration
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
@@ -68,7 +71,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-//        TESTING STUFF
+        //=============Testing==============//
         // TODO: RETRIEVE STATIONS FROM DATABASE AND MAP THEM TO MARKERS TO DISPLAY ON MAPS
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(14.574970139259474, 121.09785961494917)).title("Rainforest Park"));
+        CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
+        googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
     }
 }

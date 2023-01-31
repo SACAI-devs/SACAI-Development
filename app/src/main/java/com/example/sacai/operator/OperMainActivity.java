@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class OperMainActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperMainBinding binding;
 
     private OperMainViewModel viewModel;
@@ -36,20 +36,20 @@ public class OperMainActivity extends AppCompatActivity {
         binding = ActivityOperMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
             logout();
-//        CHECK IF USER IS EMAIL VERIFIED
+        // Check if email is verified
         } else if (!currentUser.isEmailVerified()){
             Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
             logout();
         }
 
 
-//        VIEWMODEL LOGIC
+        // ViewModel Logic
         viewModel = new ViewModelProvider(this).get(OperMainViewModel.class);
         viewModel.getResult().observe(this, item -> {
             if (item == true) {
@@ -61,47 +61,24 @@ public class OperMainActivity extends AppCompatActivity {
             }
         });
 
-//        LOAD MAP FRAGMENT
+        // Load map fragment
         replaceFragment(new OperMapFrag());
 
-//        SHOW HOME VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnHomeNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new OperMapFrag());
-//            }
-//        });
-
-//        SHOW PROFILE VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnProfileNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new OperProfileFrag());
-//            }
-//        });
-
-//        LOGOUT USER - HIDE FOR NOW
-//        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                logout();
-//            }
-//        });
-
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection

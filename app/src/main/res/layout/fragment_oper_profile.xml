@@ -141,7 +141,7 @@
                     <!-- BUTTON SAVE CHANGES -->
                     <Button
                         style="@style/PrimaryBtn"
-                        android:id="@+id/btnSave"
+                        android:id="@+id/btnSubmit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="30dp"

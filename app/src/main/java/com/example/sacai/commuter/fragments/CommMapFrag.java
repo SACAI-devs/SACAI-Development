@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
-//       CALL VARIABLES BASED ON GOOGLE MAPS DOCUMENTATION
+    // Call variables based on Google Documentation
     GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
@@ -35,22 +35,22 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
 
-//        REQUIRED EMPTY PUBLIC CONSTRUCTOR
+    // Required empty public construction
     public CommMapFrag() {
     }
 
-//    CREATE A MAP VIEW INSTANCE
+    // Create a map view
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-//        Inflate the layout for this fragment
+        // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_comm_map, container, false);
         return mView;
     }
 
-//    SHOULD HAVE THE SAME MAP ID FROM THE XML FILE
+    // Should have the same MAP ID as the XML file
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -63,7 +63,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }
     }
 
-//  CUSTOM CONFIGURATION MAPS
+    // Custom map logic and configurations
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
@@ -71,7 +71,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-//        TESTING STUFF
+        //=============Testing==============//
         googleMap.addMarker(new MarkerOptions().position(new LatLng(14.574970139259474, 121.09785961494917)).title("Rainforest Park"));
         CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
         googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));

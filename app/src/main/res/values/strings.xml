@@ -68,4 +68,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="err_wrongUserType">Account is registered as an Operator. Please switch to Operator to login, or signup as a commuter.</string>
     <string name="err_invalidCharacterInput">Numbers and special characters are not allowed.</string>
+    <string name="label_update_email">Change Email Address</string>
+    <string name="label_re_authenticate">Enter your current email and password so we can reauthenticate you.</string>
+    <string name="hint_new_email">Enter your new email</string>
+    <string name="label_changeEmail">Change email</string>
+    <string name="label_confirm">Confirm</string>
+    <string name="label_enterNewEmail">Enter your new email address</string>
 </resources>

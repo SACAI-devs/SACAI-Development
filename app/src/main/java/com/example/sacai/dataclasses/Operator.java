@@ -23,6 +23,7 @@ public class Operator {
         this.uid = uid;
     }
 
+    //====== SETTER AND GETTER FUNCTIONS ======//
     public String getDriver() {
         return driver;
     }

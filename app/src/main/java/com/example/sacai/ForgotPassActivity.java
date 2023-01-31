@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -18,8 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityForgotPassBinding binding;
+
     private FirebaseAuth mAuth;
 
     @Override
@@ -28,11 +30,10 @@ public class ForgotPassActivity extends AppCompatActivity {
         binding = ActivityForgotPassBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH
+        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-
-//        SEND RESET LINK WHEN BTN CLICKED
+        // Send password reset link when btn is clicked
         binding.btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,7 +41,7 @@ public class ForgotPassActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -72,11 +73,17 @@ public class ForgotPassActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(ForgotPassActivity.this, R.string.msg_resetLinkSent, Toast.LENGTH_SHORT).show();
-//                    showLogin();
+                    showLogin();
                 } else {
                     Toast.makeText(ForgotPassActivity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void showLogin() {
+        Intent intent = new Intent(this, LandingActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

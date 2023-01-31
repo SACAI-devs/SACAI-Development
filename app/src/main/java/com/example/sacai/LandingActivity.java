@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LandingActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityLandingBinding binding;
 
     private FirebaseAuth mAuth;
@@ -34,14 +34,14 @@ public class LandingActivity extends AppCompatActivity {
         binding = ActivityLandingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INTIIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             showMainActivity(currentUser.getUid());
         }
 
-//        OPEN LOGIN PAGE WHEN BTN IS CLICKED
+        // Show LOGIN PAGE when btn is clicked
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +49,7 @@ public class LandingActivity extends AppCompatActivity {
             }
         });
 
-//        OPEN SIGN PAGE WHEN BTN IS CLICKED
+        // Show SIGNUP PAGE when btn is clicked
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +57,7 @@ public class LandingActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW OPERATOR LOGIN WHEN BTN IS CLICKED
+        // Switch to OPERATOR LOGIN when btn is clicked
         binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +67,7 @@ public class LandingActivity extends AppCompatActivity {
     }
 
     private void showMainActivity (String uid){
-//        GET USERTYPE FROM USER TABLE
+        // Get usertype from table
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = db.getReference("Users");
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -75,7 +75,7 @@ public class LandingActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
-//                REDIRECT USER TO RESPECTIVE SCREENS
+                // Redirect user to respective screens
                 if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     showMainComm();
                 } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
@@ -107,13 +107,13 @@ public class LandingActivity extends AppCompatActivity {
     }
 
     public void showMainComm(){
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Check if user is logged in
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
             logout();
-//        CHECK IF USER IS EMAIL VERIFIED
+        // Check if email is verified
         } else if (!currentUser.isEmailVerified()){
             Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
             logout();
@@ -126,13 +126,13 @@ public class LandingActivity extends AppCompatActivity {
     }
 
     public void showMainOper(){
-        //        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Check if user is logged in
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
             logout();
-//        CHECK IF USER IS EMAIL VERIFIED
+        // Check if email is verified
         } else if (!currentUser.isEmailVerified()){
             Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
             logout();

@@ -16,9 +16,9 @@
         android:layout_height="wrap_content"
         app:title="@string/app_name"
         app:menu="@menu/switch_to_oper_menu"
-        app:navigationIcon="@drawable/ic_back"  />
+        />
 
-    <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
+    <!--    USER TYPE LABEL-->
     <Button
         android:id="@+id/btnSwitchUser"
         style="@style/OutlineBtn"
@@ -27,7 +27,9 @@
         android:layout_gravity="end"
         android:insetTop="20dp"
         android:insetRight="20dp"
-        android:text="@string/label_operator" />
+        android:text="@string/label_commuter"
+        android:clickable="false"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -18,17 +18,6 @@
         app:title="@string/app_name"
         app:navigationIcon="@drawable/ic_back"  />
 
-    <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
-    <Button
-        style="@style/OutlineBtn"
-        android:id="@+id/btnSwitchUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:insetTop="20dp"
-        android:insetRight="20dp"
-        android:text="@string/label_operator" />
-
     <!--    FORM GROUP-->
     <LinearLayout
         android:layout_width="match_parent"

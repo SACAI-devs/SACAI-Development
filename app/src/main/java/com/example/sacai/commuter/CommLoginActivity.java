@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.sacai.ForgotPassActivity;
@@ -27,16 +28,17 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CommLoginActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityCommLoginBinding binding;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCommLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase auth and check if User is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -44,16 +46,7 @@ public class CommLoginActivity extends AppCompatActivity {
             return;
         }
 
-
-//        SHOW OPERATOR LOGIN WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOperLogin();
-            }
-        });
-
-//        LOGIN USER WHEN BTN IS CLICKED
+        // Login user when btn is clicked
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +54,7 @@ public class CommLoginActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW PASSWORD RESET PAGE WHEN BTN IS CLICKED
+        // Show PASSWORD RESET when btn is clicked
         binding.btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +62,7 @@ public class CommLoginActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW COMMUTER SIGNUP WHEN BTN IS CLICKED
+        // Switch to COMMUTER SIGNUP when btn is clicked
         binding.btnSwitchSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +70,7 @@ public class CommLoginActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+//        Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -90,7 +83,7 @@ public class CommLoginActivity extends AppCompatActivity {
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -113,6 +106,7 @@ public class CommLoginActivity extends AppCompatActivity {
     private void showCommSignup() {
         Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void showForgotPass() {
@@ -124,7 +118,7 @@ public class CommLoginActivity extends AppCompatActivity {
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
 
-//        CHECK IF FIELDS ARE EMPTY
+        // Check if important fields are empty
         if (email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
                 binding.etEmail.setError(getString(R.string.err_fieldRequired));
@@ -141,15 +135,17 @@ public class CommLoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-//                                CHECK IF USER EMAIL IS VERIFIED
+                                // Check if user email is verified
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user.isEmailVerified()) {
                                     showMainActivity(user.getUid());
                                 } else {
+                                    // Sends a new verification link to email
                                     user.sendEmailVerification();
                                     Toast.makeText(CommLoginActivity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
                                 }
                             } else {
+                                // Unknown error. Cannot authenticate user
                                 Toast.makeText(CommLoginActivity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                 binding.etEmail.setError("");
                                 binding.etEmail.requestFocus();
@@ -162,7 +158,7 @@ public class CommLoginActivity extends AppCompatActivity {
     }
 
     private void showMainActivity(String uid) {
-//        GET USERTYPE FROM USER TABLE
+        // Get usertype from user table
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = db.getReference("Users");
         databaseReference.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -170,7 +166,7 @@ public class CommLoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
-//                REDIRECT USER TO RESPECTIVE SCREENS
+                // Redirect users accordingly
                 if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(CommLoginActivity.this, CommMainActivity.class);
@@ -182,10 +178,5 @@ public class CommLoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void showOperLogin() {
-        Intent intent = new Intent(this, OperLoginActivity.class);
-        startActivity(intent);
     }
 }

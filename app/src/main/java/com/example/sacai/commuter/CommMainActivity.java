@@ -14,6 +14,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,11 +35,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class CommMainActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityCommMainBinding binding;
 
 
-//    ERROR LOG FOR WHEN USER DOESNT HAVE GOOGLE PLAY SERVICES INSTALLED
+    // Version checking if user has Google Play Services installed
     private static final String TAG = "CommMapFrag";
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -55,19 +56,19 @@ public class CommMainActivity extends AppCompatActivity {
         binding = ActivityCommMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase and check if user is logged in
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
             logout();
-//        CHECK IF USER IS EMAIL VERIFIED
+        // Check if email is verified
         } else if (!currentUser.isEmailVerified()){
             Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
             logout();
         }
 
-//    VIEWMODEL LOGIC
+        // ViewModel Logic: Gets signal from fragment for toast messages
         viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
         viewModel.getResult().observe(this, item -> {
             if (item == true) {
@@ -79,27 +80,29 @@ public class CommMainActivity extends AppCompatActivity {
             }
         });
 
-//        LOAD MAP FRAGMENT IF SERVICES ARE OK
+        // Location Services
+        getLocationPermission();
+
+        // Loads map if services are OK
         if (isServicesOK()) {
             init();
         }
-//        replaceFragment(new CommMapFrag());
 
-
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -132,32 +135,32 @@ public class CommMainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-
     private void init() {
         replaceFragment(new CommMapFrag());
     }
 
-//    CHECK IF GoogleApiAvailability IS TRUE
+    // Check if GoogleApiServices is TRUE
     public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: Checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(CommMainActivity.this);
         if (available == ConnectionResult.SUCCESS) {
-//            EVERYTHING IS FINE AND USER CAN MAKE MAP REQUESTS
+            // Everything is fine and user can make map requests
             Log.d(TAG, "isServicesOK: Google Play Services is working");
             return true;
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
-//            AN ERROR OCCURED BUT IS RESOLVABLE
+            // An error occurred but is RESOLVABLE
             Log.d(TAG, "isServicesOK: An error occured. Resolvable.");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(CommMainActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
+            // An error occurred that cannot be fixed
             Toast.makeText(this, "You can't make map requests.", Toast.LENGTH_LONG).show();
         }
         return false;
     }
 
-//    REQUEST FOR LOCATION PERMISSION
+    // Request for location permissions
     private void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -173,7 +176,7 @@ public class CommMainActivity extends AppCompatActivity {
         }
     }
 
-//    LOOK FOR REQUEST PERMISSION RESULT
+    // Look for request permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -188,7 +191,7 @@ public class CommMainActivity extends AppCompatActivity {
                         }
                     }
                     mLocationPermissionsGranted = true;
-//                    INITIALIZE MAP
+                    // Initialize the map
                 }
             }
         }
