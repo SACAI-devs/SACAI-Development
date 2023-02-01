@@ -26,15 +26,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     View mView;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     // Required public constructor
     public OperMapFrag() {
     }
@@ -46,7 +37,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 //        Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_comm_map, container, false);
+        mView = inflater.inflate(R.layout.fragment_oper_map, container, false);
         return mView;
     }
 
