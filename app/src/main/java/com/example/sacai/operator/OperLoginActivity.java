@@ -70,14 +70,6 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-        // Switch to COMMUTER LOGIN when btn is clicked
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSwitchComm();
-            }
-        });
-
         // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
@@ -105,15 +97,11 @@ public class OperLoginActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, CommLoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void showSwitchComm() {
-        Intent intent = new Intent(this, CommLoginActivity.class);
-        startActivity(intent);
     }
 
     private void showPassReset() {
@@ -124,6 +112,7 @@ public class OperLoginActivity extends AppCompatActivity {
     private void showOperSignup() {
         Intent intent = new Intent(this, OperSignupActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void showMainActivity(String uid) {

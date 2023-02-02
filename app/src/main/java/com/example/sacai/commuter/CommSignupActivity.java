@@ -45,14 +45,6 @@ public class CommSignupActivity extends AppCompatActivity {
             return;
         }
 
-        // Show OPERATOR LOGIN when btn is clicked
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOpSignup();
-            }
-        });
-
         // Show NEXT PAGE when btn is clicked
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +88,7 @@ public class CommSignupActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, OperSignupActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -105,6 +98,7 @@ public class CommSignupActivity extends AppCompatActivity {
     private void showCommLogin() {
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void showNextPage() {

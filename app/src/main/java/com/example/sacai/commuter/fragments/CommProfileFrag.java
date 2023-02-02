@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.commuter.CommUpdateEmailActivity;
@@ -65,6 +66,21 @@ public class CommProfileFrag extends Fragment {
             public void onClick(View v) {
                 if (binding.cbWheelchair.isChecked()) {
                     binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        binding.cbMobility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
                 }
             }
         });
@@ -171,20 +187,21 @@ public class CommProfileFrag extends Fragment {
             }
 //        CHECK FOR INVALID CHARACTERS IN THE FIRST AND LAST NAME FIELDS
         } else if (!isAlphabetical(firstname) || !isAlphabetical(lastname) || !isAlphabetical(username)) {
-                if (!isAlphabetical(firstname)){
-                    binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
-                    binding.etFirstname.requestFocus();
-                }
-                if (!isAlphabetical(lastname)){
-                    binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
-                    binding.etLastname.requestFocus();
-                }
-                if (!isAlphabetical(username)){
-                    binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
-                    binding.etUsername.requestFocus();
-                }
+            if (!isAlphabetical(firstname)){
+                binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etFirstname.requestFocus();
             }
-        else {
+            if (!isAlphabetical(lastname)){
+                binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etLastname.requestFocus();
+            }
+            if (!isAlphabetical(username)){
+                binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etUsername.requestFocus();
+            }
+        }else if (mobility == false && auditory == false){
+            Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
+        } else {
             // Maps the variables to the nodes where values should be stored
             HashMap User = new HashMap();
             User.put("firstname", firstname);
@@ -200,7 +217,7 @@ public class CommProfileFrag extends Fragment {
             databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                // Signals host activity for an appropriate toast message
+                    // Signals host activity for an appropriate toast message
                     if (task.isSuccessful()) {
                         viewModel.setData(true);
                     } else {
@@ -210,6 +227,7 @@ public class CommProfileFrag extends Fragment {
             });
         }
     }
+
     public static boolean isAlphabetical(String s){
         return s != null && s.matches("^[a-zA-Z ]*$");
     }

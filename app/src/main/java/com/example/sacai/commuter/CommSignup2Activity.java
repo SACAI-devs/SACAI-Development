@@ -48,6 +48,21 @@ public class CommSignup2Activity extends AppCompatActivity {
             public void onClick(View v) {
                 if (binding.cbWheelchair.isChecked()) {
                     binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        binding.cbMobility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
                 }
             }
         });

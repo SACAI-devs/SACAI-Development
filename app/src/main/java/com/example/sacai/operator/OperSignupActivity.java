@@ -45,15 +45,6 @@ public class OperSignupActivity extends AppCompatActivity {
             return;
         }
 
-
-        // Switch to COMMUTER SIGNUP when btn is clicked
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCommSignup();
-            }
-        });
-
         // Show NEXT PAGE when btn is clicked
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +88,7 @@ public class OperSignupActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, CommSignupActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -106,6 +98,7 @@ public class OperSignupActivity extends AppCompatActivity {
     private void showOperLogin() {
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void showNextPage() {

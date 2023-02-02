@@ -97,6 +97,7 @@ public class CommLoginActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, OperLoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

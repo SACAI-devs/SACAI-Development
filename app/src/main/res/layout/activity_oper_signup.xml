@@ -31,6 +31,15 @@
         android:text="@string/label_operator"
         android:clickable="false"
         />
+    <TextView
+        style="@style/DarkTitleTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_signup" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <!--    FORM GROUP-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,11 +48,6 @@
         android:orientation="vertical"
         android:paddingHorizontal="40dp">
 
-        <TextView
-            style="@style/DarkTitleTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_signup" />
 
         <TextView
             style="@style/DarkSubheadingTxt"
@@ -156,4 +160,5 @@
             android:layout_height="wrap_content"
             android:text="@string/label_switchToLogin" />
     </LinearLayout>
+    </ScrollView>
 </LinearLayout>

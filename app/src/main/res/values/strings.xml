@@ -52,7 +52,7 @@
     <string name="regex_alphacheck">.*[A-Za-z].*</string>
     <string name="regex_numcheck">..*[0–9].*</string>
     <string name="err_passShouldBeAlphanumeric">Password should have both letters and numbers.</string>
-    <string name="err_passCharCount">Password should contain at least 6 characters.</string>
+    <string name="err_passCharCount">Password should contain at least 8 characters.</string>
     <string name="label_home">Home</string>
     <string name="label_editProfile">Edit Profile</string>
     <string name="label_needs">Needs:</string>
