@@ -51,14 +51,6 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        SHOW OPERATOR SIGNUP
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOpSignup();
-            }
-        });
-
 //        SHOW PREVIOUS PAGE
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,11 +76,6 @@ public class CommSignup2Activity extends AppCompatActivity {
         Intent intent = new Intent(this, CommSignupActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private void showOpSignup() {
-        Intent intent = new Intent(this, OperSignupActivity.class);
-        startActivity(intent);
     }
 
     private void registerUser() {

@@ -5,7 +5,7 @@
     <color name="white">#FFFAFAFA</color>
     <color name="true_white">#FFFFFFFF</color>
     <color name="grey">#FFAAAAAA</color>
-
+    <color name="transparent">#00FFFFFF</color>
     <!--theme colors -->
     <color name="teal_100">#FFD7F9ED</color>
     <color name="teal">#FF4BCEB8</color>

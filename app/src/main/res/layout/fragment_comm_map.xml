@@ -12,15 +12,13 @@
         android:background="@color/ochre_100">
         <!--    ROUTE SELECTION MENU -->
         <androidx.cardview.widget.CardView
+            style="@style/RoundedCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="50dp"
-            app:cardCornerRadius="14dp"
-            app:cardElevation="10dp"
-            app:cardMaxElevation="12dp">
+            android:layout_marginBottom="50dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

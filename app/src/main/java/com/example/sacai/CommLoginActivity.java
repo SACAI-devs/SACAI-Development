@@ -41,15 +41,6 @@ public class CommLoginActivity extends AppCompatActivity {
             return;
         }
 
-
-//        SHOW OPERATOR LOGIN WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOperLogin();
-            }
-        });
-
 //        LOGIN USER WHEN BTN IS CLICKED
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +76,14 @@ public class CommLoginActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //  Display user label message for page
+        binding.imgBtnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(CommLoginActivity.this, R.string.msg_commLogin, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //  TOOLBAR MENU ACTIONS
@@ -169,7 +168,7 @@ public class CommLoginActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     Toast.makeText(CommLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(CommLoginActivity.this, CommMainActivity.class);
                     startActivity(intent);
@@ -179,10 +178,5 @@ public class CommLoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void showOperLogin() {
-        Intent intent = new Intent(this, OperLoginActivity.class);
-        startActivity(intent);
     }
 }

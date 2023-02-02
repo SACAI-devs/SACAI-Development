@@ -72,7 +72,7 @@ public class LandingActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     Intent intent = new Intent(LandingActivity.this, CommMainActivity.class);
                     startActivity(intent);
                     finish();

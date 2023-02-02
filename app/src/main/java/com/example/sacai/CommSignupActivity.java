@@ -45,14 +45,6 @@ public class CommSignupActivity extends AppCompatActivity {
             return;
         }
 
-//          SHOW OPERATOR SIGNUP WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOpSignup();
-            }
-        });
-
 //        SHOW NEXT PAGE WHEN BTN IS CLICKED
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +72,14 @@ public class CommSignupActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //  Display user label message for page
+        binding.imgBtnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(CommSignupActivity.this, R.string.msg_commSignup, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //  TOOLBAR MENU ACTIONS
@@ -156,10 +156,5 @@ public class CommSignupActivity extends AppCompatActivity {
     }
     public static boolean isAlphaNumeric(String s) {
         return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
-    }
-
-    private void showOpSignup() {
-        Intent intent = new Intent(this, OperSignupActivity.class);
-        startActivity(intent);
     }
 }

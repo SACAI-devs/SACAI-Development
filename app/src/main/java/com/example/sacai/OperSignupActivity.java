@@ -46,15 +46,6 @@ public class OperSignupActivity extends AppCompatActivity {
             return;
         }
 
-
-//        SWITCH TO COMMUTER SIGNUP WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCommSignup();
-            }
-        });
-
 //        SHOW SECOND PAGE OF OPERATOR SIGNUP WHEN BTN IS CLICKED
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +73,14 @@ public class OperSignupActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //  Display user label message for page
+        binding.imgBtnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(OperSignupActivity.this, R.string.msg_operSignup, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //  TOOLBAR MENU ACTIONS
@@ -147,10 +146,5 @@ public class OperSignupActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-    }
-
-    private void showCommSignup() {
-        Intent intent = new Intent(this, CommSignupActivity.class);
-        startActivity(intent);
     }
 }

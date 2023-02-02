@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,139 +7,133 @@
     android:background="@color/teal_700"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".OperSignupActivity"
-    >
-    <!--    TOOLBAR     -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/BasicToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="@string/app_name"
-        app:menu="@menu/switch_to_comm_menu"
-        app:navigationIcon="@drawable/ic_back"  />
-    
-    <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
-    <Button
-        style="@style/OutlineBtn"
-        android:id="@+id/btnSwitchUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:insetTop="20dp"
-        android:insetRight="20dp"
-        android:text="@string/label_commuter"
-        />
-    <!--    FORM GROUP-->
+    tools:context=".OperSignupActivity" >
+    <!--USER TYPE LABEL-->
+    <ImageButton
+        android:id="@+id/imgBtnUser"
+        style="@style/UserImgBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_operator"
+        android:contentDescription="@string/msg_operSignup" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingHorizontal="40dp">
-
-        <TextView
-            style="@style/DarkTitleTxt"
+        android:orientation="vertical" >
+        <!--TOOLBAR-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/BasicToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_signup" />
-
-        <TextView
-            style="@style/DarkSubheadingTxt"
+            app:title="@string/app_name"
+            app:menu="@menu/switch_to_comm_menu"
+            app:navigationIcon="@drawable/ic_back" />
+        <!--FORM GROUP-->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/label_operatorInfo" />
-        <!--    INPUT DRIVER NAME-->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDriverName"
-                style="@style/InputTxt"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="40dp" >
+            <!--FORM LABEL-->
+            <TextView
+                style="@style/DarkTitleTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_driverName" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <!--    INPUT CONDUCTOR NAME-->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etConductorName"
-                style="@style/InputTxt"
+                android:text="@string/label_signup" />
+            <!--OPERATOR SECTION-->
+            <TextView
+                style="@style/DarkSubheadingTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_conductorName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            style="@style/DarkSubheadingTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="@string/label_vehicleInfo" />
-        <!--        DROPDOWN FRANCHISE SELECT-->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            app:startIconDrawable="@android:drawable/ic_menu_search">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFranchise"
-                style="@style/InputTxt"
+                android:layout_marginTop="8dp"
+                android:text="@string/label_operatorInfo" />
+            <!--INPUT DRIVER NAME-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_franchiseSelect" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <!--        INPUT LICENSE PLATE-->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/BasicInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPlate"
-                style="@style/InputTxt"
+                android:layout_marginVertical="5dp" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDriverName"
+                    style="@style/InputTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_driverName" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--INPUT CONDUCTOR NAME-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_licensePlate" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!--   CHECKBOX FOR WHEELCHAIR CAPACITY-->
-        <com.google.android.material.checkbox.MaterialCheckBox
-            style="@style/DarkCheckbox"
-            android:id="@+id/cbWheelchair"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/label_wheelchairCapacity" />
-
-        <!--   BUTTON SIGNUP-->
-        <Button
-            android:id="@+id/btnNext"
-            style="@style/PrimaryBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="60dp"
-            android:layout_marginTop="12dp"
-            android:text="@string/label_next" />
-
-<!--        BUTTON SWITCH TO OPERATOR LOGIN-->
-        <Button
-            android:id="@+id/btnSwitchLogin"
-            style="@style/DarkTextBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_switchToLogin" />
+                android:layout_marginVertical="5dp" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etConductorName"
+                    style="@style/InputTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_conductorName" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--VEHICLE SECTION-->
+            <TextView
+                style="@style/DarkSubheadingTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/label_vehicleInfo" />
+            <!--TODO: DROPDOWN FRANCHISE SELECTION-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                app:startIconDrawable="@android:drawable/ic_menu_search" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFranchise"
+                    style="@style/InputTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_franchiseSelect" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--INPUT PLATE NUMBER-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/BasicInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPlate"
+                    style="@style/InputTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_licensePlate" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--WHEEL CHAIR CAPACITY CHECKBOX-->
+            <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/DarkCheckbox"
+                android:id="@+id/cbWheelchair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/label_wheelchairCapacity" />
+            <!--SIGNUP BUTTON-->
+            <Button
+                android:id="@+id/btnNext"
+                style="@style/PrimaryBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="60dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/label_next" />
+            <!--LOGIN SWITCH BUTTON-->
+            <Button
+                android:id="@+id/btnSwitchLogin"
+                style="@style/DarkTextBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_switchToLogin" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

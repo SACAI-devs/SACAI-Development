@@ -7,62 +7,59 @@
     android:background="@color/teal_700"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".OperSignup2Activity"
-    >
-    <!--    TOOLBAR     -->
+    tools:context=".OperSignup2Activity" >
+    <!--TOOLBAR-->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/BasicToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/app_name"
-        app:navigationIcon="@drawable/ic_back"  />
-
-    <!--    FORM GROUP  -->
+        app:navigationIcon="@drawable/ic_back" />
+    <!--FORM GROUP-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_vertical"
         android:paddingHorizontal="40dp" >
+        <!--FORM LABEL-->
         <TextView
             style="@style/DarkTitleTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/label_signup" />
-
-    <!--    INPUT OPERATOR EMAIL    -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
+        <!--INPUT EMAIL-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp" >
+            <com.google.android.material.textfield.TextInputEditText
+                style="@style/InputTxt"
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_email" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-<!--            INPUT OPERATOR PASSWORD-->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
+                android:hint="@string/hint_email" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--INPUT PASSWORD-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            app:endIconMode="password_toggle"
+            app:passwordToggleTint="@color/grey" >
+            <com.google.android.material.textfield.TextInputEditText
+                style="@style/InputTxt"
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                app:endIconMode="password_toggle"
-                app:passwordToggleTint="@color/grey" >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                   android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_password"
-                    android:inputType="textPassword" />
-            </com.google.android.material.textfield.TextInputLayout>
-        <!--   BUTTON SIGNUP-->
+                android:hint="@string/hint_password"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--SIGNUP BUTTON   -->
         <Button
             style="@style/PrimaryBtn"
             android:id="@+id/btnSignup"
@@ -71,7 +68,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginHorizontal="60dp"
             android:text="@string/label_signup" />
-<!--        BUTTON BACK-->
+        <!--BACK BUTTON-->
         <Button
             android:id="@+id/btnBack"
             style="@style/OutlineBtn"
@@ -80,12 +77,13 @@
             android:layout_marginTop="5dp"
             android:layout_marginHorizontal="60dp"
             android:text="@string/label_back" />
+        <!--FORM MESSAGE-->
         <TextView
             style="@style/DarkBodyTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:gravity="center"
-            android:text="@string/msg_signupAgree"/>
+            android:text="@string/msg_signupAgree" />
     </LinearLayout>
 </LinearLayout>

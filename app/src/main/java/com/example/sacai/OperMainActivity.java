@@ -5,7 +5,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -13,13 +12,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.sacai.databinding.ActivityOperMainBinding;
-import com.example.sacai.fragments.CommMapFrag;
-import com.example.sacai.fragments.CommProfileFrag;
 import com.example.sacai.fragments.OperMapFrag;
+import com.example.sacai.fragments.OperPassengerListFrag;
 import com.example.sacai.fragments.OperProfileFrag;
 import com.example.sacai.viewmodels.OperMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,30 +59,6 @@ public class OperMainActivity extends AppCompatActivity {
 //        LOAD MAP FRAGMENT
         replaceFragment(new OperMapFrag());
 
-//        SHOW HOME VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnHomeNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new OperMapFrag());
-//            }
-//        });
-
-//        SHOW PROFILE VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnProfileNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new OperProfileFrag());
-//            }
-//        });
-
-//        LOGOUT USER - HIDE FOR NOW
-//        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                logout();
-//            }
-//        });
-
 //        TOOLBAR ACTION HANDLING
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -97,7 +70,7 @@ public class OperMainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_menu, menu);
+        inflater.inflate(R.menu.oper_main_menu, menu);
         return true;
     }
     @Override
@@ -109,6 +82,9 @@ public class OperMainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_showEditProfile:
                 replaceFragment(new OperProfileFrag());
+                return true;
+            case R.id.action_showPassengerList:
+                replaceFragment(new OperPassengerListFrag());
                 return true;
             case R.id.action_logout:
                 logout();

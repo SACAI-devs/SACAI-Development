@@ -4,31 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LandingActivity"
-    >
+    tools:context=".LandingActivity" >
+    <!--APP LABEL-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="40dp"
         android:paddingTop="60dp"
-        android:background="@color/white"
-        >
+        android:background="@color/white" >
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        style="@style/TitleTxt"
-        />
+        style="@style/TitleTxt" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/app_tagline"
-        style="@style/BodyTxt"
-        />
+        style="@style/BodyTxt" />
     </LinearLayout>
 
+    <!--LANDING MENU-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
@@ -36,7 +34,8 @@
         android:layout_marginTop="-50dp"
         android:background="@color/teal_100"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center" >
+        <!--LOGIN BUTTON-->
         <Button
             android:id="@+id/btnLogin"
             style="@style/PrimaryBtn"
@@ -45,7 +44,7 @@
             android:layout_marginHorizontal="60dp"
             android:layout_marginTop="30dp"
             android:text="@string/label_login" />
-
+        <!--SIGNUP BUTTON-->
         <Button
             android:id="@+id/btnSignup"
             style="@style/PrimaryBtn"
@@ -54,7 +53,7 @@
             android:layout_marginHorizontal="60dp"
             android:layout_marginTop="5dp"
             android:text="@string/label_signup" />
-
+        <!--OPERATOR SWITCH BUTTON-->
         <Button
             android:id="@+id/btnSwitchUser"
             style="@style/TextBtn"
@@ -64,6 +63,7 @@
             android:text="@string/msg_switchToOperator" />
     </LinearLayout>
 
+    <!--ILLUSTRATION-->
     <ImageView
         android:id="@+id/ImageLayout"
         android:layout_width="275dp"

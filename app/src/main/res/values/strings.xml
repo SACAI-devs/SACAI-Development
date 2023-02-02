@@ -21,10 +21,13 @@
     <string name="label_mobility">Mobility Impairment</string>
     <string name="label_placeholder">TEMP</string>
     <string name="err_emptyRequiredFields">Invalid inputs. Fill out all necessary fields.</string>
-    <string name="choice_commuter">Commuter</string>
     <string name="msg_success">Success!</string>
     <string name="label_operator">Operator</string>
     <string name="label_commuter">Commuter</string>
+    <string name="msg_operLogin">Log in for Operator</string>
+    <string name="msg_commLogin">Log in for Commuter</string>
+    <string name="msg_operSignup">Sign up for Operator</string>
+    <string name="msg_commSignup">Sign up for Commuter</string>
     <string name="hint_licensePlate">Enter license plate no.</string>
     <string name="msg_switchToOperator">Are you a SACAI OPERATOR?</string>
     <string name="label_switchToOper">Switch to Operator</string>
@@ -56,6 +59,7 @@
     <string name="err_passCharCount">Password should contain at least 6 characters.</string>
     <string name="label_home">Home</string>
     <string name="label_editProfile">Edit Profile</string>
+    <string name="label_passengerList">Passenger List</string>
     <string name="label_needs">Needs:</string>
     <string name="hint_homeAddress">Enter your home address</string>
     <string name="hint_workAddress">Enter your work address</string>
@@ -65,6 +69,7 @@
     <string name="err_userDoesNotExist">Error: User is not registered.</string>
     <string name="err_failedToReadData">Error: Failed to read data.</string>
     <string name="label_wheelchairCapacity">Wheelchair Capacity</string>
+    <string name="desc_profilePic">User\'s profile picture</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="err_wrongUserType">Account is registered as an Operator. Please switch to Operator to login, or signup as a commuter.</string>

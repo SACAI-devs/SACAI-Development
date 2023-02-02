@@ -67,14 +67,6 @@ public class OperLoginActivity extends AppCompatActivity {
             }
         });
 
-//        SHOWS COMMUTER SIGNUP WHEN BTN IS CLICKED
-        binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSwitchComm();
-            }
-        });
-
 //        TOOLBAR ACTION HANDLING
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
@@ -86,6 +78,14 @@ public class OperLoginActivity extends AppCompatActivity {
                 }
             });
         }
+
+        //  Display user label message for page
+        binding.imgBtnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(OperLoginActivity.this, R.string.msg_operLogin, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 //  TOOLBAR MENU ACTIONS
@@ -108,11 +108,6 @@ public class OperLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void showSwitchComm() {
-        Intent intent = new Intent(this, CommLoginActivity.class);
-        startActivity(intent);
-    }
-
     private void showPassReset() {
         Intent intent  = new Intent(this, ForgotPassActivity.class);
         startActivity(intent);
@@ -133,11 +128,11 @@ public class OperLoginActivity extends AppCompatActivity {
                 DataSnapshot dataSnapshot = task.getResult();
                 String usertype = String.valueOf(dataSnapshot.child("userType").getValue());
 //                REDIRECT USER TO RESPECTIVE SCREENS
-                if (usertype.equalsIgnoreCase(getString(R.string.choice_commuter))){
+                if (usertype.equalsIgnoreCase(getString(R.string.label_commuter))){
                     Toast.makeText(OperLoginActivity.this, R.string.err_wrongUserType, Toast.LENGTH_SHORT).show();
                 } else if (usertype.equalsIgnoreCase(getString(R.string.label_operator))) {
                     Toast.makeText(OperLoginActivity.this, R.string.msg_loginSuccess, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(OperLoginActivity.this, CommMainActivity.class);
+                    Intent intent = new Intent(OperLoginActivity.this, OperMainActivity.class);
                     startActivity(intent);
                     finish();
                 }

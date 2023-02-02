@@ -1,127 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/teal_700"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    tools:context=".CommSignupActivity">
-    <!--    TOOLBAR     -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/BasicToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="@string/app_name"
-        app:menu="@menu/switch_to_oper_menu"
-        app:navigationIcon="@drawable/ic_back"  />
-
-    <!--    BTN FOR SWITCHING BET OPERATOR AND COMMUTER-->
-       <Button
-           style="@style/OutlineBtn"
-            android:id="@+id/btnSwitchUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-           android:insetTop="20dp"
-           android:insetRight="20dp"
-            android:text="@string/label_operator" />
-
-<!--    FORM GROUP-->
+    tools:context=".CommLoginActivity" >
+    <!--USER TYPE LABEL-->
+    <ImageButton
+        android:id="@+id/imgBtnUser"
+        style="@style/UserImgBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_commuter"
+        android:contentDescription="@string/msg_commSignup" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center_vertical"
-        android:paddingHorizontal="40dp" >
-            <TextView
-                style="@style/DarkTitleTxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="@string/label_signup" />
-
-        <!--    INPUT FIRST NAME-->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                    android:id="@+id/etFirstname"
+        android:orientation="vertical" >
+        <!--TOOLBAR-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/BasicToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/app_name"
+            app:menu="@menu/switch_to_oper_menu"
+            app:navigationIcon="@drawable/ic_back"  />
+        <!--FORM GROUP-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="40dp" >
+                <!--FORM LABEL-->
+                <TextView
+                    style="@style/DarkTitleTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_firstName"
-                />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        <!--    INPUT LAST NAME-->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                    android:id="@+id/etLastname"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/label_signup" />
+                <!--INPUT FIRST NAME-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/BasicInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_lastName" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        <!--    INPUT EMAIL-->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                    android:id="@+id/etEmail"
+                    android:layout_marginVertical="5dp" >
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="@style/InputTxt"
+                        android:id="@+id/etFirstname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_firstName" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--INPUT LAST NAME-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/BasicInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_email"
-                    android:inputType="textEmailAddress"
-                    />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!--    INPUT PASSWORD-->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/BasicInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                app:passwordToggleTint="@color/grey"
-                app:endIconMode="password_toggle"
-                >
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/InputTxt"
-                    android:id="@+id/etPassword"
+                    android:layout_marginVertical="5dp" >
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="@style/InputTxt"
+                        android:id="@+id/etLastname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_lastName" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--INPUT EMAIL-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/BasicInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_password"
-                    android:inputType="textPassword"
-                    />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        <!--    BUTTON SIGNUP-->
-            <Button
-                style="@style/PrimaryBtn"
-                android:id="@+id/btnNext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginHorizontal="60dp"
-                android:text="@string/label_next" />
-        <!--    BUTTON SWITCH TO LOG IN-->
-            <Button
-                style="@style/DarkTextBtn"
-                android:id="@+id/btnSwitchLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_switchToLogin" />
+                    android:layout_marginVertical="5dp" >
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="@style/InputTxt"
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_email"
+                        android:inputType="textEmailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--INPUT PASSWORD-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/BasicInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    app:passwordToggleTint="@color/grey"
+                    app:endIconMode="password_toggle" >
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="@style/InputTxt"
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_password"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--SIGNUP BUTTON-->
+                <Button
+                    style="@style/PrimaryBtn"
+                    android:id="@+id/btnNext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginHorizontal="60dp"
+                    android:text="@string/label_next" />
+                <!--LOGIN SWTICH BUTTON-->
+                <Button
+                    style="@style/DarkTextBtn"
+                    android:id="@+id/btnSwitchLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_switchToLogin" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

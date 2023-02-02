@@ -12,14 +12,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.sacai.databinding.ActivityCommMainBinding;
 import com.example.sacai.fragments.CommMapFrag;
 import com.example.sacai.fragments.CommProfileFrag;
-import com.example.sacai.fragments.OperMapFrag;
-import com.example.sacai.fragments.OperProfileFrag;
 import com.example.sacai.viewmodels.CommMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,30 +57,6 @@ public class CommMainActivity extends AppCompatActivity {
 //        LOAD MAP FRAGMENT
         replaceFragment(new CommMapFrag());
 
-//        SHOW HOME VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnHomeNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new CommMapFrag());
-//            }
-//        });
-        
-//        SHOW PROFILE VIEW WHEN BTN IS CLICKED - HIDE FOR NOW
-//        binding.btnProfileNav.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                replaceFragment(new CommProfileFrag());
-//            }
-//        });
-
-//        LOGOUT USER - HIDE FOR NOW
-//        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                logout();
-//            }
-//        });
-
 //        TOOLBAR ACTION HANDLING
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -95,7 +68,7 @@ public class CommMainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_menu, menu);
+        inflater.inflate(R.menu.comm_main_menu, menu);
         return true;
     }
     @Override
