@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,10 +10,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sacai.operator.OperSignupActivity;
+import com.example.sacai.R;
 import com.example.sacai.databinding.ActivityCommSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,11 +21,11 @@ import com.google.firebase.auth.FirebaseUser;
 public class CommSignupActivity extends AppCompatActivity {
 
 
-    //    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityCommSignupBinding binding;
 
     private FirebaseAuth mAuth;
-
+    private static final int PASSWORD_LENGTH_CRITERIA = 8;
     public static final String EXTRA_FIRST = "firstname";
     public static final String EXTRA_LAST = "lastname";
     public static final String EXTRA_EMAIL = "email";
@@ -37,7 +37,7 @@ public class CommSignupActivity extends AppCompatActivity {
         binding = ActivityCommSignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -45,7 +45,7 @@ public class CommSignupActivity extends AppCompatActivity {
             return;
         }
 
-//        SHOW NEXT PAGE WHEN BTN IS CLICKED
+        // Show NEXT PAGE when btn is clicked
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +53,7 @@ public class CommSignupActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW COMMUTER LOGIN WHEN BTN IS CLICKED
+        // Switch to COMMUTER LOGIN when btn is clicked
         binding.btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +61,7 @@ public class CommSignupActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -82,7 +82,7 @@ public class CommSignupActivity extends AppCompatActivity {
         });
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -96,6 +96,7 @@ public class CommSignupActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, OperSignupActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -105,15 +106,15 @@ public class CommSignupActivity extends AppCompatActivity {
     private void showCommLogin() {
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
-    //    SHOW NEXT PAGE
     private void showNextPage() {
         String firstname = binding.etFirstname.getText().toString().trim();
         String lastname = binding.etLastname.getText().toString().trim();
         String email = binding.etEmail.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
-//        CHECK FOR EMPTY REQUIRED FIELDS
+        // Field validation
         if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty() || password.isEmpty()){
             if (firstname.isEmpty()) {
                 binding.etFirstname.setError(getString(R.string.err_fieldRequired));
@@ -131,16 +132,23 @@ public class CommSignupActivity extends AppCompatActivity {
                 binding.etPassword.setError(getString(R.string.err_fieldRequired));
                 binding.etPassword.requestFocus();
             }
-        } else if ((password.length() < 6)) {
-//            CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
+            Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
+        } else if (!isAlphabetical(firstname) || !isAlphabetical(lastname)) {
+            if (!isAlphabetical(firstname)){
+                binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etFirstname.requestFocus();
+            }
+            if (!isAlphabetical(lastname)){
+                binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etLastname.requestFocus();
+            }
+        } else if ((password.length() < PASSWORD_LENGTH_CRITERIA)) {
             binding.etPassword.setError(getString(R.string.err_passCharCount));
             binding.etPassword.requestFocus();
         } else if (!isAlphaNumeric(password)) {
-//            CHECK IF PASSWORD HAS BOTH LETTERS AND NUMBERS
             binding.etPassword.setError(getString(R.string.err_passShouldBeAlphanumeric));
             binding.etPassword.requestFocus();
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-//            CHECK IF EMAIL IS A VALID EMAIL FORMAT
             Toast.makeText(this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
             binding.etEmail.setError(getString(R.string.err_invalidEmail));
             binding.etEmail.requestFocus();
@@ -155,6 +163,11 @@ public class CommSignupActivity extends AppCompatActivity {
         }
     }
     public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+        // return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$&()\\-`.+,/\"]+$");
+    }
+
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
     }
 }

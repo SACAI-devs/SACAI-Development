@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.OperProfileFrag">
+    tools:context=".operator.fragments.OperProfileFrag">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -55,13 +55,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_driverName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDriverName"
                             style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_driverName" />
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- INPUT CONDUCTOR NAME -->
@@ -69,13 +72,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_conductorName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etConductorName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_conductorName" />
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- INPUT USERNAME -->
@@ -83,13 +89,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_userName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etUsername"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_userName" />
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- INPUT EMAIL -->
@@ -97,14 +106,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_email"
+                        android:textColorHint="@color/grey"
+                        >
+
                         <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
                             android:id="@+id/etEmail"
+                            style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_email"
-                            android:inputType="textEmailAddress"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,7 +141,7 @@
                     <!-- BUTTON SAVE CHANGES -->
                     <Button
                         style="@style/PrimaryBtn"
-                        android:id="@+id/btnSave"
+                        android:id="@+id/btnSubmit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="30dp"

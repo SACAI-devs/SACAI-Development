@@ -2,14 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/teal_700"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_700"
-    android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".operator.OperSignup2Activity"
-    >
-    <!--    TOOLBAR     -->
+    tools:context=".commuter.CommUpdateEmailActivity" >
+    <!--TOOLBAR-->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/BasicToolbar"
@@ -17,39 +15,49 @@
         android:layout_height="wrap_content"
         app:title="@string/app_name"
         app:navigationIcon="@drawable/ic_back" />
+
     <!--FORM GROUP-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="40dp" >
+        android:paddingHorizontal="40dp"
+        android:gravity="center_vertical">
         <!--FORM LABEL-->
         <TextView
             style="@style/DarkTitleTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/label_signup" />
-        <!--INPUT EMAIL-->
+            android:text="@string/label_update_email" />
+        <TextView
+            style="@style/DarkBodyTxt"
+            android:id="@+id/tvChangeEmailInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/label_re_authenticate" />
+
+        <!--INPUT CURRENT EMAIL-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
+            android:layout_marginTop="40dp"
             android:hint="@string/hint_email" >
             <com.google.android.material.textfield.TextInputEditText
-                style="@style/InputTxt"
                 android:id="@+id/etEmail"
+                style="@style/InputTxt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
         <!--INPUT PASSWORD-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
+            android:id="@+id/tfPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
+            android:layout_marginTop="5dp"
             android:hint="@string/hint_password"
             app:endIconMode="password_toggle"
             app:passwordToggleTint="@color/grey" >
@@ -60,31 +68,39 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
-        <!--SIGNUP BUTTON-->
+        <!--INPUT NEW EMAIL-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_new_email" >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNewEmail"
+                style="@style/InputTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--SUBMIT BUTTON-->
         <Button
             style="@style/PrimaryBtn"
-            android:id="@+id/btnSignup"
+            android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginHorizontal="60dp"
-            android:text="@string/label_signup" />
-        <!--BACK BUTTON-->
+            android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="@string/label_changeEmail"
+            android:visibility="visible" />
+        <!--SAVE BUTTON-->
         <Button
-            android:id="@+id/btnBack"
-            style="@style/OutlineBtn"
+            style="@style/PrimaryBtn"
+            android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginHorizontal="60dp"
-            android:text="@string/label_back" />
-        <!--FORM MESSAGE-->
-        <TextView
-            style="@style/DarkBodyTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:gravity="center"
-            android:text="@string/msg_signupAgree" />
+            android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="@string/label_save"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

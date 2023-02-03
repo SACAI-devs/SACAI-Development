@@ -7,7 +7,7 @@
     android:background="@color/teal_700"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".OperSignupActivity" >
+    tools:context=".operator.OperSignupActivity" >
     <!--USER TYPE LABEL-->
     <ImageButton
         android:id="@+id/imgBtnUser"
@@ -55,26 +55,26 @@
                 style="@style/BasicInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
+                android:layout_marginVertical="5dp"
+                android:hint="@string/hint_driverName" >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDriverName"
                     style="@style/InputTxt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_driverName" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <!--INPUT CONDUCTOR NAME-->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/BasicInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
+                android:layout_marginVertical="5dp"
+                android:hint="@string/hint_conductorName" >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etConductorName"
                     style="@style/InputTxt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_conductorName" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <!--VEHICLE SECTION-->
             <TextView
@@ -89,26 +89,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
-                app:startIconDrawable="@android:drawable/ic_menu_search" >
+                app:startIconDrawable="@android:drawable/ic_menu_search"
+                android:hint="@string/hint_franchiseSelect" >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etFranchise"
                     style="@style/InputTxt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_franchiseSelect" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <!--INPUT PLATE NUMBER-->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/BasicInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp" >
+                android:layout_marginVertical="5dp"
+                android:hint="@string/hint_licensePlate" >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPlate"
                     style="@style/InputTxt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_licensePlate" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
             <!--WHEEL CHAIR CAPACITY CHECKBOX-->
             <com.google.android.material.checkbox.MaterialCheckBox

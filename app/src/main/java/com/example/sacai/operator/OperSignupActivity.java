@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,20 +9,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.sacai.databinding.ActivityOperSignup2Binding;
+import com.example.sacai.R;
+import com.example.sacai.commuter.CommSignupActivity;
 import com.example.sacai.databinding.ActivityOperSignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class OperSignupActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperSignupBinding binding;
+
+    // Initialize Firebase Auth
     private FirebaseAuth mAuth;
 
     public static String EXTRA_DR_NAME = "driver's name";
@@ -31,14 +31,13 @@ public class OperSignupActivity extends AppCompatActivity {
     public static String EXTRA_PLATE = "plate number";
     public static boolean EXTRA_WHEELCHAIR = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOperSignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -46,7 +45,7 @@ public class OperSignupActivity extends AppCompatActivity {
             return;
         }
 
-//        SHOW SECOND PAGE OF OPERATOR SIGNUP WHEN BTN IS CLICKED
+        // Show NEXT PAGE when btn is clicked
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +53,7 @@ public class OperSignupActivity extends AppCompatActivity {
             }
         });
 
-//        SHOW OPERATOR LOGIN PAGE WHEN BTN IS CLICKED
+        // Switch to OPERATOR LOGIN when btn is clicked
         binding.btnSwitchLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,7 +61,7 @@ public class OperSignupActivity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -83,7 +82,7 @@ public class OperSignupActivity extends AppCompatActivity {
         });
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -97,6 +96,7 @@ public class OperSignupActivity extends AppCompatActivity {
             case R.id.action_switch:
                 Intent intent = new Intent (this, CommSignupActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -106,23 +106,24 @@ public class OperSignupActivity extends AppCompatActivity {
     private void showOperLogin() {
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void showNextPage() {
-        String driverFn = binding.etDriverName.getText().toString().trim();
-        String conductorFn = binding.etConductorName.getText().toString().trim();
+        String driverName = binding.etDriverName.getText().toString().trim();
+        String conductorName = binding.etConductorName.getText().toString().trim();
         String franchise = binding.etFranchise.getText().toString().trim();
         String plate = binding.etPlate.getText().toString().trim();
 
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-//        CHECK FOR EMPTY REQUIRED FIELDS
-        if (driverFn.isEmpty() || conductorFn.isEmpty() ) {
-            if (driverFn.isEmpty()) {
+        // Field validation
+        if (driverName.isEmpty() || conductorName.isEmpty() ) {
+            if (driverName.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
                 binding.etDriverName.requestFocus();
             }
-            if (conductorFn.isEmpty()) {
+            if (conductorName.isEmpty()) {
                 binding.etDriverName.setError(getString(R.string.err_fieldRequired));
                 binding.etDriverName.requestFocus();
             }
@@ -135,16 +136,30 @@ public class OperSignupActivity extends AppCompatActivity {
                 binding.etPlate.requestFocus();
             }
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
+        } else if (!isAlphabetical(driverName) || !isAlphabetical(conductorName)) {
+            if (!isAlphabetical(driverName)){
+                binding.etDriverName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etDriverName.requestFocus();
+            }
+            if (!isAlphabetical(conductorName)){
+                binding.etConductorName.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etConductorName.requestFocus();
+            }
         } else {
             Intent intent = new Intent(this, OperSignup2Activity.class);
 
-            intent.putExtra(EXTRA_DR_NAME, driverFn);
-            intent.putExtra(EXTRA_CON_NAME, conductorFn);
+            intent.putExtra(EXTRA_DR_NAME, driverName);
+            intent.putExtra(EXTRA_CON_NAME, conductorName);
             intent.putExtra(EXTRA_FRANCHISE, franchise);
             intent.putExtra(EXTRA_PLATE, plate);
             intent.putExtra(String.valueOf(EXTRA_WHEELCHAIR),wheelchair);
             startActivity(intent);
             finish();
         }
+    }
+
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
+
     }
 }

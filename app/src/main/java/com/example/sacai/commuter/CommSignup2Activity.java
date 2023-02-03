@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,11 +7,11 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.example.sacai.dao.DAOCommuter;
+import com.example.sacai.operator.OperSignupActivity;
+import com.example.sacai.R;
+import com.example.sacai.commuter.dao.DAOCommuter;
 import com.example.sacai.databinding.ActivityCommSignup2Binding;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.User;
@@ -23,8 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class CommSignup2Activity extends AppCompatActivity {
-
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityCommSignup2Binding binding;
     private FirebaseAuth mAuth;
     DAOCommuter daoCommuter = new DAOCommuter();
@@ -35,7 +34,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         binding = ActivityCommSignup2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -43,7 +42,32 @@ public class CommSignup2Activity extends AppCompatActivity {
             return;
         }
 
-//        REGISTER USER WHEN BTN IS CLICKED
+        // Syncs mobility checkbox to wheelchair user checkbox
+        binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        binding.cbMobility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        // Registers user when btn is clicked
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +75,7 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        SHOW PREVIOUS PAGE
+        // Show previous page when btn is clicked
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +83,7 @@ public class CommSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -90,7 +114,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         boolean auditory = binding.cbAuditory.isChecked();
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-//        CHECK IF FIELDS ARE EMPTY
+        // Field validation
         if ((mobility == false) && (auditory == false) && (wheelchair == false)) {
             Toast.makeText(this, R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
             return;
@@ -100,29 +124,29 @@ public class CommSignup2Activity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-//                          CREATE A NEW USER AND STORE IT INTO FIREBASE
-                                User user = new User(email, password, userType);
+                                // Create user and store it into Firebase
+                                User user = new User(email, userType);
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-//                                                IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
+                                                // If USER CREATION is SUCCESSFUL then it sends a verification email
                                                 if (task.isSuccessful()) {
-//                                                    ADDS A NEW COMMUTER RECORD
+                                                        // Adds a new commuter record
                                                         Commuter commuter = new Commuter(firstname, lastname, email, "", mobility, auditory, wheelchair,"", "", currentUser.getUid());
                                                         daoCommuter.add(commuter);
-                                                        showCommLogin();
-                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                        user.sendEmailVerification();
+                                                        sendVerificationEmail(email, password);
                                                         Toast.makeText(CommSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
+                                                        showCommLogin();
                                                 } else {
                                                     Toast.makeText(CommSignup2Activity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
                             } else {
+                                // If user's email is already registered to another user
                                 Toast.makeText(CommSignup2Activity.this, R.string.err_emailExists, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -130,9 +154,26 @@ public class CommSignup2Activity extends AppCompatActivity {
         }
     }
 
+    private void sendVerificationEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.sendEmailVerification();
+                            FirebaseAuth.getInstance().signOut();
+                        } else {
+                            Toast.makeText(CommSignup2Activity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
     private void showCommLogin() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, CommLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

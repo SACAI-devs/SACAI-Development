@@ -1,5 +1,6 @@
-package com.example.sacai.fragments;
+package com.example.sacai.commuter.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,12 +11,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.sacai.R;
+import com.example.sacai.commuter.CommUpdateEmailActivity;
 import com.example.sacai.databinding.FragmentCommProfileBinding;
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.User;
-import com.example.sacai.viewmodels.CommMainViewModel;
+import com.example.sacai.commuter.viewmodels.CommMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +31,7 @@ import java.util.HashMap;
 
 public class CommProfileFrag extends Fragment {
 
-//    BIND FRAGMENT TO LAYOUT
+    // Bind fragment to layout
     FragmentCommProfileBinding binding;
 
     CommMainViewModel viewModel;
@@ -47,20 +49,62 @@ public class CommProfileFrag extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
 
-        //        INITIALIZE FIREBASE AUTH
+        // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        //        READ USER DATA AND DISPLAY
+        // Read user data and display
         readData(currentUser.getUid());
 
-//        SAVE CHANGES TO PROFILE WHEN BTN IS CLICKED
+        // !!!TEMPORARY: Disables email editing
+//        binding.etEmail.setFocusableInTouchMode(false);
+//        binding.etEmail.setFocusable(false);
+
+        // Syncs Mobility Impairment when Wheelchair User is checked
+        binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        binding.cbMobility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.cbWheelchair.isChecked()) {
+                    binding.cbMobility.setChecked(true);
+                    binding.cbMobility.setEnabled(false);
+                } else {
+                    binding.cbMobility.setEnabled(true);
+                }
+            }
+        });
+
+        // User re-authentication to change email
+        binding.etEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUpdateEmail();
+            }
+        });
+
+        // Save changes to profile when btn is clicked
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveChanges(currentUser.getUid());
             }
         });
+    }
+
+    private void showUpdateEmail() {
+        Intent intent = new Intent(getActivity(), CommUpdateEmailActivity.class);
+        startActivity(intent);
     }
 
     private void readData(String uid) {
@@ -70,6 +114,7 @@ public class CommProfileFrag extends Fragment {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
+                        // Get the data from each node
                         DataSnapshot dataSnapshot = task.getResult();
                         String firstname = String.valueOf(dataSnapshot.child("firstname").getValue());
                         String lastname = String.valueOf(dataSnapshot.child("lastname").getValue());
@@ -79,7 +124,7 @@ public class CommProfileFrag extends Fragment {
                         String mobility = String.valueOf(dataSnapshot.child("mobility").getValue());
                         String auditory = String.valueOf(dataSnapshot.child("auditory").getValue());
                         String wheelchair = String.valueOf(dataSnapshot.child("wheelchair").getValue());
-//                        TODO: UPDATE EMAIL FEATURE
+                        // TODO: UPDATE EMAIL FEATURE
                         String email = String.valueOf(dataSnapshot.child("email").getValue());
 
                         if (username.equals("null")) {
@@ -94,6 +139,7 @@ public class CommProfileFrag extends Fragment {
                             workAddress = "";
                         }
 
+                        // Set the retrieved
                         binding.etFirstname.setText(firstname);
                         binding.etLastname.setText(lastname);
                         binding.etEmail.setText(email);
@@ -127,7 +173,7 @@ public class CommProfileFrag extends Fragment {
         boolean auditory = binding.cbAuditory.isChecked();
         boolean wheelchair = binding.cbWheelchair.isChecked();
 
-//        CHECK IF REQUIRED INPUTS ARE EMPTY
+        // Check if required inputs are empty
         if (firstname.isEmpty() || lastname.isEmpty()) {
             viewModel.setData(false);
             viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
@@ -139,7 +185,24 @@ public class CommProfileFrag extends Fragment {
                 binding.etLastname.setError(getString(R.string.err_fieldRequired));
                 binding.etLastname.requestFocus();
             }
+//        CHECK FOR INVALID CHARACTERS IN THE FIRST AND LAST NAME FIELDS
+        } else if (!isAlphabetical(firstname) || !isAlphabetical(lastname) || !isAlphabetical(username)) {
+            if (!isAlphabetical(firstname)){
+                binding.etFirstname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etFirstname.requestFocus();
+            }
+            if (!isAlphabetical(lastname)){
+                binding.etLastname.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etLastname.requestFocus();
+            }
+            if (!isAlphabetical(username)){
+                binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
+                binding.etUsername.requestFocus();
+            }
+        }else if (mobility == false && auditory == false){
+            Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         } else {
+            // Maps the variables to the nodes where values should be stored
             HashMap User = new HashMap();
             User.put("firstname", firstname);
             User.put("lastname", lastname);
@@ -154,6 +217,7 @@ public class CommProfileFrag extends Fragment {
             databaseReference.child(uid).updateChildren(User).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
+                    // Signals host activity for an appropriate toast message
                     if (task.isSuccessful()) {
                         viewModel.setData(true);
                     } else {
@@ -162,6 +226,9 @@ public class CommProfileFrag extends Fragment {
                 }
             });
         }
+    }
 
+    public static boolean isAlphabetical(String s){
+        return s != null && s.matches("^[a-zA-Z ]*$");
     }
 }

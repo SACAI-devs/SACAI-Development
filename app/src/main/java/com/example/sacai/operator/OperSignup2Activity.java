@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,12 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.sacai.dao.DAOOperator;
+import com.example.sacai.R;
 import com.example.sacai.databinding.ActivityOperSignup2Binding;
+import com.example.sacai.operator.dao.DAOOperator;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.dataclasses.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class OperSignup2Activity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
+    // Bind activity to layout
     ActivityOperSignup2Binding binding;
     private FirebaseAuth mAuth;
     DAOOperator daoOperator = new DAOOperator();
@@ -36,7 +35,7 @@ public class OperSignup2Activity extends AppCompatActivity {
         binding = ActivityOperSignup2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
+        // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -44,8 +43,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             return;
         }
 
-
-//        REGISTER USER WHEN BTN IS CLICKED
+        // Register user when btn is clicked
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +51,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        SHOWS PREVIOUS ACTIVITY WHEN BTN IS CLICKED
+        // Show previous screen when btn is clicked
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +59,7 @@ public class OperSignup2Activity extends AppCompatActivity {
             }
         });
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) binding.toolbar;
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -82,8 +80,8 @@ public class OperSignup2Activity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String drivername = getIntent().getStringExtra(OperSignupActivity.EXTRA_DR_NAME);
-        String conductorname = getIntent().getStringExtra(OperSignupActivity.EXTRA_CON_NAME);
+        String driver = getIntent().getStringExtra(OperSignupActivity.EXTRA_DR_NAME);
+        String conductor = getIntent().getStringExtra(OperSignupActivity.EXTRA_CON_NAME);
         String franchise = getIntent().getStringExtra(OperSignupActivity.EXTRA_FRANCHISE);
         String plate = getIntent().getStringExtra(OperSignupActivity.EXTRA_PLATE);
         boolean wheelchair = getIntent().getBooleanExtra("wheelchair", OperSignupActivity.EXTRA_WHEELCHAIR);
@@ -91,8 +89,7 @@ public class OperSignup2Activity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString();
         String userType = getString(R.string.label_operator);
 
-
-//        CHECK IF FIELDS ARE EMPTY
+        // Field validation
         if (franchise.isEmpty() || plate.isEmpty() || email.isEmpty() || password.isEmpty()) {
             if (email.isEmpty()) {
                 binding.etEmail.setError(getString(R.string.err_fieldRequired));
@@ -103,41 +100,37 @@ public class OperSignup2Activity extends AppCompatActivity {
                 binding.etPassword.requestFocus();
             }
         } else if ((password.length() < 6)) {
-//            CHECK IF THE PASSWORD LENGTH IS AT LEAST 6 CHARACTERS
             binding.etPassword.setError(getString(R.string.err_passCharCount));
             binding.etPassword.requestFocus();
         } else if (!isAlphaNumeric(password)) {
-//            CHECK IF PASSWORD HAS BOTH LETTERS AND NUMBERS
             binding.etPassword.setError(getString(R.string.err_passShouldBeAlphanumeric));
             binding.etPassword.requestFocus();
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-//            CHECK IF EMAIL IS A VALID EMAIL FORMAT
             Toast.makeText(this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
             binding.etEmail.setError(getString(R.string.err_invalidEmail));
             binding.etEmail.requestFocus();
         } else {
+            // Proceed with user creation
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                            if (task.isSuccessful()){
-//                            CREATE A NEW USER AND STORE IT INTO FIREBASE
-                               User user = new User(email, password, userType);
+                               //Create new user and store it into Firebase
+                               User user = new User(email, userType);
                                FirebaseUser currentUser = mAuth.getCurrentUser();
                                FirebaseDatabase.getInstance().getReference("Users")
                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                            @Override
                                            public void onComplete(@NonNull Task<Void> task) {
-//                                               IF USER CREATION IS SUCCESSFULL THEN IT SENDS AN EMAIL VERIFICATION LINK TO THE USER
+                                               // If successful, send email verification link to the user
                                                if (task.isSuccessful()) {
-//                                                ADD NEW OPERATOR RECORD
-                                                   Operator operator = new Operator(drivername, conductorname, franchise, plate, wheelchair, email,"" , currentUser.getUid());
+                                                   Operator operator = new Operator(driver, conductor, franchise, plate, wheelchair, email,"" , currentUser.getUid());
                                                    daoOperator.add(operator);
-                                                   showOperLogin();
-                                                   FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                                   user.sendEmailVerification();
+                                                   sendVerificationEmail(email, password);
                                                    Toast.makeText(OperSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
+                                                   showOperLogin();
                                                } else {
                                                    Toast.makeText(OperSignup2Activity.this, R.string.err_authentication, Toast.LENGTH_SHORT).show();
                                                }
@@ -151,13 +144,31 @@ public class OperSignup2Activity extends AppCompatActivity {
         }
     }
 
+    private void sendVerificationEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.sendEmailVerification();
+                            FirebaseAuth.getInstance().signOut();
+                        } else {
+                            Toast.makeText(OperSignup2Activity.this, R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
     public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+//        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]+$");
+        return s != null && s.matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$&()\\-`.+,/\"]+$");
     }
 
     private void showOperLogin() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, OperLoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

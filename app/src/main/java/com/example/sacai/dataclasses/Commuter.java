@@ -12,8 +12,8 @@ public class Commuter {
     private String homeAddress;
     private String workAddress;
     private String uid;
-
-
+    private Trip current_ride;
+    private Trip ride_history;
 
     public Commuter() {
     }
@@ -109,5 +109,21 @@ public class Commuter {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public Trip getCurrent_ride() {
+        return current_ride;
+    }
+
+    public void setCurrent_ride(Trip current_ride) {
+        this.current_ride = current_ride;
+    }
+
+    public Trip getRide_history() {
+        return ride_history;
+    }
+
+    public void setRide_history(Trip ride_history) {
+        this.ride_history = ride_history;
     }
 }

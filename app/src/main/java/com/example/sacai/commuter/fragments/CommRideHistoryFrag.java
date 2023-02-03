@@ -1,4 +1,4 @@
-package com.example.sacai.fragments;
+package com.example.sacai.commuter.fragments;
 
 import android.os.Bundle;
 
@@ -12,10 +12,10 @@ import com.example.sacai.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link OperMapFrag#newInstance} factory method to
+ * Use the {@link CommRideHistoryFrag#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OperMapFrag extends Fragment {
+public class CommRideHistoryFrag extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class OperMapFrag extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public OperMapFrag() {
+    public CommRideHistoryFrag() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class OperMapFrag extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment OperMapFrag.
+     * @return A new instance of fragment CommRideHistoryFrag.
      */
     // TODO: Rename and change types and number of parameters
-    public static OperMapFrag newInstance(String param1, String param2) {
-        OperMapFrag fragment = new OperMapFrag();
+    public static CommRideHistoryFrag newInstance(String param1, String param2) {
+        CommRideHistoryFrag fragment = new CommRideHistoryFrag();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class OperMapFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_oper_map, container, false);
+        return inflater.inflate(R.layout.fragment_comm_ride_history, container, false);
     }
 }

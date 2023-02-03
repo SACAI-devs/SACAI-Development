@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.OperMapFrag">
+    tools:context=".operator.fragments.OperMapFrag">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
@@ -30,12 +30,15 @@
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/BasicInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_route"
+                    android:textColorHint="@color/grey"
+                    >
                     <com.google.android.material.textfield.TextInputEditText
                         style="@style/InputTxt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_route" />
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
                 <!-- BUTTON SELECT ROUTE -->
                 <Button
@@ -46,5 +49,11 @@
                     android:text="@string/label_goNow"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+<!--        MAP CONTAINER-->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/operator_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 </FrameLayout>

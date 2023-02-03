@@ -1,4 +1,4 @@
-package com.example.sacai;
+package com.example.sacai.operator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,36 +14,44 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.sacai.databinding.ActivityCommMainBinding;
-import com.example.sacai.fragments.CommMapFrag;
-import com.example.sacai.fragments.CommProfileFrag;
-import com.example.sacai.viewmodels.CommMainViewModel;
+import com.example.sacai.LandingActivity;
+import com.example.sacai.R;
+import com.example.sacai.databinding.ActivityOperMainBinding;
+import com.example.sacai.operator.fragments.OperMapFrag;
+import com.example.sacai.operator.fragments.OperPassengerListFrag;
+import com.example.sacai.operator.fragments.OperProfileFrag;
+import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class CommMainActivity extends AppCompatActivity {
+public class OperMainActivity extends AppCompatActivity {
 
-//    BIND ACTIVITY TO LAYOUT
-    ActivityCommMainBinding binding;
+    // Bind activity to layout
+    ActivityOperMainBinding binding;
 
-    private CommMainViewModel viewModel;
+    private OperMainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCommMainBinding.inflate(getLayoutInflater());
+        binding = ActivityOperMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        INITIALIZE FIREBASE AUTH AND CHECK IF USER IS LOGGED IN
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-    if (currentUser == null) {
-        Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
-        logout();
-    }
+        // Initialize Firebase Auth and check if user is logged in
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, R.string.msg_loginToEdit, Toast.LENGTH_SHORT).show();
+            logout();
+        // Check if email is verified
+        } else if (!currentUser.isEmailVerified()){
+            Toast.makeText(this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_SHORT).show();
+            logout();
+        }
 
-//    VIEWMODEL LOGIC
-        viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
+
+        // ViewModel Logic
+        viewModel = new ViewModelProvider(this).get(OperMainViewModel.class);
         viewModel.getResult().observe(this, item -> {
             if (item == true) {
                 Toast.makeText(this, R.string.msg_success, Toast.LENGTH_SHORT).show();
@@ -54,32 +62,36 @@ public class CommMainActivity extends AppCompatActivity {
             }
         });
 
-//        LOAD MAP FRAGMENT
-        replaceFragment(new CommMapFrag());
+        // Load map fragment
+        replaceFragment(new OperMapFrag());
 
-//        TOOLBAR ACTION HANDLING
+        // Toolbar action handling
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
     }
 
-    //  TOOLBAR MENU ACTIONS
+    // Toolbar menu actions
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.comm_main_menu, menu);
+        inflater.inflate(R.menu.oper_main_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_showHome:
-                replaceFragment(new CommMapFrag());
+                replaceFragment(new OperMapFrag());
                 return true;
             case R.id.action_showEditProfile:
-                replaceFragment(new CommProfileFrag());
+                replaceFragment(new OperProfileFrag());
+                return true;
+            case R.id.action_showPassengerList:
+                replaceFragment(new OperPassengerListFrag());
                 return true;
             case R.id.action_logout:
                 logout();
@@ -91,7 +103,7 @@ public class CommMainActivity extends AppCompatActivity {
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(CommMainActivity.this, LandingActivity.class);
+        Intent intent = new Intent(this, LandingActivity.class);
         startActivity(intent);
         finish();
     }

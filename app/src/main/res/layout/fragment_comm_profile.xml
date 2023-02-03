@@ -4,18 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.CommProfileFrag">
+    tools:context=".commuter.fragments.CommProfileFrag">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Profile Fragment" />
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <!--    TOOLBAR     -->
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/BasicToolbar"
@@ -54,13 +57,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_firstName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etFirstname"
                             style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_firstName" />
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- INPUT LAST NAME -->
@@ -68,13 +74,16 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_lastName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etLastname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_lastName" />
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- INPUT USERNAME -->
@@ -82,43 +91,57 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_userName"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etUsername"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_userName" />
-                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- INPUT EMAIL -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/BasicInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
-                        <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
-                            android:id="@+id/etEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_email"
-                            android:inputType="textEmailAddress"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <!-- INPUT EMAIL -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/BasicInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:hint="@string/hint_email"
+                            android:textColorHint="@color/grey"
+                            >
+                            <com.google.android.material.textfield.TextInputEditText
+                                style="@style/InputTxt"
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress"
+                                />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                     <!-- INPUT HOME ADDRESS -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_homeAddress"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etHomeAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_homeAddress"
                             android:inputType="textEmailAddress"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -128,13 +151,15 @@
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp" >
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_workAddress"
+                        android:textColorHint="@color/grey"
+                        >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etWorkAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_workAddress"
                             android:inputType="textEmailAddress"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -145,7 +170,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
-                        android:text="@string/label_needs" />
+                        android:text="@string/label_needs"
+                        />
 
                     <!--    MOBILITY IMPAIRMENT-->
                     <CheckBox

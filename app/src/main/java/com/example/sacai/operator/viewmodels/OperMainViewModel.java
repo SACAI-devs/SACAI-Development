@@ -1,15 +1,16 @@
-package com.example.sacai.viewmodels;
+package com.example.sacai.operator.viewmodels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class CommMainViewModel extends ViewModel {
+public class OperMainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> result = new MutableLiveData<Boolean>();
     private final MutableLiveData<String> msg = new MutableLiveData<String>();
     public void setData(boolean item) {
         result.setValue(item);
     }
+
     public LiveData<Boolean> getResult() {
         return result;
     }
