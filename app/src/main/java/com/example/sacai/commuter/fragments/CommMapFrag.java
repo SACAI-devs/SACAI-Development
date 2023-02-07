@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -128,7 +129,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 saveRideHistory();
-
             }
         });
     }
@@ -175,7 +175,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 getStations();
-                getStationsInRoute(String.valueOf(etPickup));
+                getStationsInRoute(etPickup.getText().toString());
                 generateStationMarkers();
                 String station = parent.getItemAtPosition(position).toString();
                 etPickup.setText(station);
@@ -272,8 +272,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 etPickup.setAdapter(pickUpStations);
 
                 // Selecting from dropoff
-                dropOffStations = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, items);
-                etDropoff.setAdapter(dropOffStations);
+//                dropOffStations = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, items);
+//                etDropoff.setAdapter(dropOffStations);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -283,37 +283,53 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     }
 
     // Function to get all the stations within a route
-    private void getStationsInRoute(String pickup) {
-//        ArrayList<String> id = new ArrayList<>();
-//        ArrayList<String> route = new ArrayList<>(); // contains the queried routes
-//        ArrayList<String> stops = new ArrayList<>(); // contains the stops within the queried routes
-//        String TAG = "DEBUG VALUE CHECK";
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Routes");
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dsp: snapshot.getChildren()) {
-//                    route.add(String.valueOf(dsp.child("routeName").getValue()));
-//                    // Loop through the current route and determine the stops
-//                    for (int i = 1; i < dsp.getChildrenCount(); i++) {
-//                        String s = String.valueOf(dsp.child("stop".concat(String.valueOf(i))).child("busStopName").getValue());
-//
-//                        // Check if pickup == s aka station
-//                        if (s.equals(pickup)) {
-//                            stops.add(s);
-//                        } else {
-//                            stops.add("None");
-//                        }
-//
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
+    private void getStationsInRoute(String origin) {
+        String TAG = "getStationsInRoute";
+
+        // Get routes of the pickup station
+        ArrayList <String> routes = new ArrayList<>();  // Holds the routes that includes the origin/pickup station
+        ArrayList <String> stations = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Routes");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp: snapshot.getChildren()) {
+                    String thisRoute = String.valueOf(dsp.child("routeName").getValue());
+                    // Get the stops
+                   for (int i = 1; i < dsp.getChildrenCount(); i++) {
+                        String data = String.valueOf(dsp.child("stop".concat(String.valueOf(i))).child("busStopName").getValue()); // holds the bus stop name from this subnode
+                        // Check if the origin is equal to any of the stops in this route
+                        if (origin.equals(data)){
+                            routes.add(thisRoute); // if the origin shows up in that route, then it adds it to the array list
+                            String originOrder = String.valueOf(dsp.child("stop".concat(String.valueOf(i))).child("order").getValue()); // holds the order of the origin bus stop
+                            // gets the stations in the same routes as origin
+                            for (int x = 1; x < dsp.getChildrenCount(); x++) {
+                                data = String.valueOf(dsp.child("stop".concat(String.valueOf(x))).child("busStopName").getValue());
+                                String stopOrder = String.valueOf(dsp.child("stop".concat(String.valueOf(x))).child("order").getValue());
+                                // only bus stops that come after the origin stop will be added
+                                if (Integer.parseInt(originOrder) < Integer.parseInt(stopOrder)){
+                                    stations.add(data);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Convert arraylist to a string[]
+                items = new String[stations.size()];
+                for (int i = 0; i < stations.size(); i++) {
+                    items[i] = stations.get(i);
+                }
+                dropOffStations = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, items);
+                etDropoff.setAdapter(dropOffStations);
+                Log.i(TAG, "stations: " + stations);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: Action cancelled");
+            }
+        });
     }
 
     // Function to set the current trip of the commuter
@@ -400,7 +416,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         }
                         // Save the information to firebase
                         HashMap Ride = new HashMap();
-                        Trip trip = new Trip(date, time_started, time_ended, operator_id, pickup_station, dropoff_station);
+                        Trip trip = new Trip(date, time_started, time_ended, pickup_station, dropoff_station, operator_id);
                         Ride.put("date", trip.getDate());
                         Ride.put("time_started", trip.getTime_started());
                         Ride.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
