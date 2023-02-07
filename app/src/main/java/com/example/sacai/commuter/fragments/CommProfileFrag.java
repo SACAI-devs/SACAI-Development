@@ -34,7 +34,7 @@ public class CommProfileFrag extends Fragment {
     // Bind fragment to layout
     FragmentCommProfileBinding binding;
 
-    CommMainViewModel viewModel;
+//    CommMainViewModel viewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class CommProfileFrag extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
+//        viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
 
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -150,11 +150,12 @@ public class CommProfileFrag extends Fragment {
                         binding.cbAuditory.setChecked(Boolean.parseBoolean(auditory));
                         binding.cbWheelchair.setChecked(Boolean.parseBoolean(wheelchair));
                     } else {
-                        viewModel.setData(false);
-
+//                        viewModel.setData(false);
+                        Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                        viewModel.setData(false);
+//                        viewModel.setData(false);
+                    Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -175,8 +176,10 @@ public class CommProfileFrag extends Fragment {
 
         // Check if required inputs are empty
         if (firstname.isEmpty() || lastname.isEmpty()) {
-            viewModel.setData(false);
-            viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
+//            viewModel.setData(false);
+//            viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
+
+            Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
             if (firstname.isEmpty()) {
                 binding.etFirstname.setError(getString(R.string.err_fieldRequired));
                 binding.etFirstname.requestFocus();
@@ -219,15 +222,18 @@ public class CommProfileFrag extends Fragment {
                 public void onComplete(@NonNull Task task) {
                     // Signals host activity for an appropriate toast message
                     if (task.isSuccessful()) {
-                        viewModel.setData(true);
+//                        viewModel.setData(true);
+                        Toast.makeText(getActivity(), R.string.msg_success, Toast.LENGTH_SHORT).show();
                     } else {
-                        viewModel.setData(false);
+//                        viewModel.setData(false);
+                        Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
     }
 
+    // Just to check if string is alphabetical
     public static boolean isAlphabetical(String s){
         return s != null && s.matches("^[a-zA-Z ]*$");
     }

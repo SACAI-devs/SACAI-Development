@@ -73,6 +73,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/label_goNow"/>
+
+                <!-- BUTTON TEMPORARY DISEMARBKED SUCCESSFULLY -->
+                <Button
+                    android:id="@+id/btnDisembarked"
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/label_disembarked"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <!--        MAP CONTAINER-->

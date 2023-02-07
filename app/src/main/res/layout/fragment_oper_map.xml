@@ -28,17 +28,17 @@
                 android:background="@color/teal_100">
                 <!-- INPUT LOCATION -->
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/BasicInput"
+                    style="@style/AutoCompleteDropDown"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_route"
-                    android:textColorHint="@color/grey"
-                    >
-                    <com.google.android.material.textfield.TextInputEditText
-                        style="@style/InputTxt"
+                    android:layout_height="match_parent"
+                    android:hint="@string/hint_location"
+                    android:textColorHint="@color/grey">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/routeSelect"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        />
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
                 <!-- BUTTON SELECT ROUTE -->
                 <Button

@@ -69,16 +69,16 @@ public class CommMainActivity extends AppCompatActivity {
         }
 
         // ViewModel Logic: Gets signal from fragment for toast messages
-        viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
-        viewModel.getResult().observe(this, item -> {
-            if (item == true) {
-                Toast.makeText(this, R.string.msg_success, Toast.LENGTH_SHORT).show();
-            } else {
-                viewModel.getMsg().observe(this, msg -> {
-                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                });
-            }
-        });
+//        viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
+//        viewModel.getResult().observe(this, item -> {
+//            if (item == true) {
+//                Toast.makeText(this, R.string.msg_success, Toast.LENGTH_SHORT).show();
+//            } else {
+//                viewModel.getMsg().observe(this, msg -> {
+//                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+//                });
+//            }
+//        });
 
         // Location Services
         getLocationPermission();

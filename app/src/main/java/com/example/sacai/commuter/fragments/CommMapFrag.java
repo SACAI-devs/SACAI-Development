@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +42,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     // Call variables based on Google Documentation
@@ -53,6 +53,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
     // Components
     Button btnSetRoute;
+    Button btnDisembarked;
     AutoCompleteTextView etPickup, etDropoff;
 
     // Arrays
@@ -67,6 +68,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     // Store choices
     String choicePickup;
     String choiceDropoff;
+
+    // Store trip information
+    ArrayList<String> current_id = new ArrayList<>();
 
     // CONSTANTS
     private int MAP_ZOOM = 18;
@@ -95,6 +99,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         // Bind components to layout
         btnSetRoute = (Button) mView.findViewById(R.id.btnSetRoute);
+        btnDisembarked = (Button) mView.findViewById(R.id.btnDisembarked); // TODO: REMOVE ONCE DONE TESTING
         etPickup = (AutoCompleteTextView) mView.findViewById(R.id.etPickup);
         etDropoff = (AutoCompleteTextView) mView.findViewById(R.id.etDropoff);
 
@@ -104,6 +109,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
+        btnDisembarked.setVisibility(View.GONE);
 
         // Saves ride data when btn is clicked
         btnSetRoute.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +119,16 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 setTripMarkers();
                 // SEND INFORMATION TO AN OPERATOR THAT THEY ARE THERE
                 // AN OPERATOR SHOULD ACCEPT
+            }
+        });
+
+        // TODO: TESTING FOR SAVING RIDE HISTORY
+        btnDisembarked.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                saveRideHistory();
+
             }
         });
     }
@@ -151,7 +167,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
 
         getStations();
-        generateStationMarkers();
+
 
 
         // Moves camera to where the station is at
@@ -159,6 +175,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 getStations();
+                getStationsInRoute(String.valueOf(etPickup));
                 generateStationMarkers();
                 String station = parent.getItemAtPosition(position).toString();
                 etPickup.setText(station);
@@ -167,6 +184,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         .target(new LatLng(latitude.get(position), longitude.get(position)))
                         .zoom(MAP_ZOOM).bearing(0).tilt(0).build();
                 googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(mapCam));
+
             }
         });
 
@@ -174,7 +192,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         etDropoff.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getStations();
+//                getStations();
+                String pickup = etPickup.getText().toString();
+
                 generateStationMarkers();
                 String station = parent.getItemAtPosition(position).toString();
                 etDropoff.setText(station);
@@ -193,13 +213,19 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
     }
 
+
+    // Function to generate the station markers on the map
     private void generateStationMarkers() {
         mGoogleMap.clear(); // Clear existing markers
+        // Variables
         int width = 100;
         int height = 100;
+
+        // For the icon of the bus stops
         BitmapDrawable bus_icon = (BitmapDrawable)getResources().getDrawable(R.drawable.ic_bus_stop);
         Bitmap b = bus_icon.getBitmap();
         Bitmap iconified = Bitmap.createScaledBitmap(b, width, height, false);
+
         // Generate new markers for each station
         for (int i = 0; i < stationId.size(); i++) {
             mGoogleMap.addMarker(new MarkerOptions()
@@ -209,6 +235,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    // Function to get all the stations to put in the array list
     private void getStations() {
         // This method gets the stations registered from Firebase
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
@@ -223,9 +250,10 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 for (DataSnapshot dsp: dataSnapshot.getChildren()) {
                     // Get data from each node
                     String id = dsp.getKey();
-                    String name = dsp.child("busStopName").getValue().toString();
-                    Double lat = Double.parseDouble(dsp.child("center_lat").getValue().toString());
-                    Double lon = Double.parseDouble(dsp.child("center_long").getValue().toString());
+                    String name = Objects.requireNonNull(dsp.child("busStopName").getValue()).toString();
+                    Double lat = Double.parseDouble(Objects.requireNonNull(dsp.child("center_lat").getValue()).toString());
+                    Double lon = Double.parseDouble(Objects.requireNonNull(dsp.child("center_long").getValue()).toString());
+
                     // Adds data to array list
                     stationId.add(id);
                     stationName.add(name);
@@ -238,20 +266,57 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 for (int i = 0; i < stationName.size(); i++) {
                     items[i] = stationName.get(i);
                 }
+
                 // Selecting from pickup
                 pickUpStations = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, items);
                 etPickup.setAdapter(pickUpStations);
+
                 // Selecting from dropoff
                 dropOffStations = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, items);
                 etDropoff.setAdapter(dropOffStations);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "Couldn't retrieve bus stops. Please refresh.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.err_couldntRetrieveStops, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // Function to get all the stations within a route
+    private void getStationsInRoute(String pickup) {
+//        ArrayList<String> id = new ArrayList<>();
+//        ArrayList<String> route = new ArrayList<>(); // contains the queried routes
+//        ArrayList<String> stops = new ArrayList<>(); // contains the stops within the queried routes
+//        String TAG = "DEBUG VALUE CHECK";
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Routes");
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot dsp: snapshot.getChildren()) {
+//                    route.add(String.valueOf(dsp.child("routeName").getValue()));
+//                    // Loop through the current route and determine the stops
+//                    for (int i = 1; i < dsp.getChildrenCount(); i++) {
+//                        String s = String.valueOf(dsp.child("stop".concat(String.valueOf(i))).child("busStopName").getValue());
+//
+//                        // Check if pickup == s aka station
+//                        if (s.equals(pickup)) {
+//                            stops.add(s);
+//                        } else {
+//                            stops.add("None");
+//                        }
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+    }
+
+    // Function to set the current trip of the commuter
     private void setCurrentTrip() {
         // Get the current date
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -278,36 +343,89 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }
         
         findMidpoint(choicePickup, choiceDropoff); // Finding the midpoint between the pickup and drop off
-        Toast.makeText(getActivity(), "Now waiting for bus.", Toast.LENGTH_SHORT).show();
 
-        String pickupId = null;
-        String dropoffId = null;
+        String pickup = null;
+        String dropoff = null;
 
         // Get station ids
         for (int i = 0; i < stationName.size(); i++) {
             if (stationName.get(i).equals(choicePickup)) {
-                pickupId = stationId.get(i);
+                pickup = stationName.get(i);
             }
             if (stationName.get(i).equals(choiceDropoff)) {
-                dropoffId = stationId.get(i);
+                dropoff = stationName.get(i);
             }
         }
-
         // Create the node for a current trip
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Trip current_trip = new Trip(date, time, "", pickupId, dropoffId);
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Trip current_trip = new Trip(date, time, "", pickup, dropoff, "");
 
-        // Temporary for testing
-        if (databaseReference != null) {
-            // Supposed to happen whenever the trip ends
-            DatabaseReference nodeToRemove = databaseReference.child(user.getUid()).child("current_trip");
-            nodeToRemove.removeValue();
-        }
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
         databaseReference.child(user.getUid()).child("current_trip").push().setValue(current_trip);
 
+        btnSetRoute.setVisibility(View.GONE);
+        btnDisembarked.setVisibility(View.VISIBLE);
     }
 
+    // Function to save current trip to ride history
+    private void saveRideHistory() {
+        // You can either pass the trip info somehow here or get the current_trip info into this method itself. eitherway,
+        // it should be stored in a Trip object
+        // Get the instance of firebase to take a snapshot of
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference[] databaseReference = {FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("current_trip")};
+        databaseReference[0].get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        // Variables
+                        String id = "";
+                        String date = "";
+                        String time_started = "";
+                        String time_ended = "";
+                        String operator_id = "";
+                        String pickup_station = "";
+                        String dropoff_station = "";
+
+                        // Creating a hashmap to store a new node into ride
+                        for (DataSnapshot dsp: task.getResult().getChildren()) { // loop through all current_trip records (there should only be one every time)
+                            id = dsp.getKey();
+                            date = String.valueOf(dsp.child("date").getValue());
+                            time_started = String.valueOf(dsp.child("time_started").getValue());
+                            time_ended = String.valueOf(dsp.child("time_ended").getValue());
+                            operator_id = String.valueOf(dsp.child("operator_id").getValue());
+                            pickup_station = String.valueOf(dsp.child("pickup_station").getValue());
+                            dropoff_station = String.valueOf(dsp.child("dropoff_station").getValue());
+                        }
+                        // Save the information to firebase
+                        HashMap Ride = new HashMap();
+                        Trip trip = new Trip(date, time_started, time_ended, operator_id, pickup_station, dropoff_station);
+                        Ride.put("date", trip.getDate());
+                        Ride.put("time_started", trip.getTime_started());
+                        Ride.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
+                        Ride.put("operator_id", trip.getOperator_id());
+                        Ride.put("pickup_station", pickup_station);
+                        Ride.put("dropoff_station", dropoff_station);
+
+                        databaseReference[0] = FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("ride_history").child(id);
+                        databaseReference[0].updateChildren(Ride);
+                    } else {
+                        Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+//                    Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnDisembarked.setVisibility(View.GONE);
+        btnSetRoute.setVisibility(View.VISIBLE);
+        DatabaseReference current_trip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+        current_trip.removeValue();
+    }
+
+    // Function to find the midpoint of two stations
     private void findMidpoint(String pickup, String dropoff) {
         Double pickupLatitude = 0.0;
         Double pickupLongitude = 0.0;
