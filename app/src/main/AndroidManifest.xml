@@ -21,7 +21,11 @@
 
         <meta-data
             android:name="com.google.gms.version"
-            android:value="@integer/google_play_services_version" /> <!-- ========================================================= -->
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}"/>
+        <!-- ========================================================= -->
         <!-- ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS====== -->
         <!-- ========================================================= -->
         <!-- LANDING ACTIVITY -->
@@ -77,9 +81,7 @@
         </activity>
         <activity
             android:name=".operator.OperUpdateEmailActivity"
-            android:exported="false" />
-
-        <!-- ========================================================= -->
+            android:exported="false" /> <!-- ========================================================= -->
         <!-- ======BEGINNING OF COMMUTER SPECIFIC CONFIGURATIONS====== -->
         <!-- ========================================================= -->
         <!-- COMMUTER MAIN ACTIVITY -->
@@ -105,8 +107,7 @@
         </activity>
         <activity
             android:name=".commuter.CommUpdateEmailActivity"
-            android:exported="false" /> <!-- COMMUTER UPDATE EMAIL -->
-
+            android:exported="false" />
     </application>
 
 </manifest>

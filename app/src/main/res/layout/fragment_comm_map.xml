@@ -30,8 +30,9 @@
                 android:padding="20dp"
                 android:orientation="vertical"
                 android:background="@color/teal_100">
-                <!-- INPUT DESTINATION -->
+                <!-- INPUT ORIGIN -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/containerSelectOrigin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_location"
@@ -45,8 +46,9 @@
                         android:inputType="none"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
-                <!-- INPUT LOCATION -->
+                <!-- INPUT DESTINATION -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/containerSelectDestination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

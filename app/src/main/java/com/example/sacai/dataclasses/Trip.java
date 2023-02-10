@@ -13,7 +13,8 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(String date, String time_started, String time_ended, String pickup_station, String dropoff_station, String operator_id) {
+    public Trip(String id, String date, String time_started, String time_ended, String pickup_station, String dropoff_station, String operator_id) {
+        this.id = id;
         this.date = date;
         this.time_started = time_started;
         this.time_ended = time_ended;

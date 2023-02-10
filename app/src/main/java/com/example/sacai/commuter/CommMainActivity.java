@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.sacai.LandingActivity;
 import com.example.sacai.R;
 import com.example.sacai.commuter.fragments.CommMapFrag;
+import com.example.sacai.commuter.fragments.CommRideHistoryFrag;
 import com.example.sacai.databinding.ActivityCommMainBinding;
 import com.example.sacai.commuter.fragments.CommProfileFrag;
 import com.example.sacai.commuter.viewmodels.CommMainViewModel;
@@ -68,18 +69,6 @@ public class CommMainActivity extends AppCompatActivity {
             logout();
         }
 
-        // ViewModel Logic: Gets signal from fragment for toast messages
-//        viewModel = new ViewModelProvider(this).get(CommMainViewModel.class);
-//        viewModel.getResult().observe(this, item -> {
-//            if (item == true) {
-//                Toast.makeText(this, R.string.msg_success, Toast.LENGTH_SHORT).show();
-//            } else {
-//                viewModel.getMsg().observe(this, msg -> {
-//                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-//                });
-//            }
-//        });
-
         // Location Services
         getLocationPermission();
 
@@ -116,6 +105,8 @@ public class CommMainActivity extends AppCompatActivity {
             case R.id.action_logout:
                 logout();
                 return true;
+            case R.id.action_rideHistory:
+                replaceFragment(new CommRideHistoryFrag());
             default:
                 return super.onOptionsItemSelected(item);
         }

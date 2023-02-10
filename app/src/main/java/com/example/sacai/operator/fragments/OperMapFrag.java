@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sacai.R;
@@ -35,7 +34,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     // Call variables based on GoogleMaps Documentation
@@ -188,7 +186,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 }
 
                 // Selecting from route autocompleteview
-                routeChoices = new ArrayAdapter<String>(getActivity(), R.layout.component_list_item, routeItems);
+                routeChoices = new ArrayAdapter<String>(getActivity(), R.layout.dropdown_list, routeItems);
                 routeSelects.setAdapter(routeChoices);
             }
             @Override

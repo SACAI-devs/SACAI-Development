@@ -1,32 +1,41 @@
 package com.example.sacai.commuter.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.sacai.R;
+import com.example.sacai.commuter.adapter.RideHistoryAdapter;
 import com.example.sacai.databinding.FragmentCommRideHistoryBinding;
 import com.example.sacai.dataclasses.Commuter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.sacai.dataclasses.Trip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class CommRideHistoryFrag extends Fragment {
 
     // Bind fragment to layout
     FragmentCommRideHistoryBinding binding;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter rideHistoryAdapter;
+    RecyclerView.LayoutManager layoutManager;
 
-
+    ArrayList<Trip> trip;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +48,13 @@ public class CommRideHistoryFrag extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        recyclerView = view.findViewById(R.id.rideHistoryList);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        trip = new ArrayList<Trip>();
 
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -49,16 +65,39 @@ public class CommRideHistoryFrag extends Fragment {
     }
 
     private void readData(String uid) {
+        String TAG = "readData";
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        databaseReference.child(uid).child("ride_history").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        databaseReference.child(uid).child("ride_history").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        // Get each ride information node
-                        
-                    }
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String id;
+                String date;
+                String time_started;
+                String time_ended;
+                String origin;
+                String destination;
+                String operatorid;
+                trip = new ArrayList<Trip>();
+                for (DataSnapshot dsp: snapshot.getChildren()) {
+                    id = "Trip Tracking ID" + dsp.getKey();
+                    date = String.valueOf(dsp.child("date").getValue());
+                    time_started = "Started: " + dsp.child("time_started").getValue();
+                    time_ended = "Ended: " + dsp.child("time_ended").getValue();
+                    origin = String.valueOf(dsp.child("pickup_station").getValue());
+                    destination = String.valueOf(dsp.child("dropoff_station").getValue());
+                    operatorid = String.valueOf(dsp.child("operator_id").getValue());
+                    trip.add(new Trip(id, date, time_started, time_ended, origin, destination, operatorid));
+                    rideHistoryAdapter = new RideHistoryAdapter(getActivity(), trip);
                 }
+
+
+                recyclerView.setAdapter(rideHistoryAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
