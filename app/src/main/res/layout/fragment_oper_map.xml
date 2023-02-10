@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".operator.fragments.OperMapFrag">
-
-    <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/ochre_100">
-        <!--    ROUTE SELECTION MENU -->
+        <!--ROUTE SELECTION MENU-->
         <androidx.cardview.widget.CardView
             style="@style/RoundedCard"
             android:layout_width="match_parent"
@@ -26,14 +23,13 @@
                 android:padding="20dp"
                 android:orientation="vertical"
                 android:background="@color/teal_100">
-                <!-- INPUT LOCATION -->
+                <!--INPUT LOCATION-->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/AutoCompleteDropDown"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/hint_location"
                     android:textColorHint="@color/grey">
-
                     <AutoCompleteTextView
                         android:id="@+id/routeSelect"
                         android:layout_width="match_parent"
@@ -50,10 +46,11 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-<!--        MAP CONTAINER-->
+        <!--MAP CONTAINER-->
         <com.google.android.gms.maps.MapView
             android:id="@+id/operator_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_map"/>
     </RelativeLayout>
 </FrameLayout>

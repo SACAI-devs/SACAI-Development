@@ -83,7 +83,8 @@
     <string name="err_cant_have_same_pickup_dropoff">You entered the same pick-up and drop-off point. Please try again!</string>
     <string name="err_invalid_pickup">Make sure it\'s not the same as drop-off.</string>
     <string name="err_invalid_dropoff">Make sure it\'s not the same as pick-up.</string>
-    <string name="label_ride_history">Ride History</string>
+    <string name="label_rideHistory">Ride History</string>
     <string name="err_couldntRetrieveStops">Couldn\'t retrieve bus stops. Please refresh.</string>
-    <string name="label_disembarked">Disembarked Successfully</string>
+    <string name="label_rideEnded">Ride Ended</string>
+    <string name="desc_map">Google Maps</string>
 </resources>

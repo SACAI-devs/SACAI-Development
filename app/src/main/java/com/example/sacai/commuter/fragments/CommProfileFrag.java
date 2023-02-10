@@ -86,7 +86,7 @@ public class CommProfileFrag extends Fragment {
         });
 
         // User re-authentication to change email
-        binding.etEmail.setOnClickListener(new View.OnClickListener() {
+        binding.btnUpdateEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showUpdateEmail();

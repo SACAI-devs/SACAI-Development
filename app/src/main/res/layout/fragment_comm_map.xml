@@ -6,16 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".commuter.fragments.CommMapFrag">
-
-
-
-
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/ochre_100">
-        <!--    ROUTE SELECTION MENU -->
+        <!--ROUTE SELECTION MENU-->
         <androidx.cardview.widget.CardView
             style="@style/RoundedCard"
             android:layout_width="match_parent"
@@ -37,16 +32,14 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_location"
                     android:textColorHint="@color/grey"
-                    style="@style/AutoCompleteDropDown"
-                    >
+                    style="@style/AutoCompleteDropDown" >
                     <AutoCompleteTextView
                         android:id="@+id/etPickup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
-                        />
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <!-- INPUT DESTINATION -->
+                <!--INPUT LOCATION-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/containerSelectDestination"
                     android:layout_width="match_parent"
@@ -54,8 +47,7 @@
                     android:layout_marginTop="5dp"
                     android:hint="@string/hint_destination"
                     android:textColorHint="@color/grey"
-                    style="@style/AutoCompleteDropDown"
-                    >
+                    style="@style/AutoCompleteDropDown" >
                     <AutoCompleteTextView
                         android:id="@+id/etDropoff"
                         android:layout_width="match_parent"
@@ -67,7 +59,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/etTest"/>
-                <!-- BUTTON SELECT ROUTE -->
+
+                <!--GO NOW BUTTON-->
                 <Button
                     android:id="@+id/btnSetRoute"
                     style="@style/PrimaryBtn"
@@ -75,21 +68,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/label_goNow"/>
-
-                <!-- BUTTON TEMPORARY DISEMARBKED SUCCESSFULLY -->
+                <!--SUCCESS BUTTON-->
                 <Button
                     android:id="@+id/btnDisembarked"
                     style="@style/PrimaryBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="@string/label_disembarked"/>
+                    android:text="@string/label_rideEnded"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-        <!--        MAP CONTAINER-->
+
+        <!--MAP CONTAINER-->
         <com.google.android.gms.maps.MapView
             android:id="@+id/commuter_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_map" />
     </RelativeLayout>
 </FrameLayout>

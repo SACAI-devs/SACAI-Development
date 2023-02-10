@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" >
     <androidx.cardview.widget.CardView
         style="@style/RoundedCard"
@@ -10,75 +9,71 @@
         android:layout_width="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="15dp"
-        >
+        android:layout_marginVertical="14dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/ochre_100"
-            android:padding="15dp"
-            android:orientation="horizontal" >
-            <LinearLayout
+            android:padding="20dp"
+            android:orientation="vertical" >
+            <!--PLATE NUMBER PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvPlateNumber"
+                style="@style/EmphasizedTxt"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="20dp" >
-                <!--PLATE NUMBER PLACEHOLDER-->
-                <TextView
-                    android:id="@+id/tvPlateNumber"
-                    style="@style/BodyTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text="PLATE007" />
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawablePadding="5dp"
-                    android:text="DATE:" />
-                <!--SOURCE PLACEHOLDER-->
-                <TextView
-                    android:id="@+id/tvOrigin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawableLeft="@drawable/ic_source"
-                    android:drawablePadding="5dp"
-                    android:text="Origin" />
-                <!--DESTINATION PLACEHOLDER-->
-                <TextView
-                    android:id="@+id/tvDestination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawableLeft="@drawable/ic_destination"
-                    android:drawablePadding="5dp"
-                    android:text="Destination" />
-                <!--TIME START PLACEHOLDER-->
-                <TextView
-                    android:id="@+id/tvTimeStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawablePadding="5dp"
-                    android:text="Time Started" />
-                <TextView
-                    android:id="@+id/tvTimeEnd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawablePadding="5dp"
-                    android:text="Time Ended" />
-                <TextView
-                    android:id="@+id/tvTripId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:drawablePadding="5dp"
-                    android:text="Trip ID:" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="@string/label_placeholder" />
+            <!--DATE OF TRIP PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvDate"
+                style="@style/CaptionTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="" />
+            <!--SOURCE PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvOrigin"
+                style="@style/BodyTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:drawableLeft="@drawable/ic_source"
+                android:drawablePadding="5dp"
+                android:text="Source" />
+            <!--DESTINATION PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvDestination"
+                style="@style/BodyTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:drawableLeft="@drawable/ic_destination"
+                android:drawablePadding="5dp"
+                android:text="Destination" />
+            <!--START TIME PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvTimeStart"
+                style="@style/CaptionTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+            <!--END TIME PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvTimeEnd"
+                style="@style/CaptionTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+            <!--TRIP ID PLACEHOLDER-->
+            <TextView
+                android:id="@+id/tvTripId"
+                style="@style/CaptionTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

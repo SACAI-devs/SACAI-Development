@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/teal_700"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".operator.OperUpdateEmailActivity" >
     <!--TOOLBAR-->
     <androidx.appcompat.widget.Toolbar
@@ -16,35 +16,40 @@
         app:title="@string/app_name"
         app:navigationIcon="@drawable/ic_back"  />
 
-    <!--FORM GROUP-->
+    <!--FORM LABEL-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="40dp"
-        android:gravity="center_vertical" >
-        <!--FORM LABEL-->
+        android:layout_height="wrap_content"
+        android:background="@color/teal_100"
+        android:paddingVertical="32dp"
+        android:orientation="vertical">
         <TextView
-            style="@style/DarkTitleTxt"
+            style="@style/TitleTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_update_email" />
         <TextView
-            style="@style/DarkBodyTxt"
+            style="@style/BodyTxt"
             android:id="@+id/tvChangeEmailInstructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
             android:gravity="center"
-            android:text="@string/label_re_authenticate"
-            android:textColorHint="@color/grey"
-            />
+            android:text="@string/label_re_authenticate" />
+    </LinearLayout>
 
+    <!--FORM GROUP-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="40dp">
         <!--INPUT CURRENT EMAIL-->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/BasicInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:hint="@string/hint_email" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"

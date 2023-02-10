@@ -40,6 +40,19 @@
         <item name="android:textColor">@color/ochre_100</item>
     </style>
 
+    <style name="EmphasizedTxt" parent="BodyTxt">
+        <item name="fontFamily">@font/dmsans_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="SmallBodyTxt" parent="BodyTxt">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CaptionTxt" parent="SmallBodyTxt">
+        <item name="android:textColor">@color/grey</item>
+    </style>
+
     <style name="PrimaryBtn" parent="Widget.Material3.Button">
         <item name="android:fontFamily">@font/nunito_semibold</item>
         <item name="android:textSize">16sp</item>
@@ -76,7 +89,11 @@
         <item name="boxCornerRadiusTopEnd">10dp</item>
         <item name="boxCornerRadiusBottomStart">10dp</item>
         <item name="boxCornerRadiusBottomEnd">10dp</item>
-        <item name="hintTextColor">@color/grey</item>
+        <item name="android:textColorHint">@color/grey</item>
+    </style>
+
+    <style name="BlockedInput" parent="BasicInput">
+        <item name="boxBackgroundColor">@color/grey_100</item>
     </style>
 
     <style name="InputTxt">

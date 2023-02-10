@@ -258,8 +258,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         int width = 100;
         int height = 100;
         BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
-        Bitmap b = bus_icon.getBitmap();
-        Bitmap iconified = Bitmap.createScaledBitmap(b, width, height, false);
+        Bitmap iconified = bus_icon.getBitmap();
         // Set new marker points
         for (int i = 0; i < stopName.size(); i++) {
             if (stopName.get(i).equals(chosenOrigin)) {
@@ -286,8 +285,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         // For the icon of the bus stops
         BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
-        Bitmap b = bus_icon.getBitmap();
-        Bitmap iconified = Bitmap.createScaledBitmap(b, width, height, false);
+        Bitmap iconified = bus_icon.getBitmap();
 
         // Generate new markers for each station
         for (int i = 0; i < stopId.size(); i++) {

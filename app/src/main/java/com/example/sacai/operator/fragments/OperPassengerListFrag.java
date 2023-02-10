@@ -61,6 +61,6 @@ public class OperPassengerListFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_oper_passnger_list, container, false);
+        return inflater.inflate(R.layout.fragment_oper_passenger_list, container, false);
     }
 }

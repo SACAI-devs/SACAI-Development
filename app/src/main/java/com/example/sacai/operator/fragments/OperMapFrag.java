@@ -141,11 +141,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i("ClassCalled","generateReouteMarkers is running");
         Log.i("VerifyValueLatitude",latitude.toString());
         mGoogleMap.clear(); // Clear existing markers
-        int width = 100;
-        int height = 100;
         BitmapDrawable bus_icon = (BitmapDrawable)getResources().getDrawable(R.drawable.ic_bus_stop);
-        Bitmap b = bus_icon.getBitmap();
-        Bitmap iconified = Bitmap.createScaledBitmap(b, width, height, false);
+        Bitmap iconified = bus_icon.getBitmap();
         // Generate new markers for each station
         for (int i = 0; i < stationInBusStopID.size(); i++) {
             mGoogleMap.addMarker(new MarkerOptions()

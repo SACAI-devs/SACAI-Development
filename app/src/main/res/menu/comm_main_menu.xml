@@ -1,11 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="@string/label_logout"
-        app:showAsAction="collapseActionView"></item>
+
     <item
         android:id="@+id/action_showHome"
         app:showAsAction="collapseActionView"
@@ -19,6 +14,11 @@
     <item
         android:id="@+id/action_rideHistory"
         app:showAsAction="collapseActionView"
-        android:title="@string/label_ride_history">
+        android:title="@string/label_rideHistory">
+    </item>
+    <item
+        android:id="@+id/action_logout"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_logout">
     </item>
 </menu>

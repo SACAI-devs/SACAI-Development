@@ -4,40 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".commuter.fragments.CommProfileFrag">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile Fragment" />
-
-
-
+    tools:context=".commuter.fragments.CommProfileFrag" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <!--    TOOLBAR     -->
-
+        <!--TOOLBAR -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/BasicToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:title="@string/app_name"
-            app:navigationIcon="@drawable/ic_back"  />
+            app:navigationIcon="@drawable/ic_back" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
             android:background="@color/white">
+            <!--FORM GROUP-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <!-- FORM GROUP-->
+                <!--FORM LABEL-->
                 <TextView
                     style="@style/TitleTxt"
                     android:layout_width="match_parent"
@@ -45,144 +36,110 @@
                     android:background="@color/teal_100"
                     android:paddingVertical="20dp"
                     android:text="@string/label_editProfile" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:paddingHorizontal="40dp"
                     android:orientation="vertical">
-                    <!-- INPUT FIRST NAME -->
+                    <!--INPUT FIRST NAME-->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_firstName"
-                        android:textColorHint="@color/grey"
-                        >
+                        android:hint="@string/hint_firstName" >
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etFirstname"
                             style="@style/InputTxt"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
                     <!-- INPUT LAST NAME -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_lastName"
-                        android:textColorHint="@color/grey"
-                        >
+                        android:hint="@string/hint_lastName" >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etLastname"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- INPUT USERNAME -->
+                    <!--INPUT USERNAME -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_userName"
-                        android:textColorHint="@color/grey"
-                        >
+                        android:hint="@string/hint_userName" >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etUsername"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-
-                            />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <LinearLayout
+                    <!--INPUT EMAIL-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/BlockedInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
-                        <!-- INPUT EMAIL -->
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/BasicInput"
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_email" >
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etEmail"
+                            style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="5dp"
-                            android:hint="@string/hint_email"
-                            android:textColorHint="@color/grey"
-                            >
-                            <com.google.android.material.textfield.TextInputEditText
-                                style="@style/InputTxt"
-                                android:id="@+id/etEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="textEmailAddress"
-                                />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </LinearLayout>
-
-                    <!-- INPUT HOME ADDRESS -->
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:inputType="textEmailAddress" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <!--INPUT HOME ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_homeAddress"
-                        android:textColorHint="@color/grey"
-                        >
+                        android:hint="@string/hint_homeAddress" >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etHomeAddress"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress"
-                            />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- INPUT WORK ADDRESS -->
+                    <!--INPUT WORK ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/BasicInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_workAddress"
-                        android:textColorHint="@color/grey"
-                        >
+                        android:hint="@string/hint_workAddress" >
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/InputTxt"
                             android:id="@+id/etWorkAddress"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress"
-                            />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!--    NEEDS ASSESSMENT-->
+                    <!--NEEDS ASSESSMENT-->
                     <TextView
                         style="@style/SubheadingTxt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
-                        android:text="@string/label_needs"
-                        />
-
-                    <!--    MOBILITY IMPAIRMENT-->
+                        android:text="@string/label_needs" />
+                    <!--MOBILITY IMPAIRMENT-->
                     <CheckBox
                         style="@style/Checkbox"
                         android:id="@+id/cbMobility"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
-                        android:text="@string/label_mobility"/>
-
-                    <!--    AUDITORY IMPAIRMENT-->
+                        android:text="@string/label_mobility" />
+                    <!--AUDITORY IMPAIRMENT-->
                     <CheckBox
                         style="@style/Checkbox"
                         android:id="@+id/cbAuditory"
@@ -190,28 +147,34 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
                         android:text="@string/label_auditory" />
-
-                    <!--    WHEELCHAIR NEED-->
+                    <!--WHEELCHAIR NEED-->
                     <CheckBox
                         style="@style/Checkbox"
                         android:id="@+id/cbWheelchair"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
-                        android:text="@string/label_wheelchair"
-                        />
+                        android:text="@string/label_wheelchair" />
 
-                    <!-- BUTTON SAVE CHANGES -->
+                    <!--UPDATE EMAIL BUTTON-->
+                    <Button
+                        style="@style/OutlineBtn"
+                        android:id="@+id/btnUpdateEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/label_update_email" />
+                    <!--SAVE BUTTON-->
                     <Button
                         style="@style/PrimaryBtn"
                         android:id="@+id/btnSave"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="30dp"
-                        android:layout_marginHorizontal="60dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginHorizontal="20dp"
                         android:text="@string/label_save" />
                 </LinearLayout>
-
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

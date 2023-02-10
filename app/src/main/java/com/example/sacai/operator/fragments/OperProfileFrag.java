@@ -51,14 +51,12 @@ public class OperProfileFrag extends Fragment {
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        binding.etEmail.setFocusableInTouchMode(false);
-        binding.etEmail.setFocusable(false);
 
         // Read data and display
         readData(currentUser.getUid());
 
         // User re-authentication to change email
-        binding.etEmail.setOnClickListener(new View.OnClickListener() {
+        binding.btnUpdateEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showUpdateEmail();

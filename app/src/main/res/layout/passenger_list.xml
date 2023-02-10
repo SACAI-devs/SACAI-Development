@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" >
     <androidx.cardview.widget.CardView
         style="@style/RoundedCard"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal" >
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="14dp" >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,40 +25,41 @@
                 android:contentDescription="@string/desc_profilePic" />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginHorizontal="20dp" >
                 <!--USERNAME PLACEHOLDER-->
                 <TextView
                     android:id="@+id/tvUsername"
-                    style="@style/BodyTxt"
+                    style="@style/EmphasizedTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="4dp"
                     android:text="jdelacruz" />
                 <!--NEEDS LIST-->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerNeeds"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="12dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                 <!--SOURCE PLACEHOLDER-->
                 <TextView
                     android:id="@+id/tvSource"
+                    style="@style/BodyTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="2dp"
                     android:drawableLeft="@drawable/ic_source"
                     android:drawablePadding="5dp"
                     android:text="Source" />
                 <!--DESTINATION PLACEHOLDER-->
                 <TextView
                     android:id="@+id/tvDestination"
+                    style="@style/BodyTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:drawableLeft="@drawable/ic_destination"
                     android:drawablePadding="5dp"
                     android:text="Destination" />
