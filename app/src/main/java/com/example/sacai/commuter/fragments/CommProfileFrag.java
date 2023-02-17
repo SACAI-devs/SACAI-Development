@@ -56,10 +56,6 @@ public class CommProfileFrag extends Fragment {
         // Read user data and display
         readData(currentUser.getUid());
 
-        // !!!TEMPORARY: Disables email editing
-//        binding.etEmail.setFocusableInTouchMode(false);
-//        binding.etEmail.setFocusable(false);
-
         // Syncs Mobility Impairment when Wheelchair User is checked
         binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,9 +172,6 @@ public class CommProfileFrag extends Fragment {
 
         // Check if required inputs are empty
         if (firstname.isEmpty() || lastname.isEmpty()) {
-//            viewModel.setData(false);
-//            viewModel.setMsg(getString(R.string.err_emptyRequiredFields));
-
             Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
             if (firstname.isEmpty()) {
                 binding.etFirstname.setError(getString(R.string.err_fieldRequired));
@@ -202,7 +195,7 @@ public class CommProfileFrag extends Fragment {
                 binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
                 binding.etUsername.requestFocus();
             }
-        }else if (mobility == false && auditory == false){
+        }else if (mobility == false && auditory == false) {
             Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         } else {
             // Maps the variables to the nodes where values should be stored

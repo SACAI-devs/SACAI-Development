@@ -41,6 +41,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     View mView;
 
+
     // Components
     AutoCompleteTextView routeSelects;
     String routeIDWithNoBrackets;
@@ -77,10 +78,9 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-//        Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_oper_map, container, false);
-
-        return mView;
+    // Inflate the layout for this fragment
+    mView = inflater.inflate(R.layout.fragment_oper_map, container, false);
+    return mView;
     }
 
     // Should have the same MAP ID as XML file
@@ -130,11 +130,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
         googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
 
-        //=============Testing==============//
-        // TODO: RETRIEVE STATIONS FROM DATABASE AND MAP THEM TO MARKERS TO DISPLAY ON MAPS
-        /* googleMap.addMarker(new MarkerOptions().position(new LatLng(14.574970139259474, 121.09785961494917)).title("Rainforest Park"));
-        CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
-        googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark))); */
     }
 
     private void generateRouteMarkers() {
@@ -192,6 +187,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+
     // First, get the Route again that is equivalent to the option that the user chose [Routes node]
     // Then, acquire the bus stop info from the database by matching the routeName [Routes node]
     // Next, get the bus stop info by referring to the [Bus_Stop node] then matching the busStopName
@@ -238,73 +235,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(getActivity(), "Couldn't retrieve bus stops. Please refresh.", Toast.LENGTH_SHORT).show();
             }
         });
-        /*DatabaseReference databaseReferenceStations = FirebaseDatabase.getInstance().getReference("Bus_Stop");
-        // Match Bus_Stop and Routes busStopName then
-        databaseReferenceStations.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.i("DatabaseRunning","Going through Bus_Stop tree");
-                stationInBusStopID.clear();
-                matchBusStopName.clear();
-                latitude.clear();
-                longitude.clear();
-                for (DataSnapshot dsp: dataSnapshot.getChildren()) {
-              *//*      *//*//*//* Get data from each node
-                    String busstopid = dsp.getKey();
-                    String busstopname = dsp.child("busStopName").getValue().toString();
 
-                    boolean test = stationInRoutesName.contains(busstopname);
-
-                    if (test) {
-                        try {
-                            Double lat = Double.parseDouble(dsp.child("center_lat").getValue().toString());
-                            Double lon = Double.parseDouble(dsp.child("center_long").getValue().toString());
-                            Log.i("DBValue",busstopname);
-                            Log.i("DBValue",lat.toString());
-                            Log.i("DBValue",lon.toString());
-                            stationInBusStopID.add(busstopid);
-                            matchBusStopName.add(busstopname);
-                            latitude.add(lat);
-                            longitude.add(lon);
-                        }
-                        catch (Exception e) {
-                            Log.i("Skipped","No Output");
-                        }
-                    }*//*
-                    // Get data from each node
-                    String busstopid = dsp.getKey();
-                    String busstopname = "";
-                    Double lat = 0.0;
-                    Double lon = 0.0;
-
-                    if (dsp.child("busStopName").exists()) {
-                        busstopname = dsp.child("busStopName").getValue().toString();
-                    }
-
-                    if (dsp.child("center_lat").exists() && dsp.child("center_long").exists()) {
-                        lat = Double.parseDouble(dsp.child("center_lat").getValue().toString());
-                        lon = Double.parseDouble(dsp.child("center_long").getValue().toString());
-                    }
-
-                    boolean test = stationInRoutesName.contains(busstopname);
-
-                    if (test) {
-                        try {
-                            stationInBusStopID.add(busstopid);
-                            matchBusStopName.add(busstopname);
-                            latitude.add(lat);
-                            longitude.add(lon);
-                        } catch (Exception e) {
-                            // handle the exception here
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "Couldn't retrieve bus stops. Please refresh.", Toast.LENGTH_SHORT).show();
-            }
-        });*/
     }
 
     private void acquireBusStopsUnderRoutes() {

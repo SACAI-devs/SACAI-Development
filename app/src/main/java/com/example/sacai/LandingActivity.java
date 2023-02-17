@@ -2,9 +2,15 @@ package com.example.sacai;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,7 +28,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class LandingActivity extends AppCompatActivity {
+
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String BACKGROUND_LOCATION = Manifest.permission.ACCESS_BACKGROUND_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 2223;
+    private Boolean mLocationPermissionsGranted = false;
+    private Boolean mBackgroundPermissionsGranted = false;
+
 
     // Bind activity to layout
     ActivityLandingBinding binding;
@@ -34,18 +49,29 @@ public class LandingActivity extends AppCompatActivity {
         binding = ActivityLandingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         // Initialize Firebase Auth and check if user is logged in
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            showMainActivity(currentUser.getUid());
+            getLocationPermission();
+            if (mLocationPermissionsGranted && mBackgroundPermissionsGranted) {
+                showMainActivity(currentUser.getUid());
+            }
+
         }
+
+
+
 
         // Show LOGIN PAGE when btn is clicked
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLogin();
+                getLocationPermission();
+                if (mLocationPermissionsGranted && mBackgroundPermissionsGranted) {
+                    showLogin();
+                }
             }
         });
 
@@ -53,7 +79,10 @@ public class LandingActivity extends AppCompatActivity {
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSignup();
+                getLocationPermission();
+                if (mLocationPermissionsGranted && mBackgroundPermissionsGranted) {
+                    showSignup();
+                }
             }
         });
 
@@ -61,7 +90,10 @@ public class LandingActivity extends AppCompatActivity {
         binding.btnSwitchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOperLogin();
+                getLocationPermission();
+                if (mLocationPermissionsGranted && mBackgroundPermissionsGranted) {
+                    showOperLogin();
+                }
             }
         });
     }
@@ -142,7 +174,78 @@ public class LandingActivity extends AppCompatActivity {
             finish();
         }
     }
+
     private void logout() {
         FirebaseAuth.getInstance().signOut();
     }
+
+    // Request for location permissions
+    private void getLocationPermission() {
+        Log.i("ClassCalled", "getLocationPermission: is running");
+        String TAG = "mainActivity_getLocationPermission";
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
+
+        // FOR FINE LOCATION ACCESS PERMISSIONS
+        if ((ContextCompat.checkSelfPermission(Objects.requireNonNull(this),
+                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || ContextCompat.checkSelfPermission(this, BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            mLocationPermissionsGranted = true;
+            mBackgroundPermissionsGranted = true;
+            // sets location permissions as granted
+
+            Log.i(TAG, "mLocationPermissionGranted: true");
+            Log.i(TAG, "mBackgroundPermissionsGranted: true");
+        }else {
+            // Ask for permission
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show user a dialog on why the permission is needed
+                // then ask for the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                Toast.makeText(this, "SACAI needs fine locations permissions to work. Enable them in your settings.", Toast.LENGTH_LONG).show();
+
+                Log.i("getLocationPermission", "displayRationale: executed");
+
+            } else {
+                // no dialogue explanation needed
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+
+                Log.i("getLocationPermission", "noRationale: executed");
+                Toast.makeText(this, "SACAI needs fine locations permissions to work. Enable them in your settings.", Toast.LENGTH_LONG).show();
+
+            }
+
+            // FOR BACKGROUND LOCATION ACCESS PERMISSIONS
+            // Check if FINE location permission is GRANTED
+            if ((ContextCompat.checkSelfPermission(Objects.requireNonNull(this),
+                    BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                mBackgroundPermissionsGranted = true;
+                Log.i("getLocationPermission", "backgroundPermissionsCheck: background location access granted");
+            }else {
+
+                // Ask for permission
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // Show user a dialog on why the permission is needed
+                    // then ask for the permission
+
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                    Toast.makeText(this, "SACAI needs background locations access permissions to work. Enable them in your settings.", Toast.LENGTH_LONG).show();
+
+
+                    Log.i("getLocationPermission", "displayRationale: executed");
+
+
+                } else {
+                    // no dialogue explanation needed
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+
+                    Log.i("getLocationPermission", "backgroundAccess.noRationale: executed");
+                    Toast.makeText(this, "SACAI needs background locations access permissions to work. Enable them in your settings.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+    }
+
+
 }
+

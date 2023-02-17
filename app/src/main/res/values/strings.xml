@@ -87,4 +87,8 @@
     <string name="err_couldntRetrieveStops">Couldn\'t retrieve bus stops. Please refresh.</string>
     <string name="label_rideEnded">Ride Ended</string>
     <string name="desc_map">Google Maps</string>
+    <string name="label_ride_history">Ride History</string>
+    <string name="geofence_transition_entered">Geofence entered.</string>
+    <string name="geofence_transition_dwell">Dwelling in geofence.</string>
+    <string name="geofence_unknown_transition">Geofence transition unknown.</string>
 </resources>

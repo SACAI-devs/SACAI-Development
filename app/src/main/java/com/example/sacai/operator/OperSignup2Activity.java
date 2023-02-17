@@ -70,7 +70,6 @@ public class OperSignup2Activity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     private void showPrevious() {

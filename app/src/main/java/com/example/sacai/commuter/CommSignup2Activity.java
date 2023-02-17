@@ -135,7 +135,7 @@ public class CommSignup2Activity extends AppCompatActivity {
                                                 // If USER CREATION is SUCCESSFUL then it sends a verification email
                                                 if (task.isSuccessful()) {
                                                         // Adds a new commuter record
-                                                        Commuter commuter = new Commuter(firstname, lastname, email, "", mobility, auditory, wheelchair,"", "", currentUser.getUid());
+                                                        Commuter commuter = new Commuter(firstname, lastname, email,firstname+lastname, mobility, auditory, wheelchair,"", "", currentUser.getUid());
                                                         daoCommuter.add(commuter);
                                                         sendVerificationEmail(email, password);
                                                         Toast.makeText(CommSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
