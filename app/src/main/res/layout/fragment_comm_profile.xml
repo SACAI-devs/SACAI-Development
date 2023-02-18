@@ -99,29 +99,32 @@
                     </com.google.android.material.textfield.TextInputLayout>
                     <!--INPUT HOME ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/BasicInput"
+                        android:id="@+id/containerSetHomeAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_homeAddress" >
-                        <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
+                        android:hint="@string/hint_homeAddress"
+                        android:textColorHint="@color/grey"
+                        style="@style/AutoCompleteDropDown" >
+                        <AutoCompleteTextView
                             android:id="@+id/etHomeAddress"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <!--INPUT WORK ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/BasicInput"
+                        android:id="@+id/containerSetDestinationAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_workAddress" >
-                        <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
+                        android:hint="@string/hint_workAddress"
+                        android:textColorHint="@color/grey"
+                        style="@style/AutoCompleteDropDown" >
+                        <AutoCompleteTextView
                             android:id="@+id/etWorkAddress"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!--NEEDS ASSESSMENT-->

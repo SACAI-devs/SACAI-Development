@@ -7,10 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".commuter.fragments.CommMapFrag"
     >
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/ochre_100">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/commuter_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_map" />
+
         <!--ROUTE SELECTION MENU-->
         <androidx.cardview.widget.CardView
             style="@style/RoundedCard"
@@ -22,11 +31,13 @@
             android:layout_marginBottom="50dp">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="20dp"
                 android:orientation="vertical"
                 android:background="@color/teal_100">
                 <!-- INPUT ORIGIN -->
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/containerSelectOrigin"
                     android:layout_width="match_parent"
@@ -40,12 +51,12 @@
                         android:layout_height="wrap_content"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <!--INPUT LOCATION-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/containerSelectDestination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:hint="@string/hint_destination"
                     android:textColorHint="@color/grey"
                     style="@style/AutoCompleteDropDown" >
@@ -56,19 +67,41 @@
                         android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- SET DESTINATION TO SAVED LOCATIONS -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/etTest"/>
+                    android:gravity="center"
+                    >
+                    <!-- SET HOME -->
+                    <Button
+                        android:id="@+id/btnSetHome"
+                        style="@style/PrimaryBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginHorizontal="5dp"
+                        android:textSize="12dp"
+                        android:text="@string/label_home"/>
+                    <!--SET WORK-->
+                    <Button
+                        android:id="@+id/btnSetWork"
+                        style="@style/PrimaryBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="2dp"
+                        android:textSize="12dp"
+                        android:text="@string/label_work"/>
+                </LinearLayout>
 
-                <!--GO NOW BUTTON-->
+                <!--PARA SASAKAY BUTTON-->
                 <Button
                     android:id="@+id/btnSetRoute"
                     style="@style/PrimaryBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="@string/label_goNow"/>
+                    android:text="@string/label_PARA_SASAKAY"/>
+
                 <!--SUCCESS BUTTON-->
                 <Button
                     android:id="@+id/btnDisembarked"
@@ -79,12 +112,6 @@
                     android:text="@string/label_rideEnded"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
         <!--MAP CONTAINER-->
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/commuter_map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/desc_map" />
     </RelativeLayout>
 </FrameLayout>

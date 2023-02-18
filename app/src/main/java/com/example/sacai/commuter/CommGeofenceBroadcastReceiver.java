@@ -1,16 +1,15 @@
-package com.example.sacai;
+package com.example.sacai.commuter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Commuter_in_Geofence;
+import com.example.sacai.dataclasses.Commuter_Shared;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,10 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.List;
 
-public class CommuterGeofenceBroadcastReceiver extends BroadcastReceiver {
+public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String uid = user.getUid();
-    Commuter_in_Geofence commuter = new Commuter_in_Geofence();
+    Commuter_Shared commuter = new Commuter_Shared();
 
 
 

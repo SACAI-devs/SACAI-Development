@@ -7,7 +7,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.sacai.CommuterGeofenceBroadcastReceiver;
+import com.example.sacai.commuter.CommGeofenceBroadcastReceiver;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
@@ -59,7 +59,7 @@ public class GeofenceHelper extends ContextWrapper {
         }
 
         // We can get the same pending intent for adding and removing geofences
-        Intent intent = new Intent(this, CommuterGeofenceBroadcastReceiver.class);
+        Intent intent = new Intent(this, CommGeofenceBroadcastReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 2607, intent, PendingIntent.FLAG_MUTABLE);
         return pendingIntent;
     }

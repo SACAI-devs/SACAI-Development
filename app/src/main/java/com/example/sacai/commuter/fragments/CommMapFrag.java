@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.sacai.R;
 import com.example.sacai.dataclasses.Commuter;
+import com.example.sacai.dataclasses.Commuter_Shared;
 import com.example.sacai.dataclasses.Trip;
 import com.example.sacai.operator.GeofenceHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -62,6 +63,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,11 +85,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private GeofenceHelper geofenceHelper;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 10002;
 
-
-
     // Components
-    Button btnSetRoute;
-    Button btnDisembarked;
+    Button btnSetRoute, btnDisembarked, btnSetHome, btnSetWork;
     AutoCompleteTextView etOrigin, etDestination;
     TextInputLayout selectOrigin, selectDestination;
     Marker originMark;
@@ -106,6 +105,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     String chosenOrigin;
     String chosenDestination;
     String currentRoute;
+    ArrayList<String> temp = new ArrayList<>();
 
     //Polyline
     String encodedPolyline = "";
@@ -113,6 +113,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     Polyline polyInit;
     List<Polyline> testPoly = new ArrayList<Polyline>();
 
+    //TODO tidy this up better
+    boolean wheelchair_user;
+    Commuter_Shared commuter = new Commuter_Shared();
     // CONSTANTS
     private int MAP_ZOOM = 20;
     private float GEOFENCE_RADIUS = 100; // TODO: QUERY FROM FIREBASE
@@ -148,6 +151,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         // Bind components to layout
         btnSetRoute =  mView.findViewById(R.id.btnSetRoute);
         btnDisembarked =  mView.findViewById(R.id.btnDisembarked);
+        btnSetHome = mView.findViewById(R.id.btnSetHome);
+        btnSetWork = mView.findViewById(R.id.btnSetWork);
         etOrigin =  mView.findViewById(R.id.etPickup);
         etDestination =  mView.findViewById(R.id.etDropoff);
         selectOrigin =  mView.findViewById(R.id.containerSelectOrigin);
@@ -174,11 +179,49 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        // set origin to home address
+        btnSetHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (etOrigin.isFocused()) {
+                    setOriginHome();
+                } else if (etDestination.isFocused()) {
+                    if(etOrigin.getText().toString().isEmpty()) {
+                        Toast.makeText(getActivity(), "Destination is not within route of selected origin or origin is not set.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        setDestinationHome();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Select between origin or destination before setting your home or work address", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnSetWork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (etOrigin.isFocused()) {
+                    setOriginWork();
+                } else if (etDestination.isFocused()) {
+                    if(etOrigin.getText().toString().isEmpty()) {
+                        Toast.makeText(getActivity(), "Destination is not within route of selected origin or origin is not set.", Toast.LENGTH_SHORT).show();
+                    } else {
+                            setDestinationWork();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Select between origin or destination before setting your home or work address", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
         // TODO: Move to when the commuter is already in a ride
         btnDisembarked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveRideHistory();
+
 
                 // Configure UI to enable origin and destination selections again
                 etOrigin.setEnabled(true);
@@ -199,8 +242,155 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 selectDestination.setFocusableInTouchMode(true);
             }
         });
+
     }
 
+//     retrieve the user's saved home address
+    private void setOriginHome() {
+        String TAG = "setOriginHome";
+        Log.i(TAG, "setOriginHome: is running");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        // Get user information from firebase
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+
+        Log.i(TAG, "setOriginHome: dbReference " + databaseReference);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String home = dsp.child("homeAddress").getValue().toString();
+                            Log.i(TAG, "onDataChange: homeAddress " + home);
+                            etOrigin.setText(home);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+    }
+
+    private void setOriginWork() {
+        String TAG = "setOriginWork";
+        Log.i("ClassCalled", "setOriginWork: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "setOriginWork: dbReference " + databaseReference);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String work = dsp.child("workAddress").getValue().toString();
+                            Log.i(TAG, "onDataChange: workAddress" + work);
+                            etOrigin.setText(work);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+
+        Log.i(TAG, "setOriginWork: work is set");
+    }
+
+    private void setDestinationWork() {
+        String TAG = "setDestination";
+        Log.i("ClassCalled", "setDestination: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        temp.clear();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "setDestinationWork: dbReference " + databaseReference);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String work = dsp.child("workAddress").getValue().toString();
+                            for (int i = 0; i < items.length; i++) {
+                                if (work.equals(items[i])) {
+                                    etDestination.setText(work);
+                                    temp.add(work);
+                                }
+                                Log.i(TAG, "onDataChange: work " + work);
+                                Log.i(TAG, "onDataChange: items " + items[i]);
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "onDataChange: exception ", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+        Log.i(TAG, "setOriginWork: home is set");
+    }
+
+    private void setDestinationHome() {
+        String TAG = "setDestinationHome";
+        Log.i("ClassCalled", "setDestinationHome: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        temp.clear();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean inRoute =true;
+
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String home = dsp.child("homeAddress").getValue().toString();
+                            for (int i = 0 ; i < items.length; i++) {
+                                if (home.equals(items[i])) {
+                                    etDestination. setText(home);
+                                    temp.add(home);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "onDataChange: exception ", e);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: cancel " + error);
+            }
+        });
+        Log.i(TAG, "setDestinationHome: home destination set");
+    }
 
     // Custom map logic and configurations
     @SuppressLint("MissingPermission")
@@ -238,7 +428,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 String station = parent.getItemAtPosition(position).toString();
                 etOrigin.setText(station);
 
-               // If there is an existing ORIGIN marker on the map then remove that marker
+                Toast.makeText(getActivity(), "Make sure you are near the bus stop.", Toast.LENGTH_SHORT).show();
+
+                // If there is an existing ORIGIN marker on the map then remove that marker
                 try {
                     originMark.remove();
                     Log.i("onMapReady", "originMark.remove: successful");
@@ -321,7 +513,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private void addGeofence(String geofence_id, LatLng latLng, float radius) {
         Log.i("ClassCalled", "addGeofence: is running");
-
 
         Geofence geofence = geofenceHelper.getGeofence(geofence_id, latLng, radius,
                 Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
@@ -686,7 +877,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         // Move the camera to new midpoint location
         CameraPosition midpoint = CameraPosition.builder()
                 .target(new LatLng(midLat, midLong))
-                .zoom(15).bearing(0).tilt(0).build();
+                .zoom(13).bearing(0).tilt(0).build();
         mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
         Log.i("findMidpoint", "moveCamera: successful");
 
@@ -880,5 +1071,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+
 
 }

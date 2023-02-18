@@ -8,9 +8,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.example.sacai.R;
@@ -23,16 +27,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class CommProfileFrag extends Fragment {
 
     // Bind fragment to layout
     FragmentCommProfileBinding binding;
+
+    String[] items;
+    ArrayAdapter<String> homeAddress;                    // For the drop down
+    ArrayAdapter<String> workAddress;               // For the drop down
+    ArrayList<String> stopName = new ArrayList<>();     // Store station names here
+    String chosenHomeAddress;
+    String chosenWorkAddress;
+    View mView;
+    AutoCompleteTextView etHomeAddress,etWorkAddress;
+
 
 //    CommMainViewModel viewModel;
     @Override
@@ -47,8 +65,6 @@ public class CommProfileFrag extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        viewModel = new ViewModelProvider(requireActivity()).get(CommMainViewModel.class);
-
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -56,6 +72,7 @@ public class CommProfileFrag extends Fragment {
         // Read user data and display
         readData(currentUser.getUid());
 
+        getStations();
         // Syncs Mobility Impairment when Wheelchair User is checked
         binding.cbWheelchair.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +85,6 @@ public class CommProfileFrag extends Fragment {
                 }
             }
         });
-
         binding.cbMobility.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +105,25 @@ public class CommProfileFrag extends Fragment {
             }
         });
 
+        // Loads selection items into home and work address drop downs
+        binding.etHomeAddress.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                getStations();
+                String station = parent.getItemAtPosition(position).toString();
+                binding.etHomeAddress.setText(station);
+            }
+        });
+
+        binding.etWorkAddress.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                getStations();
+                String station = parent.getItemAtPosition(position).toString();
+                binding.etWorkAddress.setText(station);
+            }
+        });
+
         // Save changes to profile when btn is clicked
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +136,51 @@ public class CommProfileFrag extends Fragment {
     private void showUpdateEmail() {
         Intent intent = new Intent(getActivity(), CommUpdateEmailActivity.class);
         startActivity(intent);
+    }
+
+    // Function to get all the stations to put in the array list
+    private void getStations() {
+        Log.i("ClassCalled", "getStations is running");
+        String TAG = "getStations";
+
+        // Get database reference to retrieve bus stops
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                stopName.clear();
+
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        String name = dsp.child("busStopName").getValue().toString();
+                        Log.i(TAG, "onDataChange: busStopName" + name);
+                        stopName.add(name);
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+                }
+
+                // Convert arraylist to a string[]
+                items  = new String[stopName.size()];
+                for (int i = 0; i < stopName.size(); i++) {
+                    items[i] = stopName.get(i);
+                    Log.i(TAG, "onDataChange: stopName " + stopName.get(i));
+                }
+                Log.i(TAG, "onDataChange: items " + items);
+
+                homeAddress = new ArrayAdapter<>(getActivity(), R.layout.dropdown_list, items);
+                binding.etHomeAddress.setAdapter(homeAddress);
+
+                workAddress = new ArrayAdapter<>(getActivity(), R.layout.dropdown_list, items);
+                binding.etWorkAddress.setAdapter(workAddress);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
     }
 
     private void readData(String uid) {
@@ -162,9 +242,8 @@ public class CommProfileFrag extends Fragment {
         String username = binding.etUsername.getText().toString().trim();
         String firstname = binding.etFirstname.getText().toString().trim();
         String lastname = binding.etLastname.getText().toString().trim();
-        String home = binding.etHomeAddress.getText().toString().trim();
-        String work = binding.etWorkAddress.getText().toString().trim();
-        String email = binding.etEmail.getText().toString().trim();
+        String home = binding.etHomeAddress.getText().toString();
+        String work = binding.etWorkAddress.getText().toString();
 
         boolean mobility = binding.cbMobility.isChecked();
         boolean auditory = binding.cbAuditory.isChecked();
@@ -195,7 +274,13 @@ public class CommProfileFrag extends Fragment {
                 binding.etUsername.setError(getString(R.string.err_invalidCharacterInput));
                 binding.etUsername.requestFocus();
             }
-        }else if (mobility == false && auditory == false) {
+        } else if (binding.etHomeAddress.equals(binding.etWorkAddress)) {
+            binding.etHomeAddress.setError("Can't be the same as work address");
+            binding.etWorkAddress.setError("Can't be the same as home address");
+
+            binding.etHomeAddress.requestFocus();
+            binding.etWorkAddress.requestFocus();
+        } else if (mobility == false && auditory == false) {
             Toast.makeText(getActivity(), R.string.err_emptyRequiredFields, Toast.LENGTH_SHORT).show();
         } else {
             // Maps the variables to the nodes where values should be stored
@@ -215,10 +300,8 @@ public class CommProfileFrag extends Fragment {
                 public void onComplete(@NonNull Task task) {
                     // Signals host activity for an appropriate toast message
                     if (task.isSuccessful()) {
-//                        viewModel.setData(true);
                         Toast.makeText(getActivity(), R.string.msg_success, Toast.LENGTH_SHORT).show();
                     } else {
-//                        viewModel.setData(false);
                         Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
                     }
                 }

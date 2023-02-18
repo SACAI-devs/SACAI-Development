@@ -91,4 +91,7 @@
     <string name="geofence_transition_entered">Geofence entered.</string>
     <string name="geofence_transition_dwell">Dwelling in geofence.</string>
     <string name="geofence_unknown_transition">Geofence transition unknown.</string>
+    <string name="msg_makes_sure_you_are_near_a_bus_stop">Make sure you are near the bus stop.</string>
+    <string name="label_PARA_SASAKAY">PARA Sasakay</string>
+    <string name="label_work">Work</string>
 </resources>

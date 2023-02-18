@@ -54,7 +54,7 @@ public class CommRideHistoryFrag extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        trip = new ArrayList<Trip>();
+        trip = new ArrayList<>();
 
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -80,7 +80,7 @@ public class CommRideHistoryFrag extends Fragment {
                 trip = new ArrayList<Trip>();
                 for (DataSnapshot dsp: snapshot.getChildren()) {
                     try {
-                        id = "Trip Tracking ID" + dsp.getKey();
+                        id = "Trip Tracking ID " + dsp.getKey();
                         date = String.valueOf(dsp.child("date").getValue());
                         time_started = "Started: " + dsp.child("time_started").getValue();
                         time_ended = "Ended: " + dsp.child("time_ended").getValue();
