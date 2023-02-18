@@ -46,6 +46,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,11 +60,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.PolyUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -101,7 +105,13 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     // Store choices
     String chosenOrigin;
     String chosenDestination;
+    String currentRoute;
 
+    //Polyline
+    String encodedPolyline = "";
+    List<LatLng> decodedPolyline;
+    Polyline polyInit;
+    List<Polyline> testPoly = new ArrayList<Polyline>();
 
     // CONSTANTS
     private int MAP_ZOOM = 20;
@@ -256,6 +266,11 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         getStationsInRoute(chosenOrigin);
                     }
                 }
+                //Activate this function if Commuter has input in both Origin and Destination
+                if (chosenDestination != "" && chosenOrigin != "") {
+                    //Identify the route for drawing route encoded polyline
+                    findRoute();
+                }
             }
         });
         // Moves camera to where the station is at
@@ -292,6 +307,11 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         // Queries stations in the route/s the origin stop is in
                         getStationsInRoute(chosenOrigin);
                     }
+                }
+                //Activate this function if Commuter has input in both Origin and Destination
+                if (chosenDestination != "" && chosenOrigin != "") {
+                    //Identify the route for drawing route encoded polyline
+                    findRoute();
                 }
             }
         });
@@ -755,38 +775,110 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 Log.i(TAG, "onCancelled: error " + error);
             }
         });
+    }
 
-//        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                String origin;
-//                String destination;
-//
-//                if (task.isComplete()) {
-//                Log.i(TAG, "onComplete: is running");
-//                    if (task.isSuccessful()) {
-//                        for (DataSnapshot dsp : task.getResult().getChildren()) {
-//                            Log.i(TAG, "onComplete: looping through results");
-//                            if (dsp.child("busStopName").getValue() == chosenOrigin) {
-//                                origin = String.valueOf(dsp.child("busStopName").getValue());
-//                                Log.i(TAG, "onComplete.origin: " + origin);
-//                            } else if (dsp.child("busStopName").getValue() == chosenDestination) {
-//                                destination = String.valueOf(dsp.child("busStopName").getValue());
-//                                Log.i(TAG, "onComplete.destination: " + destination);
-//                            }
-//                        }
-//                    } else {
-//                        Log.i(TAG, "onComplete: unsuccessful");
-//                    }
-//                } else {
-//                    Log.i(TAG, "onComplete: not completed");
-//                }
-//                Log.i(TAG, "tryAddingGeofence: trying...");
-//
-//            }
-//        });
+    private void findRoute() {
+        //Refer to the Route_Drawing branch
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Route_Drawing");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Get data under child
+                for (DataSnapshot getRouteSnapshot: dataSnapshot.getChildren()) {
+                    String startBusDb = etOrigin.getText().toString();
+                    String endBusDb = "";
+                    currentRoute = "";
 
+                    for (DataSnapshot getBusStopInfoSnapshot: getRouteSnapshot.getChildren()) {
+                        if (getBusStopInfoSnapshot.child("startBusStopName").getValue().toString().equals(startBusDb)) {
 
+                            endBusDb = getBusStopInfoSnapshot.child("endBusStopName").getValue().toString();
+
+                            if (!startBusDb.equals(etDestination.getText().toString())) {
+                                startBusDb = endBusDb;
+                            }
+                            if (startBusDb.equals(etDestination.getText().toString())) {
+                                currentRoute = getRouteSnapshot.getKey();
+                                drawRoutes();
+                                break; //stop query database once Route has been acquired
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Couldn't retrieve routes. Please refresh.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void drawRoutes() {
+        //Refer to the Route_Drawing branch
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Route_Drawing").child(currentRoute);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Get data under child
+                String startBusDb = etOrigin.getText().toString();
+                String endBusDb = "";
+
+                //Remove existing polylines
+                try {
+                    for(Polyline line : testPoly)
+                    {
+                        line.remove();
+                    }
+                    testPoly.clear();
+                }
+                catch (Exception e) {
+
+                }
+
+                for (DataSnapshot getBusStopInfoSnapshot: dataSnapshot.getChildren()) {
+                    if (getBusStopInfoSnapshot.child("startBusStopName").getValue().toString().equals(startBusDb)) {
+                        // This polyline color is currently black
+                        endBusDb = getBusStopInfoSnapshot.child("endBusStopName").getValue().toString();
+
+                        //Loop through dB branches until it matches the text on the Destination
+                        if (!startBusDb.equals(etDestination.getText().toString())) {
+                            startBusDb = endBusDb;
+
+                            encodedPolyline = getBusStopInfoSnapshot.child("polyline").getValue().toString();
+                            decodedPolyline = PolyUtil.decode(encodedPolyline);
+
+                            try {
+                                polyInit = mGoogleMap.addPolyline(new PolylineOptions().addAll(decodedPolyline));
+                                testPoly.add(polyInit);
+                            }
+                            catch (Exception e) {
+                                //should definitely add something here for debugging
+                            }
+
+                        }
+                        if (startBusDb.equals(etDestination.getText().toString())) {
+                            encodedPolyline = getBusStopInfoSnapshot.child("polyline").getValue().toString();
+                            decodedPolyline = PolyUtil.decode(encodedPolyline);
+
+                            try {
+                                polyInit = mGoogleMap.addPolyline(new PolylineOptions().addAll(decodedPolyline));
+                                testPoly.add(polyInit);
+                            }
+                            catch (Exception e) {
+                                //should def add something here for debugging
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Couldn't retrieve polylines. Please refresh.", Toast.LENGTH_SHORT).show();
+                throw error.toException();
+            }
+        });
     }
 
 }

@@ -79,25 +79,28 @@ public class CommRideHistoryFrag extends Fragment {
                 String operatorid;
                 trip = new ArrayList<Trip>();
                 for (DataSnapshot dsp: snapshot.getChildren()) {
-                    id = "Trip Tracking ID" + dsp.getKey();
-                    date = String.valueOf(dsp.child("date").getValue());
-                    time_started = "Started: " + dsp.child("time_started").getValue();
-                    time_ended = "Ended: " + dsp.child("time_ended").getValue();
-                    origin = String.valueOf(dsp.child("pickup_station").getValue());
-                    destination = String.valueOf(dsp.child("dropoff_station").getValue());
-                    operatorid = String.valueOf(dsp.child("operator_id").getValue());
-                    trip.add(new Trip(id, date, time_started, time_ended, origin, destination, operatorid));
-                    rideHistoryAdapter = new RideHistoryAdapter(getActivity(), trip);
+                    try {
+                        id = "Trip Tracking ID" + dsp.getKey();
+                        date = String.valueOf(dsp.child("date").getValue());
+                        time_started = "Started: " + dsp.child("time_started").getValue();
+                        time_ended = "Ended: " + dsp.child("time_ended").getValue();
+                        origin = String.valueOf(dsp.child("pickup_station").getValue());
+                        destination = String.valueOf(dsp.child("dropoff_station").getValue());
+                        operatorid = String.valueOf(dsp.child("operator_id").getValue());
+                        trip.add(new Trip(id, date, time_started, time_ended, origin, destination, operatorid));
+                        rideHistoryAdapter = new RideHistoryAdapter(getActivity(), trip);
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+
+
                 }
-
-
                 recyclerView.setAdapter(rideHistoryAdapter);
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.i(TAG, "onCancelled: database error " + error);
             }
         });
     }

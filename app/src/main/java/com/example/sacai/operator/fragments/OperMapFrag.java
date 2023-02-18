@@ -27,13 +27,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     // Call variables based on GoogleMaps Documentation
@@ -145,6 +148,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                     .title(stationInBusStopName.get(i))
                     .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
         }
+        drawRoutes();
     }
 
     private void getRoutes() {
@@ -318,6 +322,32 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                     }
                 }
                 generateRouteMarkers();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Couldn't retrieve bus stops. Please refresh.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //Draw routes
+    private void drawRoutes(){
+        // This method gets the route drawings from Firebase
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Route_Drawing").child(selectedRouteName);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Get data under child
+                for (DataSnapshot getRouteDrawingSnapshot: dataSnapshot.getChildren()) {
+                    String encodedPolyline = "";
+
+                    // if test is true
+                    if (getRouteDrawingSnapshot.child("polyline").exists()) {
+                        encodedPolyline = getRouteDrawingSnapshot.child("polyline").getValue().toString();
+                        List<LatLng> decodedPolyline = PolyUtil.decode(encodedPolyline);
+                        mGoogleMap.addPolyline(new PolylineOptions().addAll(decodedPolyline));
+                    }
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
