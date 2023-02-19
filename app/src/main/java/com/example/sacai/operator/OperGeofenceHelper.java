@@ -14,9 +14,9 @@ import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.maps.model.LatLng;
 
-public class GeofenceHelper extends ContextWrapper {
+public class OperGeofenceHelper extends ContextWrapper {
 
-    public GeofenceHelper(Context base) {
+    public OperGeofenceHelper(Context base) {
         super(base);
     }
 
@@ -44,7 +44,7 @@ public class GeofenceHelper extends ContextWrapper {
                 .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
                 .setLoiteringDelay(5000)    // Time delay between determining whether you've entered a geofence to be considered DWELLING in the geofence
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setExpirationDuration(60 * 10)
                 .build();
 
     }
@@ -59,7 +59,7 @@ public class GeofenceHelper extends ContextWrapper {
         }
 
         // We can get the same pending intent for adding and removing geofences
-        Intent intent = new Intent(this, CommGeofenceBroadcastReceiver.class);
+        Intent intent = new Intent(this, OperatorBroadcastReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 2607, intent, PendingIntent.FLAG_MUTABLE);
         return pendingIntent;
     }

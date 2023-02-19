@@ -10,7 +10,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,7 @@ import com.example.sacai.R;
 import com.example.sacai.commuter.CommGeofenceActions;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Trip;
-import com.example.sacai.operator.GeofenceHelper;
+import com.example.sacai.commuter.CommGeofenceHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -82,7 +81,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
     // Global Variables
     private GeofencingClient geofencingClient;
-    private GeofenceHelper geofenceHelper;
+    private CommGeofenceHelper commGeofenceHelper;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 10002;
 
     // Components
@@ -145,8 +144,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         // For geofencing
         geofencingClient = LocationServices.getGeofencingClient(requireActivity()); // TODO: check
+        commGeofenceHelper = new CommGeofenceHelper(getActivity());
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        geofenceHelper = new GeofenceHelper(getActivity());
 
         // Bind components to layout
         btnSetRoute =  mView.findViewById(R.id.btnSetRoute);
@@ -488,6 +487,24 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         checkForOngoingTrip();
 
+
+        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Remove Geofences", "onSuccess: geofences removed");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
+
         mGoogleMap.setMyLocationEnabled(true);  // sets the user location to be enabled
         Log.i("getLocationPermission", "mLocationPermissionGranted: TRUE");
         zoomToUserLocation();   //
@@ -596,23 +613,21 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private void addGeofence(String geofence_id, LatLng latLng, float radius) {
         Log.i("ClassCalled", "addGeofence: is running");
 
-        Geofence geofence = geofenceHelper.getGeofence(geofence_id, latLng, radius,
+        Geofence geofence = commGeofenceHelper.getGeofence(geofence_id, latLng, radius,
                 Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
-        final boolean[] success = {false};
+        GeofencingRequest geofencingRequest = commGeofenceHelper.getGeofencingRequest(geofence);
+        PendingIntent pendingIntent = commGeofenceHelper.getPendingIntent();
 
         geofencingClient.addGeofences(geofencingRequest, pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Log.i("addGeofence", "onSuccess: geofence added");
-                success[0] = true;
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    String errorMessage = geofenceHelper.getErrorString(e);
+                    String errorMessage = commGeofenceHelper.getErrorString(e);
                     Log.i("addGeofence", "onFailure: " + errorMessage);
                 }
         });
@@ -870,7 +885,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        geofencingClient.removeGeofences(geofenceHelper.getPendingIntent())
+        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -988,6 +1003,23 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         String TAG = "tryAddingGeofences";
         Log.i(TAG, "tryAddingGeofence: is running");
 
+        // remove existing geofences
+        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Remove Geofences", "onSuccess: geofences removed");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
 
         // get the list of bus stops available
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
@@ -1161,7 +1193,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private void removeFromCurrentTrip() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
-        geofencingClient.removeGeofences(geofenceHelper.getPendingIntent())
+        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

@@ -24,13 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    String uid = user.getUid();
-    String triggered_geofence;
-    boolean wheelchair_user;
-
-    Commuter_in_Geofence commuter = new Commuter_in_Geofence();
     CommGeofenceActions action = new CommGeofenceActions();
+    String triggered_geofence;
 
 
     @Override
@@ -43,19 +38,19 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         try {
             if (geofencingEvent.hasError()) {   // should not proceed if the geofencing event has an error
-                Log.i(TAG, "onReceive: errror receiving geofence event");
+                Log.i(TAG, "onReceive: error receiving geofence event");
                 return;
             }
         } catch (Exception e) {
             Log.e(TAG, "onReceive: ", e);
         }
+        // List that holds triggered geofences
         List<Geofence> geofenceList =  geofencingEvent.getTriggeringGeofences();    // get which geofences where triggered
 
         for (Geofence geofence: geofenceList) {
             triggered_geofence = geofence.getRequestId();
-            Log.i(TAG, "onReceive: " + geofence.getRequestId());
+            Log.i(TAG, "onReceive: geofence request id " + geofence.getRequestId());    // Request ID will be the name of the Bus Stop
          }
-//        Location location = geofencingEvent.getTriggeringLocation();    // get the location of a triggered geofence
 
         int transitionType = geofencingEvent.getGeofenceTransition();
         switch (transitionType) {

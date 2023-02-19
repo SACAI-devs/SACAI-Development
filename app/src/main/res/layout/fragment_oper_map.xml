@@ -38,6 +38,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
                 <!-- BUTTON SELECT ROUTE -->
                 <Button
+                    android:id="@+id/btnStartRoute"
                     style="@style/PrimaryBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
