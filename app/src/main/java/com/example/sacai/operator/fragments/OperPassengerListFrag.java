@@ -14,10 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sacai.R;
-import com.example.sacai.databinding.FragmentCommRideHistoryBinding;
 import com.example.sacai.databinding.FragmentOperPassengerListBinding;
-import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Commuter_Shared;
+import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.example.sacai.dataclasses.Operator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +35,7 @@ public class OperPassengerListFrag extends Fragment {
     RecyclerView.Adapter passengerListAdapter;
     RecyclerView.LayoutManager layoutManager;
 
-    ArrayList<Commuter_Shared> passenger;   // Commuter's information as a passenger
+    ArrayList<Commuter_in_Geofence> passenger;   // Commuter's information as a passenger
 
 
     public OperPassengerListFrag() {

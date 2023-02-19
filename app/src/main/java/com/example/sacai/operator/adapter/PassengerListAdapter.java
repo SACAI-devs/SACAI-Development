@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Commuter_Shared;
+import com.example.sacai.dataclasses.Commuter_in_Geofence;
 
 import java.util.ArrayList;
 
 public class PassengerListAdapter extends RecyclerView.Adapter<PassengerListAdapter.ViewHolder> {
-    private ArrayList<Commuter_Shared> passenger;
-    public PassengerListAdapter(Context context, ArrayList<Commuter_Shared> list) {
+    private ArrayList<Commuter_in_Geofence> passenger;
+    public PassengerListAdapter(Context context, ArrayList<Commuter_in_Geofence> list) {
         passenger = list;
     }
 
