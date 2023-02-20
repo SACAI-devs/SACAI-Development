@@ -82,13 +82,11 @@ public class OperPassengerListFrag extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String date;
-
                 String id;          // ID of the commuter in the passengerlist
                 String username;    // Commuter username
-                String mobility;    // Commuter mobility needs
-                String auditory;    // Commuter auditory needs
-                String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
+//                String mobility;    // Commuter mobility needs
+//                String auditory;    // Commuter auditory needs
+//                String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
                 String origin;      // Commuter origin bus stop
                 String destination; // Commuter destination bus stop
                 passenger = new ArrayList<>();
@@ -96,7 +94,8 @@ public class OperPassengerListFrag extends Fragment {
                 for (DataSnapshot dsp : snapshot.getChildren()) {
                     try {
                         id = "Trip Tracking ID: " + dsp.getKey();
-                        date = dsp.child("date").getValue().toString();
+                        username = "Username: " + dsp.child("username");
+//                        origin = dsp.child("pickup_station")
                         // TODO Add adapter
 
                         Log.i(TAG, "onDataChange: id " + id);

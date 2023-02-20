@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment;
 import com.example.sacai.R;
 import com.example.sacai.commuter.CommGeofenceActions;
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Trip;
+import com.example.sacai.dataclasses.Commuter_Trip;
 import com.example.sacai.commuter.CommGeofenceHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -742,7 +742,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         Calendar c = Calendar.getInstance();
         String date = sdf.format(c.getTime());
         String time = String.valueOf(Calendar.getInstance().getTime());
-        final boolean[] isSuccess = {false};
 
         // Get the values from the dropdown menu
         chosenOrigin = etOrigin.getText().toString();
@@ -779,11 +778,17 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }
         // Create the node for a current trip
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Trip current_trip = new Trip("", date, time, "", pickup, dropoff, "");
+        Commuter_Trip current_trip = new Commuter_Trip("", date, time, "", pickup, dropoff, "");
 
         // Saving the current trip into the database
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        databaseReference.child(user.getUid()).child("current_trip").push().setValue(current_trip).addOnCompleteListener(new OnCompleteListener<Void>() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "setCurrentRide: verify database " + db);
+
+        // Clear current trip
+        db.child(user.getUid()).child("current_trip").removeValue();
+        Log.i(TAG, "setCurrentTrip: cleared current_trip");
+
+        db.child(user.getUid()).child("current_trip").push().setValue(current_trip).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isComplete()) {
@@ -794,7 +799,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         toggleMapUI();
 
                         // try adding geofence
-                        Log.i(TAG, "onComplete: BuildVersion " + Build.VERSION.SDK_INT);
                         // We need background location services permission
                         try {
                             if (ContextCompat.checkSelfPermission((requireActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -863,12 +867,12 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         }
                         // Save the information to firebase
                         HashMap Ride = new HashMap();
-                        Trip trip = new Trip(id, date, time_started, time_ended, pickup_station, dropoff_station, operator_id);
-                        Ride.put("id", trip.getId());
-                        Ride.put("date", trip.getDate());
-                        Ride.put("time_started", trip.getTime_started());
+                        Commuter_Trip commuterTrip = new Commuter_Trip(id, date, time_started, time_ended, pickup_station, dropoff_station, operator_id);
+                        Ride.put("id", commuterTrip.getId());
+                        Ride.put("date", commuterTrip.getDate());
+                        Ride.put("time_started", commuterTrip.getTime_started());
                         Ride.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
-                        Ride.put("operator_id", trip.getOperator_id());
+                        Ride.put("operator_id", commuterTrip.getOperator_id());
                         Ride.put("pickup_station", pickup_station);
                         Ride.put("dropoff_station", dropoff_station);
 
@@ -879,8 +883,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         Log.i("saveRideHistory", "onComplete: data from record does not exist");
                     }
                 } else {
-                    Log.i("saveRideHistory", "onComplete: retrieve data could not be completed");
                     Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                    Log.i("saveRideHistory", "onComplete: retrieve data could not be completed");
                 }
             }
         });

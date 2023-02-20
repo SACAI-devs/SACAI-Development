@@ -1,13 +1,18 @@
 package com.example.sacai.operator.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -20,8 +25,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.sacai.commuter.CommGeofenceHelper;
 import com.example.sacai.R;
+import com.example.sacai.dataclasses.Operator;
+import com.example.sacai.dataclasses.Operator_Trip;
 import com.example.sacai.operator.OperGeofenceHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -39,8 +45,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,8 +58,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     // Call variables based on GoogleMaps Documentation
@@ -60,16 +75,18 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     // Gobal Variables
     private GeofencingClient geofencingClient;
-    private OperGeofenceHelper geofenceHelper;
+    private OperGeofenceHelper operGeofenceHelper;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 10002;
     
     // Components
     AutoCompleteTextView routeSelects;
-    Button btnStartRoute;
+    Button btnStartRoute, btnEndRoute;
 
     String routeIDWithNoBrackets;
     //String routeSnapID; // Store station name in the Routes branch
     String selectedRouteName;
+    String chosenRoute;
+
 
     // Arrays
     String[] routeItems;
@@ -116,12 +133,13 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i("ClassCalled", "onViewCreated: is running");
 
         geofencingClient = LocationServices.getGeofencingClient(requireActivity());
-        geofenceHelper = new OperGeofenceHelper(getActivity());
+        operGeofenceHelper = new OperGeofenceHelper(getActivity());
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         // Bind components to layout
         routeSelects = (AutoCompleteTextView) mView.findViewById(R.id.routeSelect);
         btnStartRoute = mView.findViewById(R.id.btnStartRoute);
+        btnEndRoute = mView.findViewById(R.id.btnEndRoute);
 
         mMapView = (MapView) mView.findViewById(R.id.operator_map);
         if (mMapView != null) {
@@ -135,13 +153,92 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "btnStartRoute.onClick: is running");
-                tryAddingGeofences();
+                setCurrentTrip();
                 Log.i(TAG, "btnSetRoute.onClick: is running");
+            }
+        });
+
+        btnEndRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                endCurrentRoute();
             }
         });
 
     }
 
+    private void endCurrentRoute() {
+        String TAG = "endCurrentRoute";
+        Log.i("ClassCalled", "endCurrentRoute: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference[] db = {FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip")};
+        Log.i(TAG, "endCurrentRoute: verify db reference " + db[0]);
+
+        db[0].get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        String id = "";
+                        String route = "";
+                        String origin = "";
+                        String destination = "";
+                        String passenger_list_id = "";  // Must get passenger list but temporarily empty
+
+                        for (DataSnapshot dsp : task.getResult().getChildren()) {
+                            id = dsp.getKey();
+                            route = dsp.child("route_name").getValue().toString();
+                            origin = dsp.child("origin_stop").getValue().toString();
+                            destination = dsp.child("destination_stop").getValue().toString();
+                            // passenger_list_id = dsp.child("passenger_list_id").getValue().toString();
+                        }
+
+                        // Save the information to firebase
+                        HashMap Ride = new HashMap<>();
+                        Operator_Trip operatorTrip = new Operator_Trip(id, route, origin, destination, "", "");
+
+                        Ride.put("id", operatorTrip.getId());
+                        Ride.put("route_name", operatorTrip.getRoute_name());
+                        Ride.put("origin_stop", operatorTrip.getOrigin_stop());
+                        Ride.put("destination_stop", operatorTrip.getDestination_stop());
+                        Ride.put("passenger_list_id", "TEMP ID");
+
+                        db[0] = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("ride_history").child(id);
+
+                        db[0].updateChildren(Ride);
+                    } else {
+                        Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "onComplete: data does not exist");
+                    }
+                } else {
+                    Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "onComplete: retrieve data could not be completed");
+                }
+            }
+        });
+        geofencingClient.removeGeofences(operGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Remove Geofences", "onSuccess: geofences removed");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
+
+        db[0] = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
+        db[0].child(user.getUid()).child("current_trip").removeValue();
+        Log.i(TAG, "setCurrentTrip: cleared current_trip");
+        mGoogleMap.clear();
+    }
 
     // Custom map logic and configuration
     @SuppressLint("MissingPermission")
@@ -175,7 +272,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
         googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
 
-        geofencingClient.removeGeofences(geofenceHelper.getPendingIntent())
+        geofencingClient.removeGeofences(operGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -194,6 +291,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     }
 
+    // Function to generate route markers
     private void generateRouteMarkers() {
         Log.i("ClassCalled","generateReouteMarkers is running");
         Log.i("VerifyValueLatitude",latitude.toString());
@@ -210,15 +308,14 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         drawRoutes();
     }
 
-
-
+    // Function to get routes from database
     private void getRoutes() {
         // This method gets the routes registered from Firebase
         Log.i("ClassCalled","getRoutes is running");
-        DatabaseReference databaseReferenceRoutes = FirebaseDatabase.getInstance().getReference("Routes");
+        DatabaseReference dbRoutes = FirebaseDatabase.getInstance().getReference("Routes");
 
         //Get Routes
-        databaseReferenceRoutes.addValueEventListener(new ValueEventListener() {
+        dbRoutes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 routeId.clear();
@@ -252,16 +349,152 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+    // Function to set a current trip
+    private void setCurrentTrip() {
+        String TAG = "startRide";
+        Log.i("ClassCalled", "startRide: is running");
+
+        // Get operator user database record
+        // Create a data object for the information on the ride
+        // Save the ride to a new ride_history node
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        String date = sdf.format(c.getTime());
+        String time = String.valueOf(Calendar.getInstance().getTime());
+
+
+        // Get the values from the drop down menu
+        chosenRoute = routeSelects.getText().toString();
+
+        if (chosenRoute.isEmpty()) {
+            routeSelects.setError(getString(R.string.err_fieldRequired));
+            return;
+        }
+
+        // Get origin and destination
+        Log.i(TAG, "setCurrentRide: route bus stops " + stationInRoutesName);
+        Log.i(TAG, "setCurrentRide: route bus stop order " + stationInRoutesOrder);
+
+        // Find the midpoint of two stations
+        findMidPoint();
+
+        // Create the node for the current trip
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Operator_Trip current_trip = new Operator_Trip("", chosenRoute, stationInBusStopName.get(0), stationInBusStopName.get(stationInBusStopName.size()-1), "", "");
+
+        // Saving the current trip into the database
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
+        Log.i(TAG, "setCurrentRide: verify database " + db);
+
+        db.child(user.getUid()).child("current_trip").push().setValue(current_trip).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isComplete()) {
+                    if (task.isSuccessful()) {
+                        Log.i(TAG, "onComplete: current trip information has been added to the database");
+
+                        // Configure UI
+                        toggleMapUI();
+                        // try adding geofence
+                        // We need background location services permission
+                        try {
+                            if (ContextCompat.checkSelfPermission((requireActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                tryAddingGeofences();
+                                Log.i(TAG, "btnSetRoute.tryAddingGeofence: passed");
+                            } else {
+                                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                                    // We should show a dialog explaining why we need this
+                                    // TODO Dialog popup?
+                                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
+                                } else {
+                                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
+                                }
+                                tryAddingGeofences();
+                                Log.i(TAG, "btnSetRoute.tryAddingGeofence: passed");
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "onComplete: ", e);
+                        }
+                    } else {
+                        Log.i(TAG, "onComplete: task is not successful");
+                    }
+                } else {
+                    Log.i(TAG, "onComplete: task could not be completed");
+                }
+            }
+        });
+    }
+
+    private void toggleMapUI() {
+        String TAG = "toggleMapUI";
+        Log.i("ClassCalled", "toggleMapUI: is running");
+    }
+
+    // Function to find the midpoint of the first and last station in the route
+    // and then redirect the camera back to the user
+    private void findMidPoint() {
+        Log.i("ClassCalled", "findMidpoint is running");
+
+        Double originLatitude = stationMarkers.get(0).getPosition().latitude;
+        Double originLongitude = stationMarkers.get(0).getPosition().longitude;
+        Double destinationLatitude = stationMarkers.get(stationMarkers.size()-1).getPosition().latitude;
+        Double destinationLongitude = stationMarkers.get(stationMarkers.size()-1).getPosition().longitude;
+
+        // Calculate for the midpoint between the two locations
+        Double midLat = (originLatitude + destinationLatitude) / 2;
+        Double midLong = (originLongitude + destinationLongitude) / 2;
+
+        Log.i("findMidpoint", "midLat: " + originLatitude);
+        Log.i("findMidpoint", "midLong: " + originLongitude);
+
+        // Clear the map of the other markers
+        // Move the camera to new midpoint location
+        CameraPosition midpoint = CameraPosition.builder()
+                .target(new LatLng(midLat, midLong))
+                .zoom(13).bearing(0).tilt(0).build();
+        mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
+        Log.i("findMidpoint", "moveCamera: successful");
+
+        // Will zoom and pan the camera to the location of the user after 3 seconds
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                zoomToUserLocation();
+            }
+        }, 3000);
+    }
+
+    private void zoomToUserLocation() {
+        Log.i("ClassCall", "zoomToUserLocation: is running");
+
+        // get the last location of the user (SUPPRESSED BECAUSE WE SHOULD ALREADY HAVE THAT EXECUTE IN THE FUNCTION THAT WOULD CALL IT)`
+        @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                try {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
+                    Log.i("zoomToUserLocation", "onSuccess: camera moved to user location");
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Please turn on your location services", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
     
     @SuppressLint("MissingPermission")
     private void addGeofence(String geofence_id, LatLng latLng, float radius) {
         String TAG = "addGeofence";
         Log.i("ClassCalled", "addGeofence: is running");
         
-        Geofence geofence = geofenceHelper.getGeofence(geofence_id, latLng, radius,
+        Geofence geofence = operGeofenceHelper.getGeofence(geofence_id, latLng, radius,
                 Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+        GeofencingRequest geofencingRequest = operGeofenceHelper.getGeofencingRequest(geofence);
+        PendingIntent pendingIntent = operGeofenceHelper.getPendingIntent();
         
         geofencingClient.addGeofences(geofencingRequest, pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -284,8 +517,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         // Get the bus stops in the route
         Log.i(TAG, "tryAddingGeofencese: " + stationInRoutesName);
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
-        Log.i(TAG, "tryAddingGeofences: database reference " + databaseReference);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Bus_Stop");
+        Log.i(TAG, "tryAddingGeofences: database reference " + db);
     
         
         try {
@@ -309,11 +542,11 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i("Verify",routeId.toString());
         Log.i("ClassCalled","matchRouteNames is running");
 
-        DatabaseReference databaseReferenceRoutes = FirebaseDatabase.getInstance().getReference("Routes");
+        DatabaseReference dbRoutes = FirebaseDatabase.getInstance().getReference("Routes");
 
         // Acquiring Routes and matching with user selected Route. If match, then acquire busStopName
         // Get Routes and Bus Stop Info under Routes
-        databaseReferenceRoutes.addValueEventListener(new ValueEventListener() {
+        dbRoutes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //Debug
@@ -354,9 +587,9 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i("Verify",routeSnapID.toString());
         Log.i("Verify",trmStr);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference databaseReferenceRoutes = ref.child("Routes").child(trmStr);
+        DatabaseReference dbRoutes = ref.child("Routes").child(trmStr);
         //Acquiring busStopName under the specific route selected by the user
-        databaseReferenceRoutes.addValueEventListener(new ValueEventListener() {
+        dbRoutes.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshots) {
@@ -390,8 +623,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     private void matchBusStopsUnderBusStops(){
         // This method gets the stations registered from Firebase
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Bus_Stop");
+        db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 stationInBusStopID.clear();
@@ -439,8 +672,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     //Draw routes
     private void drawRoutes(){
         // This method gets the route drawings from Firebase
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Route_Drawing").child(selectedRouteName);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Route_Drawing").child(selectedRouteName);
+        db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //Get data under child
@@ -461,4 +694,5 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
 }

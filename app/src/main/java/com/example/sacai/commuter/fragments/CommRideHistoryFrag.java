@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sacai.R;
-import com.example.sacai.commuter.adapter.RideHistoryAdapter;
+import com.example.sacai.commuter.adapter.CommRideHistoryAdapter;
 import com.example.sacai.databinding.FragmentCommRideHistoryBinding;
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Trip;
+import com.example.sacai.dataclasses.Commuter_Trip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +35,7 @@ public class CommRideHistoryFrag extends Fragment {
     RecyclerView.Adapter rideHistoryAdapter;
     RecyclerView.LayoutManager layoutManager;
 
-    ArrayList<Trip> trip;
+    ArrayList<Commuter_Trip> commuterTrip;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +54,7 @@ public class CommRideHistoryFrag extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        trip = new ArrayList<>();
+        commuterTrip = new ArrayList<>();
 
         // Initialize Firebase Auth
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -77,7 +77,7 @@ public class CommRideHistoryFrag extends Fragment {
                 String origin;
                 String destination;
                 String operatorid;
-                trip = new ArrayList<Trip>();
+                commuterTrip = new ArrayList<Commuter_Trip>();
                 for (DataSnapshot dsp: snapshot.getChildren()) {
                     try {
                         id = "Trip Tracking ID " + dsp.getKey();
@@ -87,8 +87,8 @@ public class CommRideHistoryFrag extends Fragment {
                         origin = String.valueOf(dsp.child("pickup_station").getValue());
                         destination = String.valueOf(dsp.child("dropoff_station").getValue());
                         operatorid = String.valueOf(dsp.child("operator_id").getValue());
-                        trip.add(new Trip(id, date, time_started, time_ended, origin, destination, operatorid));
-                        rideHistoryAdapter = new RideHistoryAdapter(getActivity(), trip);
+                        commuterTrip.add(new Commuter_Trip(id, date, time_started, time_ended, origin, destination, operatorid));
+                        rideHistoryAdapter = new CommRideHistoryAdapter(getActivity(), commuterTrip);
                     } catch (Exception e) {
                         Log.e(TAG, "onDataChange: exception ", e);
                     }

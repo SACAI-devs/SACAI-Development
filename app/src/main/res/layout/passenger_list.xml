@@ -36,6 +36,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:text="jdelacruz" />
+                <TextView
+                    android:id="@+id/tvUserId"
+                    style="@style/CaptionTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="" />
                 <!--NEEDS LIST-->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerNeeds"

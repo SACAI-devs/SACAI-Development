@@ -1,6 +1,6 @@
 package com.example.sacai.dataclasses;
 
-public class Trip {
+public class Commuter_Trip {
     // Important trip information
     private String id;              // uid of the trip
     private String date;            // date of the trip
@@ -10,10 +10,10 @@ public class Trip {
     private String dropoff_station; // where did they disembark
     private String operator_id;     // track the operator of the bus
 
-    public Trip() {
+    public Commuter_Trip() {
     }
 
-    public Trip(String id, String date, String time_started, String time_ended, String pickup_station, String dropoff_station, String operator_id) {
+    public Commuter_Trip(String id, String date, String time_started, String time_ended, String pickup_station, String dropoff_station, String operator_id) {
         this.id = id;
         this.date = date;
         this.time_started = time_started;

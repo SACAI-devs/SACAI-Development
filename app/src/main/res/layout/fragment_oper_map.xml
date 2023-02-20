@@ -44,6 +44,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/label_goNow"/>
+
+                <!-- BUTTON END ROUTE -->
+                <Button
+                    android:id="@+id/btnEndRoute"
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_end_trip"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
