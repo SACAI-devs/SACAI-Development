@@ -865,19 +865,20 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                             pickup_station = String.valueOf(dsp.child("pickup_station").getValue());
                             dropoff_station = String.valueOf(dsp.child("dropoff_station").getValue());
                         }
-                        // Save the information to firebase
-                        HashMap Ride = new HashMap();
+
+                        // Save the information to firebase via a hashmap
+                        HashMap Trip = new HashMap();
                         Commuter_Trip commuterTrip = new Commuter_Trip(id, date, time_started, time_ended, pickup_station, dropoff_station, operator_id);
-                        Ride.put("id", commuterTrip.getId());
-                        Ride.put("date", commuterTrip.getDate());
-                        Ride.put("time_started", commuterTrip.getTime_started());
-                        Ride.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
-                        Ride.put("operator_id", commuterTrip.getOperator_id());
-                        Ride.put("pickup_station", pickup_station);
-                        Ride.put("dropoff_station", dropoff_station);
+                        Trip.put("id", commuterTrip.getId());
+                        Trip.put("date", commuterTrip.getDate());
+                        Trip.put("time_started", commuterTrip.getTime_started());
+                        Trip.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
+                        Trip.put("operator_id", commuterTrip.getOperator_id());
+                        Trip.put("pickup_station", pickup_station);
+                        Trip.put("dropoff_station", dropoff_station);
 
                         databaseReference[0] = FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("ride_history").child(id);
-                        databaseReference[0].updateChildren(Ride);
+                        databaseReference[0].updateChildren(Trip);
                     } else {
                         Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                         Log.i("saveRideHistory", "onComplete: data from record does not exist");
