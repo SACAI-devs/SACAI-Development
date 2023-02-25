@@ -84,9 +84,9 @@ public class OperPassengerListFrag extends Fragment {
 
                 String id;          // ID of the commuter in the passengerlist
                 String username;    // Commuter username
-//                String mobility;    // Commuter mobility needs
-//                String auditory;    // Commuter auditory needs
-//                String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
+                String mobility;    // Commuter mobility needs
+                String auditory;    // Commuter auditory needs
+                String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
                 String origin;      // Commuter origin bus stop
                 String destination; // Commuter destination bus stop
                 passenger = new ArrayList<>();
@@ -105,7 +105,6 @@ public class OperPassengerListFrag extends Fragment {
                     }
                 }
                 recyclerView.setAdapter(passengerListAdapter);
-
             }
 
             @Override

@@ -155,6 +155,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             mMapView.getMapAsync(this);
         }
 
+        toggleViewNoTripStarted();
 
         btnStartRoute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,12 +182,15 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        String TAG = "onMapReady";
         MapsInitializer.initialize(getContext());
 
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mGoogleMap = googleMap;
 
         getRoutes();
+
+        // TODO check for ongoing trips
         mGoogleMap.setMyLocationEnabled(true);
 
         // Moves camera to where the route is at
@@ -206,9 +210,9 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        CameraPosition rainforestPark = CameraPosition.builder().target(new LatLng(14.574970139259474, 121.09785961494917)).zoom(16).bearing(0).tilt(0).build();
-        googleMap.moveCamera((CameraUpdateFactory.newCameraPosition(rainforestPark)));
 
+        // Remove existing geofences
+        Log.i(TAG, "onMapReady: removing existing geofences");
         geofencingClient.removeGeofences(operGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
@@ -225,7 +229,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         // ...
                     }
                 });
-
+        zoomToUserLocation();
     }
 
     // FUNCTIONS FOR SELECTING, AND VIEWING A ROUTE
@@ -455,7 +459,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i("ClassCalled", "startRide: is running");
 
 
-
         // Get operator user database record
         // Create a data object for the information on the ride
         // Save the ride to a new ride_history node
@@ -483,6 +486,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         // Create the node for the current trip
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         Operator_Trip current_trip = new Operator_Trip("", chosenRoute, stationInBusStopName.get(0), stationInBusStopName.get(stationInBusStopName.size() - 1), "", "", "", "");
 
         // Saving the current trip into the database
@@ -506,12 +510,13 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         Log.i(TAG, "onComplete: current trip information has been added to the database");
 
                         // Configure UI
-                        toggleMapUI();
+                        toggleViewTripStarted();
+
                         // try adding geofence
                         // We need background location services permission
                         try {
                             if (ContextCompat.checkSelfPermission((requireActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                tryAddingGeofences();
+
                                 Log.i(TAG, "btnSetRoute.tryAddingGeofence: passed");
                             } else {
                                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
@@ -536,8 +541,9 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        tryAddingGeofences();
         // Turn on location updating
-        startLocationUpdates();
+
     }
 
     private void endCurrentRoute() {
@@ -678,7 +684,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void saveLocationToDatabase(double latitude, double longitude) {
+    public void saveLocationToDatabase(double latitude, double longitude) {
         String TAG = "saveLocationToDatabase";
         Log.i("ClassCalled", "saveLocationToDatabase: is running");
 
@@ -689,61 +695,79 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         // Get current user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        final DatabaseReference[] db = {FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName())};
-        Log.i(TAG, "saveLocationToDatabase: verify database reference " + db);
 
-        db[0].child(user.getUid()).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        DatabaseReference dbInput = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip");
+        dbInput.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                String id = "";
-                String route_name = "";
-                String origin_stop = "";
-                String destination_stop = "";
-                String current_stop = "";
-                String current_lat = "";
-                String current_long = "";
-                String passenger_list_id = "";
-                if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        try {
-                            for (DataSnapshot dsp : task.getResult().getChildren()) {
-                                Log.i(TAG, "onDataChange: dsp.getKey " + dsp.getKey());
-                                id = dsp.getKey();
-                                route_name = dsp.child("route_name").getValue().toString();
-                                origin_stop = dsp.child("origin_stop").getValue().toString();
-                                destination_stop = dsp.child("destination_stop").getValue().toString();
-                                current_stop = dsp.child("current_stop").getValue().toString();
-                                current_lat = dsp.child("current_lat").getValue().toString();
-                                current_long = dsp.child("current_long").getValue().toString();
-                                passenger_list_id = dsp.child("passenger_list_id").getValue().toString();
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "onDataChange: exception ", e);
-                        }
-
-                        // Save information into firebase via a hashmap
-                        HashMap Trip = new HashMap();
-                        Operator_Trip operatorTrip = new Operator_Trip(id, route_name, origin_stop, destination_stop,current_stop,current_lat,current_long,passenger_list_id);
-                        Trip.put("id", operatorTrip.getId());
-                        Trip.put("route_name", operatorTrip.getRoute_name());
-                        Trip.put("origin_stop", operatorTrip.getOrigin_stop());
-                        Trip.put("destination_stop", operatorTrip.getDestination_stop());
-                        Trip.put("current_stop", operatorTrip.getCurrent_stop());
-                        Trip.put("current_lat", latitude);
-                        Trip.put("current_long", longitude);
-                        Trip.put("passenger_list_id", operatorTrip.getPassenger_list_id());
-
-                        db[0] = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip").child(id);
-                        Log.i(TAG, "onDataChange: " + db[0]);
-                        db[0].updateChildren(Trip);
-                    } else {
-                        Log.i(TAG, "onComplete: record does not exist");
+                try {
+                    for (DataSnapshot dsp : task.getResult().getChildren()) {
+                        dbInput.child(dsp.getKey()).child("current_lat").setValue(latitude);
+                        dbInput.child(dsp.getKey()).child("current_long").setValue(longitude);
                     }
-                } else {
-                    Log.i(TAG, "onComplete: record retrieval does not exist");
+                } catch (Exception e) {
+                    Log.e(TAG, "onComplete: exception ", e);
                 }
+
             }
         });
+
+
+//        final DatabaseReference[] db = {FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName())};
+//        Log.i(TAG, "saveLocationToDatabase: verify database reference " + db);
+//
+//        db[0].child(user.getUid()).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                String id = "";
+//                String route_name = "";
+//                String origin_stop = "";
+//                String destination_stop = "";
+//                String current_stop = "";
+//                String current_lat = "";
+//                String current_long = "";
+//                String passenger_list_id = "";
+//                if (task.isSuccessful()) {
+//                    if (task.getResult().exists()) {
+//                        try {
+//                            for (DataSnapshot dsp : task.getResult().getChildren()) {
+//                                Log.i(TAG, "onDataChange: dsp.getKey " + dsp.getKey());
+//                                id = dsp.getKey();
+//                                route_name = dsp.child("route_name").getValue().toString();
+//                                origin_stop = dsp.child("origin_stop").getValue().toString();
+//                                destination_stop = dsp.child("destination_stop").getValue().toString();
+//                                current_stop = dsp.child("current_stop").getValue().toString();
+//                                current_lat = dsp.child("current_lat").getValue().toString();
+//                                current_long = dsp.child("current_long").getValue().toString();
+//                                passenger_list_id = dsp.child("passenger_list_id").getValue().toString();
+//                            }
+//                        } catch (Exception e) {
+//                            Log.e(TAG, "onDataChange: exception ", e);
+//                        }
+//
+//                        // Save information into firebase via a hashmap
+//                        HashMap Trip = new HashMap();
+//                        Operator_Trip operatorTrip = new Operator_Trip(id, route_name, origin_stop, destination_stop,current_stop,current_lat,current_long,passenger_list_id);
+//                        Trip.put("id", operatorTrip.getId());
+//                        Trip.put("route_name", operatorTrip.getRoute_name());
+//                        Trip.put("origin_stop", operatorTrip.getOrigin_stop());
+//                        Trip.put("destination_stop", operatorTrip.getDestination_stop());
+//                        Trip.put("current_stop", operatorTrip.getCurrent_stop());
+//                        Trip.put("current_lat", latitude);
+//                        Trip.put("current_long", longitude);
+//                        Trip.put("passenger_list_id", operatorTrip.getPassenger_list_id());
+//
+//                        db[0] = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip").child(id);
+//                        Log.i(TAG, "onDataChange: " + db[0]);
+//                        db[0].updateChildren(Trip);
+//                    } else {
+//                        Log.i(TAG, "onComplete: record does not exist");
+//                    }
+//                } else {
+//                    Log.i(TAG, "onComplete: record retrieval does not exist");
+//                }
+//            }
+//        });
     }
 
     // FUNCTIONS FOR GEOFENCING
@@ -775,29 +799,23 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         String TAG = "tryAddingGeofencese";
         Log.i("ClassCalled", "tryAddingGeofencese: is running");
 
-
         // Get the bus stops in the route
         Log.i(TAG, "tryAddingGeofencese: " + stationInRoutesName);
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("Bus_Stop");
         Log.i(TAG, "tryAddingGeofences: database reference " + db);
-
 
         try {
             for (int i = 0; i < stationMarkers.size(); i++) {
                 addGeofence(stationInBusStopName.get(i), new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude), GEOFENCE_RADIUS);
             }
             Log.i(TAG, "tryAddingGeofences: stations in route geofences added");
+            startLocationUpdates();
         } catch (Exception e) {
             Log.e(TAG, "tryAddingGeofences: exception ", e);
         }
 
     }
 
-    // MISC
-    private void toggleMapUI() {
-        String TAG = "toggleMapUI";
-        Log.i("ClassCalled", "toggleMapUI: is running");
-    }
 
     private void findMidPoint() {
         Log.i("ClassCalled", "findMidpoint is running");
@@ -851,5 +869,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         });
     }
 
-
+    private void toggleViewNoTripStarted() {
+        btnEndRoute.setVisibility(View.GONE);
+    }
+    private void toggleViewTripStarted() {
+        btnEndRoute.setVisibility(View.VISIBLE);
+    }
 }

@@ -20,6 +20,7 @@ import com.example.sacai.databinding.ActivityOperMainBinding;
 import com.example.sacai.operator.fragments.OperMapFrag;
 import com.example.sacai.operator.fragments.OperPassengerListFrag;
 import com.example.sacai.operator.fragments.OperProfileFrag;
+import com.example.sacai.operator.fragments.OperQRCodeWithSaveFrag;
 import com.example.sacai.operator.fragments.OperRideHistoryFrag;
 import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -96,6 +97,9 @@ public class OperMainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_showPassengerList:
                 replaceFragment(new OperPassengerListFrag());
+                return true;
+            case R.id.action_scanQR:
+                replaceFragment(new OperQRCodeWithSaveFrag());
                 return true;
             case R.id.action_logout:
                 logout();

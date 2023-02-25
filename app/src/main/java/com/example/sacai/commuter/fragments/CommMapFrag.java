@@ -1,10 +1,8 @@
 package com.example.sacai.commuter.fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,8 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.sacai.R;
@@ -297,7 +293,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.i("ClassCalled", "onMapReady: is running");
+        String TAG = "onMapReady";
         MapsInitializer.initialize(getContext());
 
         // Declarations and initializations
@@ -308,7 +304,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         checkForOngoingTrip();
 
-
+        Log.i(TAG, "onMapReady: removing existing geofences...");
         geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
@@ -594,7 +590,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         Log.i(TAG, "onComplete: current trip information has been added to the database");
 
                         // Configure UI to disable when trip has started
-                        toggleMapUI();
+                        toggleViewNoQrScanned();
 
                         Log.i(TAG, "btnSetRoute.onClick: success");
                     } else {
@@ -686,7 +682,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                     Log.i(TAG, "onDataChange: snapshot " + task.getResult());
                     Log.i(TAG, "onDataChange: a current trip exists");
 
-                    toggleMapUI();
+                    toggleViewNoQrScanned();
 
                     for (DataSnapshot dsp : task.getResult().getChildren()) {
                         try {
@@ -1286,7 +1282,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }, 3000);
     }
 
-    private void toggleMapUI() {
+    private void toggleViewNoQrScanned() {
+
+        // UI when the COMMUTER is still waiting for a bus and has NOT scanned an operator's QR code
         etOrigin.setEnabled(false);
         etOrigin.setClickable(false);
         etOrigin.setFocusable(false);

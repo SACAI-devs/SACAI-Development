@@ -6,11 +6,6 @@
         android:title="@string/label_home">
     </item>
     <item
-        android:id="@+id/action_showEditProfile"
-        app:showAsAction="collapseActionView"
-        android:title="@string/label_editProfile">
-    </item>
-    <item
         android:id="@+id/action_showRideHistory"
         app:showAsAction="collapseActionView"
         android:title="@string/label_ride_history">
@@ -19,6 +14,16 @@
         android:id="@+id/action_showPassengerList"
         app:showAsAction="collapseActionView"
         android:title="@string/label_passengerList">
+    </item>
+    <item
+        android:id="@+id/action_scanQR"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_QRCode">
+    </item>
+    <item
+        android:id="@+id/action_showEditProfile"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_editProfile">
     </item>
     <item
         android:id="@+id/action_logout"
