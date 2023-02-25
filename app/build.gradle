@@ -53,5 +53,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'androidx.work:work-runtime-ktx:2.8.0'
     implementation 'com.google.maps.android:android-maps-utils:2.3.0' // for PolyUtil in drawing map decoding
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
 }

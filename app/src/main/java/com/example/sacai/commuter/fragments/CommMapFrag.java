@@ -3,13 +3,14 @@ package com.example.sacai.commuter.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.example.sacai.commuter.CommGeofenceActions;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_Trip;
 import com.example.sacai.commuter.CommGeofenceHelper;
+import com.example.sacai.dataclasses.Operator;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -62,11 +64,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
@@ -83,6 +86,10 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private GeofencingClient geofencingClient;
     private CommGeofenceHelper commGeofenceHelper;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 10002;
+    // Variables for looping location updates
+    private Timer timer;
+    private TimerTask timerTask;
+    private Handler handler = new Handler();
 
     // Components
     Button btnSetRoute, btnDisembarked, btnSetHome, btnSetWork, btnScanQr;
@@ -99,14 +106,17 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     ArrayList<String> stopName = new ArrayList<>();     // Store station names here
     ArrayList<Double> latitude = new ArrayList<>();     // Store latitude of stations
     ArrayList<Double> longitude = new ArrayList<>();    // Store longitude of stations
-
+    ArrayList<Marker> busInBusStop = new ArrayList<>(); // Store bus stop ids in bus stop
     // Store choices
     String chosenOrigin;
     String chosenDestination;
     String currentRoute;
     ArrayList<String> temp = new ArrayList<>();
-
-
+    String qrResultsOperatorUID;
+    String usernameDb, auditoryDb, mobilityDb, wheelchairDb;
+    String currentTripOrigin, currentTripDestination;
+    String currentRouteKey;
+    boolean wheelchair_user = false;
 
     //Polyline
     String encodedPolyline = "";
@@ -158,9 +168,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         selectOrigin =  mView.findViewById(R.id.containerSelectOrigin);
         selectDestination =  mView.findViewById(R.id.containerSelectDestination);
 
-
-
-
         // Generate stations to select
         getStations();
         mMapView = (MapView) mView.findViewById(R.id.commuter_map);
@@ -174,12 +181,15 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         // Sets button to invisible if commuter is not yet in a trip
         btnDisembarked.setVisibility(View.GONE);
         btnScanQr.setVisibility(View.GONE);
+
         // Saves ride data when btn is clicked
         btnSetRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            String TAG = "btnSetRoute";
+                Log.i(TAG, "onClick: TRUE");
                 // Save current trip into database
-               setCurrentTrip();
+                setCurrentTrip();
             }
         });
 
@@ -215,19 +225,53 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 } else {
                     Toast.makeText(getActivity(), "Select between origin or destination before setting your home or work address", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
+
+
+        btnScanQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator integrator = IntentIntegrator.forSupportFragment(CommMapFrag.this);
+
+                integrator.setOrientationLocked(false);
+                integrator.setPrompt("Scan QR code");
+                integrator.setBeepEnabled(false);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+
+                integrator.initiateScan();
+            }
+        });
+
+
         // TODO: Move to when the commuter is already in a ride
         btnDisembarked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CommGeofenceActions action = new CommGeofenceActions();
 
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                removeFromCurrentTrip();
-                removeCommuterVisibility();
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+
+                db.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(task.isComplete()) {
+                            String operator_id;
+                            for (DataSnapshot dsp : task.getResult().getChildren()) {
+                                Log.i(TAG, "onComplete: GETTING CURRENT TRIP " + dsp.getKey());
+                                operator_id = dsp.child("operator_id").getValue().toString();
+                                if (!operator_id.isEmpty()){
+                                    Log.i(TAG, "onComplete: OPERATOR ID " + operator_id);
+                                    saveRideHistory();
+                                }
+                                removeFromCurrentTrip();
+                            }
+                        }
+                    }
+                });
+
                 // Configure UI to enable origin and destination selections again
                 etOrigin.setEnabled(true);
                 etOrigin.setClickable(true);
@@ -247,229 +291,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 selectDestination.setFocusableInTouchMode(true);
             }
         });
-    }
-
-    private void checkForOngoingTrip() {
-        String TAG = "checkForOngoingTrip";
-        Log.i("ClassCalled", "checkForOngoingTrip: is running");
-
-        BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
-        Bitmap iconified = bus_icon.getBitmap();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        Log.i(TAG, "checkForOngoingTrip: db reference " + databaseReference);
-
-        getStations();
-
-        databaseReference.child(uid).child("current_trip").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Log.i(TAG, "onDataChange: snapshot " + snapshot);
-                    Log.i(TAG, "onDataChange: a current trip exists");
-
-                    toggleMapUI();
-
-                    for (DataSnapshot dsp : snapshot.getChildren()) {
-                        try {
-                            etOrigin.setText(dsp.child("pickup_station").getValue().toString());
-                            etDestination.setText(dsp.child("dropoff_station").getValue().toString());
-                            chosenOrigin = etOrigin.getText().toString();
-                            chosenDestination = etDestination.getText().toString();
-
-                            //Activate this function if Commuter has input in both Origin and Destination
-                            if (chosenDestination != "" && chosenOrigin != "") {
-                                //Identify the route for drawing route encoded polyline
-                                findRoute();
-                            }
-
-                            Log.i(TAG, "onDataChange: chosenOrigin " + chosenOrigin);
-                            Log.i(TAG, "onDataChange: chosenDestination " + chosenDestination);
-                            Log.i(TAG, "onDataChange: stopname size " + stopName.size());
-                            for (int i = 0; i < stopName.size(); i++) {
-                                Log.i(TAG, "onDataChange: going through stops");
-                                Log.i(TAG, "onDataChange: Stop Name " + stopName.get(i));
-                                if (stopName.get(i).equals(chosenOrigin)) {
-                                    originMark = mGoogleMap.addMarker(new MarkerOptions()
-                                            .position(new LatLng(latitude.get(i), longitude.get(i)))
-                                            .title(stopName.get(i))
-                                            .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
-                                } else if (stopName.get(i).equals(chosenDestination)) {
-                                    destinationMark = mGoogleMap.addMarker(new MarkerOptions()
-                                            .position(new LatLng(latitude.get(i), longitude.get(i)))
-                                            .title(stopName.get(i))
-                                            .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
-                                }
-                            }
-
-                            tryAddingGeofence();
-                        } catch (Exception e) {
-                            Log.e(TAG, "onDataChange: exception ", e);
-                        }
-                    }
-
-                } else {
-                    Log.i(TAG, "onDataChange: a current trip does not exist");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    //     retrieve the user's saved home address
-    private void setOriginHome() {
-        String TAG = "setOriginHome";
-        Log.i(TAG, "setOriginHome: is running");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-
-        // Get user information from firebase
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-
-        Log.i(TAG, "setOriginHome: dbReference " + databaseReference);
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dsp : snapshot.getChildren()) {
-                    try {
-                        if (dsp.getKey().equals(uid)) {
-                            String home = dsp.child("homeAddress").getValue().toString();
-                            Log.i(TAG, "onDataChange: homeAddress " + home);
-                            etOrigin.setText(home);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "onDataChange: exception ", e);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: database error " + error);
-            }
-        });
-    }
-
-    private void setOriginWork() {
-        String TAG = "setOriginWork";
-        Log.i("ClassCalled", "setOriginWork: is running");
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        Log.i(TAG, "setOriginWork: dbReference " + databaseReference);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dsp : snapshot.getChildren()) {
-                    try {
-                        if (dsp.getKey().equals(uid)) {
-                            String work = dsp.child("workAddress").getValue().toString();
-                            Log.i(TAG, "onDataChange: workAddress" + work);
-                            etOrigin.setText(work);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "onDataChange: exception ", e);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: database error " + error);
-            }
-        });
-
-        Log.i(TAG, "setOriginWork: work is set");
-    }
-
-    private void setDestinationWork() {
-        String TAG = "setDestination";
-        Log.i("ClassCalled", "setDestination: is running");
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-        temp.clear();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        Log.i(TAG, "setDestinationWork: dbReference " + databaseReference);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dsp : snapshot.getChildren()) {
-                    try {
-                        if (dsp.getKey().equals(uid)) {
-                            String work = dsp.child("workAddress").getValue().toString();
-                            for (int i = 0; i < items.length; i++) {
-                                if (work.equals(items[i])) {
-                                    etDestination.setText(work);
-                                    temp.add(work);
-                                }
-                                Log.i(TAG, "onDataChange: work " + work);
-                                Log.i(TAG, "onDataChange: items " + items[i]);
-                            }
-
-                        }
-                    } catch (Exception e) {
-                        Log.i(TAG, "onDataChange: exception ", e);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: database error " + error);
-            }
-        });
-        Log.i(TAG, "setOriginWork: home is set");
-    }
-
-    private void setDestinationHome() {
-        String TAG = "setDestinationHome";
-        Log.i("ClassCalled", "setDestinationHome: is running");
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-        temp.clear();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean inRoute =true;
-
-                for (DataSnapshot dsp : snapshot.getChildren()) {
-                    try {
-                        if (dsp.getKey().equals(uid)) {
-                            String home = dsp.child("homeAddress").getValue().toString();
-                            for (int i = 0 ; i < items.length; i++) {
-                                if (home.equals(items[i])) {
-                                    etDestination. setText(home);
-                                    temp.add(home);
-                                }
-                            }
-
-                        }
-                    } catch (Exception e) {
-                        Log.i(TAG, "onDataChange: exception ", e);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: cancel " + error);
-            }
-        });
-        Log.i(TAG, "setDestinationHome: home destination set");
     }
 
     // Custom map logic and configurations
@@ -608,30 +429,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    // Function to add a geofence
-    @SuppressLint("MissingPermission")
-    private void addGeofence(String geofence_id, LatLng latLng, float radius) {
-        Log.i("ClassCalled", "addGeofence: is running");
 
-        Geofence geofence = commGeofenceHelper.getGeofence(geofence_id, latLng, radius,
-                Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = commGeofenceHelper.getGeofencingRequest(geofence);
-        PendingIntent pendingIntent = commGeofenceHelper.getPendingIntent();
-
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.i("addGeofence", "onSuccess: geofence added");
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    String errorMessage = commGeofenceHelper.getErrorString(e);
-                    Log.i("addGeofence", "onFailure: " + errorMessage);
-                }
-        });
-    }
 
     // Function to get all the stations to put in the array list
     private void getStations() {
@@ -798,27 +596,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         // Configure UI to disable when trip has started
                         toggleMapUI();
 
-                        // try adding geofence
-                        // We need background location services permission
-                        try {
-                            if (ContextCompat.checkSelfPermission((requireActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                tryAddingGeofence();
-                                Log.i(TAG, "btnSetRoute.tryAddingGeofence: passed");
-                            } else {
-                                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                                    // We should show a dialog explaining why we need this
-                                    // TODO Dialog popup?
-                                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
-                                } else {
-                                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
-                                }
-                                tryAddingGeofence();
-                                Log.i(TAG, "btnSetRoute.tryAddingGeofence: passed");
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "onComplete: ", e);
-                        }
-
                         Log.i(TAG, "btnSetRoute.onClick: success");
                     } else {
                         Toast.makeText(getActivity(), "Error: Could not start a trip.", Toast.LENGTH_SHORT).show();
@@ -830,18 +607,342 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+        Log.i(TAG, "setCurrentTrip: trying to add geofences...");
+        tryAddingGeofence();
+    }
+
+    // Acquire CommuterDetails
+    private void acquireCommuterDetails() {
+        Log.i("Debug", "Running acquireCommuterDetails() Class");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("Commuter").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    //Acquire single items
+                    String firebaseValues = String.valueOf(task.getResult().getValue());
+                    String[] arrOfStr = firebaseValues.split(",");
+
+                    for (String a : arrOfStr) {
+                        if (a.contains("username")) {
+                            String[] b = a.split("=");
+                            if (b[1].replaceAll("[\\[\\](){}]","")!=""){
+                                usernameDb = b[1].replaceAll("[\\[\\](){}]","");
+                                Log.d("firebase", usernameDb);
+                            }
+                        }
+                        if (a.contains("mobility")) {
+                            String[] b = a.split("=");
+                            if (b[1].replaceAll("[\\[\\](){}]","")!=""){
+                                mobilityDb = b[1].replaceAll("[\\[\\](){}]","");
+                                Log.d("firebase", mobilityDb);
+                            }
+                        }
+                        if (a.contains("auditory")) {
+                            String[] b = a.split("=");
+                            if (b[1].replaceAll("[\\[\\](){}]","")!=""){
+                                auditoryDb = b[1].replaceAll("[\\[\\](){}]","");
+                                Log.d("firebase", auditoryDb);
+                            }
+                        }
+                        if (a.contains("wheelchair")) {
+                            String[] b = a.split("=");
+                            if (b[1].replaceAll("[\\[\\](){}]","")!=""){
+                                wheelchairDb = b[1].replaceAll("[\\[\\](){}]","");
+                                Log.d("firebase", wheelchairDb);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void checkForOngoingTrip() {
+        String TAG = "checkForOngoingTrip";
+        Log.i("ClassCalled", "checkForOngoingTrip: is running");
+
+        BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
+        Bitmap iconified = bus_icon.getBitmap();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "checkForOngoingTrip: db reference " + databaseReference);
+
+        getStations();
+
+        databaseReference.child(uid).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.getResult().exists()) {
+                    Log.i(TAG, "onDataChange: snapshot " + task.getResult());
+                    Log.i(TAG, "onDataChange: a current trip exists");
+
+                    toggleMapUI();
+
+                    for (DataSnapshot dsp : task.getResult().getChildren()) {
+                        try {
+                            etOrigin.setText(dsp.child("pickup_station").getValue().toString());
+                            etDestination.setText(dsp.child("dropoff_station").getValue().toString());
+                            chosenOrigin = etOrigin.getText().toString();
+                            chosenDestination = etDestination.getText().toString();
+
+                            //Activate this function if Commuter has input in both Origin and Destination
+                            if (chosenDestination != "" && chosenOrigin != "") {
+                                //Identify the route for drawing route encoded polyline
+                                findRoute();
+                            }
+
+
+                            for (int i = 0; i < stopName.size(); i++) {
+                                Log.i(TAG, "onDataChange: going through stops");
+                                Log.i(TAG, "onDataChange: Stop Name " + stopName.get(i));
+                                if (stopName.get(i).equals(chosenOrigin)) {
+                                    originMark = mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(latitude.get(i), longitude.get(i)))
+                                            .title(stopName.get(i))
+                                            .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
+                                } else if (stopName.get(i).equals(chosenDestination)) {
+                                    destinationMark = mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(latitude.get(i), longitude.get(i)))
+                                            .title(stopName.get(i))
+                                            .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            Log.e(TAG, "onDataChange: exception ", e);
+                        }
+                    }
+                    Log.i(TAG, "onDataChange: chosenOrigin " + chosenOrigin);
+                    Log.i(TAG, "onDataChange: chosenDestination " + chosenDestination);
+                    Log.i(TAG, "onDataChange: stopname size " + stopName.size());
+                    Log.i(TAG, "onDataChange: trying to add geofences...");
+                    tryAddingGeofence();
+                } else {
+                    Log.i(TAG, "onDataChange: a current trip does not exist");
+                }
+            }
+        });
+
+        acquireCommuterDetails();
+    }
+
+    // Retrieve the user's saved home address
+    private void setOriginHome() {
+        String TAG = "setOriginHome";
+        Log.i(TAG, "setOriginHome: is running");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        // Get user information from firebase
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+
+        Log.i(TAG, "setOriginHome: dbReference " + databaseReference);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String home = dsp.child("homeAddress").getValue().toString();
+                            Log.i(TAG, "onDataChange: homeAddress " + home);
+                            etOrigin.setText(home);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+    }
+
+    private void setOriginWork() {
+        String TAG = "setOriginWork";
+        Log.i("ClassCalled", "setOriginWork: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "setOriginWork: dbReference " + databaseReference);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String work = dsp.child("workAddress").getValue().toString();
+                            Log.i(TAG, "onDataChange: workAddress" + work);
+                            etOrigin.setText(work);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onDataChange: exception ", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+
+        Log.i(TAG, "setOriginWork: work is set");
+    }
+
+    private void setDestinationWork() {
+        String TAG = "setDestination";
+        Log.i("ClassCalled", "setDestination: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        temp.clear();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        Log.i(TAG, "setDestinationWork: dbReference " + databaseReference);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String work = dsp.child("workAddress").getValue().toString();
+                            for (int i = 0; i < items.length; i++) {
+                                if (work.equals(items[i])) {
+                                    etDestination.setText(work);
+                                    temp.add(work);
+                                }
+                                Log.i(TAG, "onDataChange: work " + work);
+                                Log.i(TAG, "onDataChange: items " + items[i]);
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "onDataChange: exception ", e);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: database error " + error);
+            }
+        });
+        Log.i(TAG, "setOriginWork: home is set");
+    }
+
+    private void setDestinationHome() {
+        String TAG = "setDestinationHome";
+        Log.i("ClassCalled", "setDestinationHome: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        temp.clear();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean inRoute =true;
+
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    try {
+                        if (dsp.getKey().equals(uid)) {
+                            String home = dsp.child("homeAddress").getValue().toString();
+                            for (int i = 0 ; i < items.length; i++) {
+                                if (home.equals(items[i])) {
+                                    etDestination. setText(home);
+                                    temp.add(home);
+                                }
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "onDataChange: exception ", e);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: cancel " + error);
+            }
+        });
+        Log.i(TAG, "setDestinationHome: home destination set");
+    }
+
+    private void removeFromCurrentTrip() {
+        String TAG = "removeFromCurrentTrip";
+        Log.i(TAG, "removeFromCurrentTrip: is running");
+        stopLocationUpdates();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Remove Geofences", "onSuccess: geofences removed");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
+
+        // Configure the UI
+        btnDisembarked.setVisibility(View.GONE);
+        btnSetRoute.setVisibility(View.VISIBLE);
+        btnSetWork.setVisibility(View.VISIBLE);
+        btnSetHome.setVisibility(View.VISIBLE);
+
+        Log.i("UI_Changes", "saveRideHistory: btnDisembarked set to GONE");
+        Log.i("UI_Changes", "saveRideHistory: btnSetRoute set to VISIBLE");
+
+        // Remove the current_trip information as commuter confirms disembark
+        DatabaseReference current_trip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+        current_trip.removeValue();
+        Log.i("current_trip", "removeValue: successful");
+        // Clear the existing markers on the map
+        mGoogleMap.clear();
+        removeCommuterVisibility();
     }
 
     // Function to save current trip to ride history
     private void saveRideHistory() {
         Log.i("ClassCalled", "saveRideHistory is running");
+
+        // Get the current date and time
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        String date = sdf.format(c.getTime());
+        String time = String.valueOf(Calendar.getInstance().getTime());
+
         // You can either pass the trip info somehow here or get the current_trip info into this method itself. eitherway,
         // it should be stored in a Trip object
         // Get the instance of firebase to take a snapshot of
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        final DatabaseReference[] databaseReference = {FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("current_trip")};
 
-        databaseReference[0].get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        final DatabaseReference[] db = {FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("current_trip")};
+
+        db[0].get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -850,7 +951,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         String id = "";
                         String date = "";
                         String time_started = "";
-                        String time_ended = "";
+                        String time_ended = time;
                         String operator_id = "";
                         String pickup_station = "";
                         String dropoff_station = "";
@@ -860,25 +961,20 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                             id = dsp.getKey();
                             date = String.valueOf(dsp.child("date").getValue());
                             time_started = String.valueOf(dsp.child("time_started").getValue());
-                            time_ended = String.valueOf(dsp.child("time_ended").getValue());
                             operator_id = String.valueOf(dsp.child("operator_id").getValue());
                             pickup_station = String.valueOf(dsp.child("pickup_station").getValue());
                             dropoff_station = String.valueOf(dsp.child("dropoff_station").getValue());
                         }
 
-                        // Save the information to firebase via a hashmap
-                        HashMap Trip = new HashMap();
-                        Commuter_Trip commuterTrip = new Commuter_Trip(id, date, time_started, time_ended, pickup_station, dropoff_station, operator_id);
-                        Trip.put("id", commuterTrip.getId());
-                        Trip.put("date", commuterTrip.getDate());
-                        Trip.put("time_started", commuterTrip.getTime_started());
-                        Trip.put("time_ended", String.valueOf(Calendar.getInstance().getTime()));
-                        Trip.put("operator_id", commuterTrip.getOperator_id());
-                        Trip.put("pickup_station", pickup_station);
-                        Trip.put("dropoff_station", dropoff_station);
+                        DatabaseReference dbSave = FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("ride_history").child(id);
 
-                        databaseReference[0] = FirebaseDatabase.getInstance().getReference("Commuter").child(user.getUid()).child("ride_history").child(id);
-                        databaseReference[0].updateChildren(Trip);
+                        dbSave.child("date").setValue(date);
+                        dbSave.child("time_started").setValue(time_started);
+                        dbSave.child("time_ended").setValue(time);
+                        dbSave.child("operator_id").setValue(operator_id);
+                        dbSave.child("origin").setValue(pickup_station);
+                        dbSave.child("destination").setValue(dropoff_station);
+
                     } else {
                         Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                         Log.i("saveRideHistory", "onComplete: data from record does not exist");
@@ -913,9 +1009,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         btnSetWork.setVisibility(View.VISIBLE);
         btnSetHome.setVisibility(View.VISIBLE);
 
-        Log.i("UI_Changes", "saveRideHistory: btnDisembarked set to GONE");
-        Log.i("UI_Changes", "saveRideHistory: btnSetRoute set to VISIBLE");
-
         // Remove the current_trip information as commuter confirms disembark
         DatabaseReference current_trip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
         current_trip.removeValue();
@@ -924,49 +1017,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         mGoogleMap.clear();
     }
 
-    // Function to find the midpoint of two stations
-    private void findMidpoint(String pickup, String dropoff) {
-        Log.i("ClassCalled", "findMidpoint is running");
-
-        Double originLatitude = 0.0;
-        Double originLongitude = 0.0;
-        Double destinationLatitude = 0.0;
-        Double destinationLongitude = 0.0;
-
-        // Get the center of two points
-        for (int i = 0; i < stopName.size(); i++) {
-            if (stopName.get(i).equals(pickup)) {
-                originLatitude = latitude.get(i);
-                originLongitude = longitude.get(i);
-            }
-            if (stopName.get(i).equals(dropoff)) {
-                destinationLatitude = latitude.get(i);
-                destinationLongitude = longitude.get(i);
-            }
-        }
-        // Calculate for the midpoint between the two locations
-        Double midLat = (originLatitude + destinationLatitude) / 2;
-        Double midLong = (originLongitude + destinationLongitude) / 2;
-
-        Log.i("findMidpoint", "midLat: " + originLatitude);
-        Log.i("findMidpoint", "midLong: " + originLongitude);
-
-        // Clear the map of the other markers
-        // Move the camera to new midpoint location
-        CameraPosition midpoint = CameraPosition.builder()
-                .target(new LatLng(midLat, midLong))
-                .zoom(13).bearing(0).tilt(0).build();
-        mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
-        Log.i("findMidpoint", "moveCamera: successful");
-
-        // Will zoom and pan the camera to the location of the user after 3 seconds
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                zoomToUserLocation();
-            }
-        }, 3000);
-    }
 
     // Function to zoom into the user's current location (not the built in zoom to location)
     private void zoomToUserLocation() {
@@ -1009,6 +1059,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i(TAG, "tryAddingGeofence: is running");
 
         // remove existing geofences
+        Log.i(TAG, "tryAddingGeofence: removing existing geofences");
         geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
                     @Override
@@ -1028,42 +1079,62 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         // get the list of bus stops available
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Bus_Stop");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
                 String origin = null;          // stores id of origin bus stop
                 String destination = null;      // stores id of destination bus stop
-                for (DataSnapshot dsp : snapshot.getChildren()) {
+                for (DataSnapshot dsp : task.getResult().getChildren()) {
                     if ((dsp.child("busStopName").getValue().toString()).equals(chosenOrigin))  {
-                        Log.i(TAG, "onDataChange: Matched Origin " + dsp.child("busStopName").getValue().toString());
                         origin = dsp.getKey();
-                        Log.i(TAG, "onDataChange.origin: " + origin);
                     } else if ((dsp.child("busStopName").getValue().toString()).equals(chosenDestination)) {
-                        Log.i(TAG, "onDataChange: Matched Destination " + dsp.child("busStopName").getValue().toString());
+
                         destination = dsp.getKey();
                         Log.i(TAG, "onDataChange.destination: " + destination);
                     } else {
                         Log.i(TAG, "onDataChange: nothing matches");
                     }
                 }
-
+                Log.i(TAG, "onDataChange: Matched Origin " + origin);
+                Log.i(TAG, "onDataChange: Matched Destination " + destination);
                 try {
+                    Log.i(TAG, "onComplete: adding geofences...");
                     addGeofence(origin, new LatLng(originMark.getPosition().latitude, originMark.getPosition().longitude), GEOFENCE_RADIUS);                     // make a geofence at the origin of the trip
-                    addCircle(new LatLng(originMark.getPosition().latitude,originMark.getPosition().longitude), GEOFENCE_RADIUS);                                // make circle for origin geofence boundaries
                     addGeofence(destination, new LatLng(destinationMark.getPosition().latitude, destinationMark.getPosition().longitude), GEOFENCE_RADIUS);      // make a geofence at the destination of the trip
-                    addCircle(new LatLng(destinationMark.getPosition().latitude,destinationMark.getPosition().longitude), GEOFENCE_RADIUS);                      // make circle for origin geofence boundaries
+                    startLocationUpdates();
                 } catch (Exception e) {
                     Log.i(TAG, "onDataChange: tried adding geofences, failed...");
                     Log.i(TAG, "onDataChange: exception " + e);
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: could not get database snapshot");
-                Log.i(TAG, "onCancelled: error " + error);
-            }
         });
+    }
+
+    // Function to add a geofence
+    @SuppressLint("MissingPermission")
+    private void addGeofence(String geofence_id, LatLng latLng, float radius) {
+        String TAG = "addGeofence";
+        Log.i("ClassCalled", "addGeofence: is running");
+        Log.i(TAG, "addGeofence: geofence id " + geofence_id);
+
+        Geofence geofence = commGeofenceHelper.getGeofence(geofence_id, latLng, radius,
+                Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
+        GeofencingRequest geofencingRequest = commGeofenceHelper.getGeofencingRequest(geofence);
+        PendingIntent pendingIntent = commGeofenceHelper.getPendingIntent();
+
+        geofencingClient.addGeofences(geofencingRequest, pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i("addGeofence", "onSuccess: geofence added");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        String errorMessage = commGeofenceHelper.getErrorString(e);
+                        Log.i("addGeofence", "onFailure: " + errorMessage);
+                    }
+                });
     }
 
     private void findRoute() {
@@ -1171,6 +1242,50 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    // Function to find the midpoint of two stations
+    private void findMidpoint(String pickup, String dropoff) {
+        Log.i("ClassCalled", "findMidpoint is running");
+
+        Double originLatitude = 0.0;
+        Double originLongitude = 0.0;
+        Double destinationLatitude = 0.0;
+        Double destinationLongitude = 0.0;
+
+        // Get the center of two points
+        for (int i = 0; i < stopName.size(); i++) {
+            if (stopName.get(i).equals(pickup)) {
+                originLatitude = latitude.get(i);
+                originLongitude = longitude.get(i);
+            }
+            if (stopName.get(i).equals(dropoff)) {
+                destinationLatitude = latitude.get(i);
+                destinationLongitude = longitude.get(i);
+            }
+        }
+        // Calculate for the midpoint between the two locations
+        Double midLat = (originLatitude + destinationLatitude) / 2;
+        Double midLong = (originLongitude + destinationLongitude) / 2;
+
+        Log.i("findMidpoint", "midLat: " + originLatitude);
+        Log.i("findMidpoint", "midLong: " + originLongitude);
+
+        // Clear the map of the other markers
+        // Move the camera to new midpoint location
+        CameraPosition midpoint = CameraPosition.builder()
+                .target(new LatLng(midLat, midLong))
+                .zoom(13).bearing(0).tilt(0).build();
+        mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
+        Log.i("findMidpoint", "moveCamera: successful");
+
+        // Will zoom and pan the camera to the location of the user after 3 seconds
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                zoomToUserLocation();
+            }
+        }, 3000);
+    }
+
     private void toggleMapUI() {
         etOrigin.setEnabled(false);
         etOrigin.setClickable(false);
@@ -1195,47 +1310,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         btnScanQr.setVisibility(View.VISIBLE);
     }
 
-    private void removeFromCurrentTrip() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-        geofencingClient.removeGeofences(commGeofenceHelper.getPendingIntent())
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Geofences removed
-                        Log.i("Remove Geofences", "onSuccess: geofences removed");
-                        // ...
-                    }
-                })
-                .addOnFailureListener(getActivity(), new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to remove geofences
-                        // ...
-                    }
-                });
-
-        // Configure the UI
-        btnDisembarked.setVisibility(View.GONE);
-        btnSetRoute.setVisibility(View.VISIBLE);
-        btnSetWork.setVisibility(View.VISIBLE);
-        btnSetHome.setVisibility(View.VISIBLE);
-
-        Log.i("UI_Changes", "saveRideHistory: btnDisembarked set to GONE");
-        Log.i("UI_Changes", "saveRideHistory: btnSetRoute set to VISIBLE");
-
-        // Remove the current_trip information as commuter confirms disembark
-        DatabaseReference current_trip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
-        current_trip.removeValue();
-        Log.i("current_trip", "removeValue: successful");
-        // Clear the existing markers on the map
-        mGoogleMap.clear();
-    }
-
-
-    boolean wheelchair_user = false;
-
-    // Function to remove commuter visibility on the map
+ // Function to remove commuter visibility on the map
     public void removeCommuterVisibility() {
         Log.i("ClassCalled", "removeCommuterVisibility: is running");
         String TAG = "removeCommuterVisibility";
@@ -1301,6 +1376,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 Log.i(TAG, "onCancelled: database error " + error);
             }
         });
+
     }
 
     public void deleteCommuterData() {
@@ -1326,5 +1402,168 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             Log.i(TAG, "deleteCommuterData: dbReference " + drCommInGeofence);
             drCommInGeofence.child(chosenOrigin).child("no_wheelchair").child(uid).removeValue();
         }
+    }
+
+    // Function to find all operators in the same bus stop
+    private void showOperatorInBusStop() {
+        String TAG = "showOperatorInBusStop";
+        Log.i("ClassCalled", "showOperatorInBusStop: is running");
+
+
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
+        // get the operators information
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dsp : snapshot.getChildren()) {
+                    Log.i(TAG, "onComplete: OPERATOR ID " + dsp.getKey()); {
+                        if (dsp.child("current_trip").exists()) {
+                            Log.i(TAG, "onComplete: THIS OPERATOR HAS AN ONGOING TRIP");
+                            getOperatorTripInformation(dsp.getKey());   // Get the current trip of the operator with this ID
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getOperatorTripInformation(String key) {
+        String TAG = "getOperatorTripInformation";
+        Log.i("ClassCalled", "getOperatorTripInformation: is running");
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(key).child("current_trip");
+        Log.i(TAG, "getOperatorTripInformation: db reference " + db);
+
+        db.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isComplete()) {
+                    try {
+                        for (DataSnapshot dsp : task.getResult().getChildren()) {
+                            if (dsp.child("current_stop").getValue().toString().equals(chosenOrigin)) {
+                                Log.i(TAG, "onComplete: THE BUS IS IN THE SAME STOP");
+                                showOperatorLocation(dsp.getKey(), Double.parseDouble(dsp.child("current_lat").getValue().toString()), Double.parseDouble(dsp.child("current_long").getValue().toString()));
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onComplete: exception ", e);
+                    }
+                }
+            }
+        });
+    }
+
+    private void showOperatorLocation(String key, Double current_lat, Double current_long) {
+        String TAG = "showOperatorLocation";
+        Log.i(TAG, "showOperatorLocation: is running");
+
+        LatLng busLocation = new LatLng(current_lat, current_long);
+
+        for (int i = 0; i < busInBusStop.size(); i++) {
+            Log.i(TAG, "showOperatorLocation: removing markers");
+            busInBusStop.get(i).remove();
+            busInBusStop.remove(i);
+        }
+        Log.i(TAG, "showOperatorLocation: number of bus stop markers in area " + busInBusStop.size());
+        busInBusStop.add(mGoogleMap.addMarker(new MarkerOptions()
+        .position(busLocation)
+        .title(key)));
+
+    }
+
+    // FUNCTIONS FOR LOCATION UPDATES
+    private void stopLocationUpdates(){
+        String TAG = "stopTimer";
+        Log.i("ClassCalled", "stopTimer: is running");
+        if(timer != null){
+            timer.cancel();
+            timer.purge();
+            Log.i(TAG, "stopTimer: timer loop stopped");
+        }
+    }
+
+    //To start timer
+    private void startLocationUpdates(){
+        String TAG = "startTimer";
+        Log.i("ClassCalled", "startTimer: is running");
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run(){
+                        // update location every set interval
+                        showOperatorInBusStop();
+                        Log.i(TAG, "run: location updated");
+                    }
+                });
+            }
+        };
+        timer.schedule(timerTask, 5000, 5000);
+    }
+
+    //For QR Code Scanning
+    // Checks whether the  QR scanned completed and obtained an Operator ID
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else  {
+                Log.i("ScanResults", result.getContents());
+                qrResultsOperatorUID = result.getContents();
+                Toast.makeText(getContext(), "Successfully Scanned", Toast.LENGTH_LONG).show();
+            }
+            Log.i("Debug", qrResultsOperatorUID);
+            addCurrentTripToOperator();
+        }
+    }
+
+    //Add to current_trip of operator
+    private void addCurrentTripToOperator() {
+        Log.i("Debug", "Running addCurrentTrip() Class");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference dbInput = db.child("Operator").child(qrResultsOperatorUID).child("current_trip").child("passenger_list").child(uid);
+
+        dbInput.child("username").setValue(usernameDb);
+        dbInput.child("wheelchair").setValue(wheelchairDb);
+        dbInput.child("auditory").setValue(auditoryDb);
+        dbInput.child("mobility").setValue(mobilityDb);
+        dbInput.child("origin").setValue(currentTripOrigin);
+        dbInput.child("destination").setValue(currentTripDestination);
+        dbInput.child("para").setValue("false");
+
+        addOperatorIDToCommuterCurrentTrip();
+    }
+
+    private void addOperatorIDToCommuterCurrentTrip() {
+        Log.i("Debug", "Running addOperatorIDToCommuterCurrentTrip() Class");
+        checkForOngoingTrip();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference dbInput = db.child("Commuter").child(uid).child("current_trip").child(currentRouteKey);
+
+        dbInput.child("operator_id").setValue(qrResultsOperatorUID);
+
+        toggleOnGoingTripView();
+    }
+
+    private void toggleOnGoingTripView() {
+        String TAG = "toggleOnGoingTripView";
+        Log.i(TAG, "toggleOnGoingTripView: is running");
+
+        btnDisembarked.setText("Para! BABABA");
+        btnScanQr.setVisibility(View.GONE);
     }
 }

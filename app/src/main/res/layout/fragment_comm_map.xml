@@ -103,6 +103,14 @@
                     android:text="@string/label_PARA_SASAKAY"/>
 
                 <Button
+                    android:id="@+id/btnDisembarked"
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/label_cancel_para" />
+
+                <Button
                     android:id="@+id/btnScanQr"
                     style="@style/PrimaryBtn"
                     android:layout_width="match_parent"
@@ -110,13 +118,6 @@
                     android:text="@string/label_scan_qr"/>
 
                 <!--SUCCESS BUTTON-->
-                <Button
-                    android:id="@+id/btnDisembarked"
-                    style="@style/PrimaryBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="@string/label_cancel_para"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <!--MAP CONTAINER-->

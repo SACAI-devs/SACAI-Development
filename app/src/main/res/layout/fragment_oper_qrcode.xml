@@ -1,45 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".commuter.fragments.CommRideHistoryFrag" >
+    tools:context=".operator.fragments.OperQRCodeWithSaveFrag">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
         <!--TOOLBAR-->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/BasicToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/app_name"
-            app:navigationIcon="@drawable/ic_back" />
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/app_name" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:background="@color/white" >
+            android:background="@color/white"
+            android:fillViewport="true">
+            <!--FORM GROUP-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <!--PAGE TITLE-->
+                android:orientation="vertical">
+                <!--FORM LABEL-->
+
                 <TextView
                     style="@style/TitleTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/teal_100"
                     android:paddingVertical="20dp"
-                    android:text="@string/label_ride_history" />
-                <!--PASSENGER LIST-->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rideHistoryList"
+                    android:text="@string/label_QRCode" />
+
+                <ImageView
+                    android:id="@+id/imageView_QR"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="393dp"
+                    android:contentDescription="@string/label_QRCode"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+                <Button
+                    android:id="@+id/btnSaveQR"
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginBottom="30dp"
+                    android:text="@string/label_saveQR" />
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
 </FrameLayout>

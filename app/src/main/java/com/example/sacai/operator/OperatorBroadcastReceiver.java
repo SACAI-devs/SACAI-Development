@@ -53,13 +53,14 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
                 Log.i(TAG, "onReceive: operator is in geofence");
 
                 Toast.makeText(context, "You are now visible from bus stop", Toast.LENGTH_SHORT).show();
-                action.setOperatorVisibility();
+                action.setOperatorVisibility(triggered_geofences);
+                Log.i(TAG, "onReceive: action passed.");
                 break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: operator exited geofence");
 
-                action.removeOperatorVisibility();
                 Toast.makeText(context, "You are not within the range of a bus stop.", Toast.LENGTH_SHORT).show();
+                action.removeOperatorVisibility();
                 break;
             default:
                 Log.i(TAG, "onReceive: user is not in a geofence of a bus stop");

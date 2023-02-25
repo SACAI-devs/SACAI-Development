@@ -56,22 +56,16 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.i(TAG, "onReceive: user entered the geofence");
+                Toast.makeText(context, "You are now approaching bus stop .", Toast.LENGTH_SHORT).show();
+                break;
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.i(TAG, "onReceive: user is in geofence");
-
-                Toast.makeText(context, "You are now approaching bus stop .", Toast.LENGTH_SHORT).show();
-
                 action.setCommuterVisibility();
                 break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
-
                 action.removeCommuterVisibility();
                 Toast.makeText(context, "You are not within the range of a bus stop. Go to the nearest bus stop so operators in the area can be notified.", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Log.i(TAG, "onReceive: user is not in a geofence");
-                Toast.makeText(context, "Please approach the bus station so we can alert operators in the area.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

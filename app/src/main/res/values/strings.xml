@@ -99,4 +99,7 @@
     <string name="label_scan_qr">Scan QR</string>
     <string name="label_cancel_para">Cancel PARA SASAKAY</string>
     <string name="label_end_trip">End Trip</string>
+    <string name="label_upload_id">Upload PWD id</string>
+    <string name="label_QRCode">QR Code</string>
+    <string name="label_saveQR">Save to Device</string>
 </resources>

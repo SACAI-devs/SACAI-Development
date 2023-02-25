@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_in_Geofence;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,11 +47,11 @@ public class CommGeofenceActions {
         Log.i(TAG, "setCommuterVisibility: dbReference " + drUserInfo);
 
         // Get user information
-        drUserInfo.addValueEventListener(new ValueEventListener() {
+
+        drUserInfo.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.i(TAG, "onDataChange: looping through each record");
-                for (DataSnapshot dsp : snapshot.getChildren()) {
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dsp : task.getResult().getChildren()) {
                     if (uid.equals(dsp.getKey())){
                         try {
                             commuter.setUsername(String.valueOf(dsp.child("username").getValue()));
@@ -68,34 +70,21 @@ public class CommGeofenceActions {
                 // check if reference is correct
                 Log.i(TAG, "setCommuterVisibility: dbReference " + drTripInformation);
 
-                drTripInformation.addValueEventListener(new ValueEventListener() {
+                drTripInformation.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Log.i(TAG, "onDataChange: looping through records");
-                        for (DataSnapshot dsp : snapshot.getChildren()) {
-
-                            try{
-                                commuter.setOrigin(String.valueOf(dsp.child("pickup_station").getValue()));
-                                commuter.setDestination(String.valueOf(dsp.child("dropoff_station").getValue()));
-                            } catch (Exception e) {
-                                Log.i(TAG, "onDataChange: exception " + e);
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        try{
+                            for (DataSnapshot dsp : task.getResult().getChildren()) {
+                            commuter.setOrigin(String.valueOf(dsp.child("pickup_station").getValue()));
+                            commuter.setDestination(String.valueOf(dsp.child("dropoff_station").getValue()));
                             }
+                            addCommuterData();
+                            return;
+                        } catch (Exception e) {
+                            Log.i(TAG, "onDataChange: exception " + e);
                         }
-                        addCommuterData();
-                        return;
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.i(TAG, "onCancelled: database error " + error);
                     }
                 });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "onCancelled: database error " + error);
             }
         });
     }

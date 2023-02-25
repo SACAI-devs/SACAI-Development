@@ -43,8 +43,8 @@ public class CommGeofenceHelper extends ContextWrapper {
                 .setCircularRegion(latLng.latitude, latLng.longitude, radius)
                 .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
-                .setLoiteringDelay(5000)    // Time delay between determining whether you've entered a geofence to be considered DWELLING in the geofence
-                .setExpirationDuration(60 * 10)
+                .setLoiteringDelay(500)    // Time delay between determining whether you've entered a geofence to be considered DWELLING in the geofence
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
 
     }

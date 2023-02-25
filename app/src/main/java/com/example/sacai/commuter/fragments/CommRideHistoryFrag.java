@@ -84,16 +84,14 @@ public class CommRideHistoryFrag extends Fragment {
                         date = String.valueOf(dsp.child("date").getValue());
                         time_started = "Started: " + dsp.child("time_started").getValue();
                         time_ended = "Ended: " + dsp.child("time_ended").getValue();
-                        origin = String.valueOf(dsp.child("pickup_station").getValue());
-                        destination = String.valueOf(dsp.child("dropoff_station").getValue());
+                        origin = String.valueOf(dsp.child("origin").getValue());
+                        destination = String.valueOf(dsp.child("destination").getValue());
                         operatorid = String.valueOf(dsp.child("operator_id").getValue());
                         commuterTrip.add(new Commuter_Trip(id, date, time_started, time_ended, origin, destination, operatorid));
                         rideHistoryAdapter = new CommRideHistoryAdapter(getActivity(), commuterTrip);
                     } catch (Exception e) {
                         Log.e(TAG, "onDataChange: exception ", e);
                     }
-
-
                 }
                 recyclerView.setAdapter(rideHistoryAdapter);
             }

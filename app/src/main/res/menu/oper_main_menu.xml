@@ -11,6 +11,11 @@
         android:title="@string/label_editProfile">
     </item>
     <item
+        android:id="@+id/action_showRideHistory"
+        app:showAsAction="collapseActionView"
+        android:title="@string/label_ride_history">
+    </item>
+    <item
         android:id="@+id/action_showPassengerList"
         app:showAsAction="collapseActionView"
         android:title="@string/label_passengerList">

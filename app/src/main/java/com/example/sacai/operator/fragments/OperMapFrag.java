@@ -112,7 +112,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     ArrayList<Marker> stationMarkers = new ArrayList<>(); // Store station markers
 
     // CONSTANTS
-    private int MAP_ZOOM = 2;
+    private int MAP_ZOOM = 12;
     private int width = 100;
     private int height = 100;
     private int GEOFENCE_RADIUS = 500;
@@ -818,7 +818,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         // Move the camera to new midpoint location
         CameraPosition midpoint = CameraPosition.builder()
                 .target(new LatLng(midLat, midLong))
-                .zoom(13).bearing(0).tilt(0).build();
+                .zoom(12).bearing(0).tilt(0).build();
         mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
         Log.i("findMidpoint", "moveCamera: successful");
 
@@ -850,10 +850,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
     }
-    
-
-
-
 
 
 }

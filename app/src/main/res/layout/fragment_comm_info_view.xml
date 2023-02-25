@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".commuter.fragments.CommInfoViewFrag" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--TOOLBAR -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/BasicToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/app_name"
+            app:navigationIcon="@drawable/ic_back" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:background="@color/white">
+            <!--FORM GROUP-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!--FORM LABEL-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="40dp">
+
+                    <ImageView
+                        android:id="@+id/imageProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:src="@drawable/ic_commuter" />
+
+                    <!--INPUT USERNAME -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/BasicInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/hint_userName">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUsername"
+                            style="@style/InputTxt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <!--NEEDS ASSESSMENT-->
+                    <TextView
+                        style="@style/SubheadingTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:text="@string/label_needs" />
+                    <!--MOBILITY IMPAIRMENT-->
+                    <CheckBox
+                        android:id="@+id/cbMobility"
+                        style="@style/Checkbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="12dp"
+                        android:text="@string/label_mobility" />
+                    <!--AUDITORY IMPAIRMENT-->
+                    <CheckBox
+                        android:id="@+id/cbAuditory"
+                        style="@style/Checkbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="12dp"
+                        android:text="@string/label_auditory" />
+                    <!--WHEELCHAIR NEED-->
+                    <CheckBox
+                        android:id="@+id/cbWheelchair"
+                        style="@style/Checkbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="12dp"
+                        android:text="@string/label_wheelchair" />
+
+                    <!--UPLOAD PWD ID PHOTO-->
+                    <ImageView
+                        android:id="@+id/imageId"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:src="@android:drawable/ic_menu_gallery" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>
