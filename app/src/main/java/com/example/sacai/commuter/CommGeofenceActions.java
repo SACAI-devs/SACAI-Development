@@ -1,9 +1,11 @@
 package com.example.sacai.commuter;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.sacai.dataclasses.Bus_Stop;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +30,7 @@ public class CommGeofenceActions {
     }
 
     // Function to set commuter visibility from the map
-    public void setCommuterVisibility() {
+    public void setCommuterVisibility(String triggered_geofence) {
 
         Log.i("ClassCalled", "setCommuterVisibility: is running");
         String TAG = "setCommuterVisibility";
@@ -75,10 +77,12 @@ public class CommGeofenceActions {
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
                         try{
                             for (DataSnapshot dsp : task.getResult().getChildren()) {
-                            commuter.setOrigin(String.valueOf(dsp.child("pickup_station").getValue()));
-                            commuter.setDestination(String.valueOf(dsp.child("dropoff_station").getValue()));
+                            commuter.setOrigin(String.valueOf(dsp.child("pickup_station").getValue()).replaceAll("[^a-zA-Z0-9]", " "));
+                            commuter.setDestination(String.valueOf(dsp.child("dropoff_station").getValue()).replaceAll("[^a-zA-Z0-9]", " "));
                             }
-                            addCommuterData();
+                            Log.i(TAG, "onComplete: CHECKING ORIGIN " + commuter.getOrigin());
+                            Log.i(TAG, "onComplete: CHECKING DESTINATION  " + commuter.getDestination());
+                            addCommuterData(triggered_geofence);
                             return;
                         } catch (Exception e) {
                             Log.i(TAG, "onDataChange: exception " + e);
@@ -89,13 +93,15 @@ public class CommGeofenceActions {
         });
     }
 
-    public void addCommuterData() {
+    public void addCommuterData(String triggered_geofence) {
         String TAG = "addCommuterData";
         Log.i("ClassCalled", "addCommuterData: is running");
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
 
+
+        
         // Create hashmap object for injection
         HashMap Data = new HashMap();
         Data.put("uid", commuter.getUid());
@@ -104,6 +110,7 @@ public class CommGeofenceActions {
         Data.put("destination", commuter.getDestination());
         Data.put("mobility", commuter.getMobile_impairment());
         Data.put("auditory", commuter.getAuditory_impairment());
+
 
         Log.i(TAG, "addCommuterData: username " + commuter.getUsername());
         Log.i(TAG, "addCommuterData: origin"  + commuter.getOrigin());
@@ -114,6 +121,8 @@ public class CommGeofenceActions {
             DatabaseReference drCommInGeofence = FirebaseDatabase.getInstance().getReference("Commuter_in_Geofence");
             Log.i(TAG, "addCommuterData: dbReference " + drCommInGeofence);
             drCommInGeofence.child(commuter.getOrigin()).child("has_wheelchair").child(uid).updateChildren(Data);
+            drCommInGeofence.child(commuter.getOrigin()).child("has_wheelchair").child(uid).child("current_stop").setValue(triggered_geofence);
+
             Log.i(TAG, "addCommuterData: passed");
         } else {
 
@@ -122,6 +131,7 @@ public class CommGeofenceActions {
             DatabaseReference drCommInGeofence = FirebaseDatabase.getInstance().getReference("Commuter_in_Geofence");
             Log.i(TAG, "addCommuterData: dbReference " + drCommInGeofence);
             drCommInGeofence.child(commuter.getOrigin()).child("no_wheelchair").child(uid).updateChildren(Data);
+            drCommInGeofence.child(commuter.getOrigin()).child("no_wheelchair").child(uid).child("current_stop").setValue(triggered_geofence);
         }
     }
 

@@ -29,7 +29,7 @@ public class CommGeofenceHelper extends ContextWrapper {
 
         return new GeofencingRequest.Builder()
                 .addGeofence(geofence)
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL)
                 .build();
 
     }

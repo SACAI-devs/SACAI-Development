@@ -58,10 +58,12 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
                 Log.i(TAG, "onReceive: user entered the geofence");
                 Toast.makeText(context, "You are now approaching bus stop .", Toast.LENGTH_SHORT).show();
                 break;
+
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.i(TAG, "onReceive: user is in geofence");
-                action.setCommuterVisibility();
+                action.setCommuterVisibility(triggered_geofence);
                 break;
+
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
                 action.removeCommuterVisibility();

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.example.sacai.R;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.dataclasses.Operator_Trip;
 import com.example.sacai.operator.OperGeofenceHelper;
+import com.example.sacai.operator.OperatorBroadcastReceiver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -42,6 +44,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -115,7 +118,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private int MAP_ZOOM = 12;
     private int width = 100;
     private int height = 100;
-    private int GEOFENCE_RADIUS = 500;
+    private int GEOFENCE_RADIUS = 150;
 
     // Required public constructor
     public OperMapFrag() {
@@ -161,6 +164,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "btnStartRoute.onClick: is running");
+                startLocationUpdates();
                 setCurrentTrip();
                 Log.i(TAG, "btnSetRoute.onClick: is running");
             }
@@ -169,7 +173,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         btnEndRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopLocationUpdates();
                 endCurrentRoute();
             }
         });
@@ -197,6 +200,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         routeSelects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mGoogleMap.clear();
                 selectedRouteName = routeSelects.getText().toString();
 
                 Log.i("VerifyValue", selectedRouteName);
@@ -532,6 +536,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         } catch (Exception e) {
                             Log.e(TAG, "onComplete: ", e);
                         }
+                        tryAddingGeofences();
                     } else {
                         Log.i(TAG, "onComplete: task is not successful");
                     }
@@ -541,7 +546,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        tryAddingGeofences();
+//        tryAddingGeofences();
         // Turn on location updating
 
     }
@@ -626,7 +631,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i(TAG, "setCurrentTrip: cleared current_trip");
         mGoogleMap.clear();
 
+        stationMarkers.clear();
+        Log.i(TAG, "endCurrentRoute: station markers removed " + stationMarkers);
         // Stop looping location updates
+        Log.i(TAG, "endCurrentRoute: stopping location updates...");
         stopLocationUpdates();
     }
 
@@ -638,6 +646,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             timer.cancel();
             timer.purge();
             Log.i(TAG, "stopTimer: timer loop stopped");
+            toggleViewNoTripStarted();
         }
     }
 
@@ -657,7 +666,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 });
             }
         };
-        timer.schedule(timerTask, 5000, 5000);
+        timer.schedule(timerTask, 500, 5000);
     }
 
     // Function to update location in firebase every set time interval
@@ -793,60 +802,81 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         Log.e(TAG, "onFailure: ", e);
                     }
                 });
+
     }
 
     private void tryAddingGeofences() {
         String TAG = "tryAddingGeofencese";
         Log.i("ClassCalled", "tryAddingGeofencese: is running");
 
-        // Get the bus stops in the route
-        Log.i(TAG, "tryAddingGeofencese: " + stationInRoutesName);
+
+        Log.i(TAG, "tryAddingGeofences: removing existing geofences...");
+        geofencingClient.removeGeofences(operGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i(TAG, "onSuccess: existing geofences removed successfully");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "onFailure: could not remove existing geofences");
+                    }
+                });
+
+
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("Bus_Stop");
         Log.i(TAG, "tryAddingGeofences: database reference " + db);
+
 
         try {
             for (int i = 0; i < stationMarkers.size(); i++) {
                 addGeofence(stationInBusStopName.get(i), new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude), GEOFENCE_RADIUS);
+                addCircle(new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude),GEOFENCE_RADIUS);
             }
             Log.i(TAG, "tryAddingGeofences: stations in route geofences added");
-            startLocationUpdates();
+//            startLocationUpdates();
         } catch (Exception e) {
             Log.e(TAG, "tryAddingGeofences: exception ", e);
         }
-
     }
 
 
     private void findMidPoint() {
         Log.i("ClassCalled", "findMidpoint is running");
 
-        Double originLatitude = stationMarkers.get(0).getPosition().latitude;
-        Double originLongitude = stationMarkers.get(0).getPosition().longitude;
-        Double destinationLatitude = stationMarkers.get(stationMarkers.size()-1).getPosition().latitude;
-        Double destinationLongitude = stationMarkers.get(stationMarkers.size()-1).getPosition().longitude;
+        try{
+            Double originLatitude = stationMarkers.get(0).getPosition().latitude;
+            Double originLongitude = stationMarkers.get(0).getPosition().longitude;
+            Double destinationLatitude = stationMarkers.get(stationMarkers.size()-1).getPosition().latitude;
+            Double destinationLongitude = stationMarkers.get(stationMarkers.size()-1).getPosition().longitude;
 
-        // Calculate for the midpoint between the two locations
-        Double midLat = (originLatitude + destinationLatitude) / 2;
-        Double midLong = (originLongitude + destinationLongitude) / 2;
+            // Calculate for the midpoint between the two locations
+            Double midLat = (originLatitude + destinationLatitude) / 2;
+            Double midLong = (originLongitude + destinationLongitude) / 2;
 
-        Log.i("findMidpoint", "midLat: " + originLatitude);
-        Log.i("findMidpoint", "midLong: " + originLongitude);
+            Log.i("findMidpoint", "midLat: " + originLatitude);
+            Log.i("findMidpoint", "midLong: " + originLongitude);
 
-        // Clear the map of the other markers
-        // Move the camera to new midpoint location
-        CameraPosition midpoint = CameraPosition.builder()
-                .target(new LatLng(midLat, midLong))
-                .zoom(12).bearing(0).tilt(0).build();
-        mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
-        Log.i("findMidpoint", "moveCamera: successful");
+            // Clear the map of the other markers
+            // Move the camera to new midpoint location
+            CameraPosition midpoint = CameraPosition.builder()
+                    .target(new LatLng(midLat, midLong))
+                    .zoom(12).bearing(0).tilt(0).build();
+            mGoogleMap.moveCamera((CameraUpdateFactory.newCameraPosition(midpoint)));
+            Log.i("findMidpoint", "moveCamera: successful");
 
-        // Will zoom and pan the camera to the location of the user after 3 seconds
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                zoomToUserLocation();
-            }
-        }, 3000);
+            // Will zoom and pan the camera to the location of the user after 3 seconds
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    zoomToUserLocation();
+                }
+            }, 3000);
+        } catch (Exception e) {
+            Log.e("findMidpoint", "Exception ", e);
+        }
+
     }
 
     private void zoomToUserLocation() {
@@ -870,9 +900,28 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     }
 
     private void toggleViewNoTripStarted() {
+        btnStartRoute.setVisibility(View.VISIBLE);
         btnEndRoute.setVisibility(View.GONE);
+        routeSelects.setFocusable(false);
+        routeSelects.setText(null);
     }
     private void toggleViewTripStarted() {
         btnEndRoute.setVisibility(View.VISIBLE);
+        btnStartRoute.setVisibility(View.GONE);
+        routeSelects.setFocusable(true);
+    }
+
+    // Function that draws a circle to indicate the geofence boundaries of a bus stop
+    private void addCircle(LatLng latLng, float geofence_radius) {
+        String TAG = "addCircle";
+        Log.i(TAG, "addCircle: is running");
+
+        CircleOptions circleOptions = new CircleOptions();
+        circleOptions.center(latLng);
+        circleOptions.radius(geofence_radius);
+        circleOptions.strokeColor(Color.argb(255, 255, 0, 0));
+        circleOptions.fillColor(Color.argb(65, 255, 0, 0));
+        circleOptions.strokeColor(4);
+        mGoogleMap.addCircle(circleOptions);
     }
 }

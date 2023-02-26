@@ -25,9 +25,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.sacai.R;
 import com.example.sacai.commuter.CommGeofenceActions;
+import com.example.sacai.commuter.CommMainActivity;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_Trip;
 import com.example.sacai.commuter.CommGeofenceHelper;
+import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.example.sacai.dataclasses.Operator;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -184,8 +186,12 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
             String TAG = "btnSetRoute";
                 Log.i(TAG, "onClick: TRUE");
-                // Save current trip into database
-                setCurrentTrip();
+                //Activate this function if Commuter has input in both Origin and Destination
+                if (chosenDestination != "" && chosenOrigin != "") {
+                    // Save current trip into database
+                    findRoute();
+                    setCurrentTrip();
+                }
             }
         });
 
@@ -268,11 +274,14 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                     }
                 });
 
+                getStationsInRoute("");
                 // Configure UI to enable origin and destination selections again
                 etOrigin.setEnabled(true);
                 etOrigin.setClickable(true);
                 etOrigin.setFocusable(true);
                 etOrigin.setFocusableInTouchMode(true);
+                etOrigin.setText(null);
+                etDestination.setText(null);
                 selectOrigin.setEnabled(true);
                 selectOrigin.setClickable(true);
                 selectOrigin.setFocusable(true);
@@ -285,6 +294,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 selectDestination.setClickable(true);
                 selectDestination.setFocusable(true);
                 selectDestination.setFocusableInTouchMode(true);
+                btnScanQr.setVisibility(View.GONE);
             }
         });
     }
@@ -339,7 +349,10 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         etOrigin.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mGoogleMap.clear();
                 getStations();  // Generate stations to select
+                etDestination.setText(null);
+
                 getStationsInRoute(etOrigin.getText().toString());
                 String station = parent.getItemAtPosition(position).toString();
                 etOrigin.setText(station);
@@ -1084,7 +1097,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                     if ((dsp.child("busStopName").getValue().toString()).equals(chosenOrigin))  {
                         origin = dsp.getKey();
                     } else if ((dsp.child("busStopName").getValue().toString()).equals(chosenDestination)) {
-
                         destination = dsp.getKey();
                         Log.i(TAG, "onDataChange.destination: " + destination);
                     } else {
@@ -1095,8 +1107,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 Log.i(TAG, "onDataChange: Matched Destination " + destination);
                 try {
                     Log.i(TAG, "onComplete: adding geofences...");
-                    addGeofence(origin, new LatLng(originMark.getPosition().latitude, originMark.getPosition().longitude), GEOFENCE_RADIUS);                     // make a geofence at the origin of the trip
-                    addGeofence(destination, new LatLng(destinationMark.getPosition().latitude, destinationMark.getPosition().longitude), GEOFENCE_RADIUS);      // make a geofence at the destination of the trip
+                    addGeofence(chosenOrigin, new LatLng(originMark.getPosition().latitude, originMark.getPosition().longitude), GEOFENCE_RADIUS);                     // make a geofence at the origin of the trip
+                    addGeofence(chosenDestination   , new LatLng(destinationMark.getPosition().latitude, destinationMark.getPosition().longitude), GEOFENCE_RADIUS);      // make a geofence at the destination of the trip
                     startLocationUpdates();
                 } catch (Exception e) {
                     Log.i(TAG, "onDataChange: tried adding geofences, failed...");
@@ -1127,8 +1139,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        String errorMessage = commGeofenceHelper.getErrorString(e);
-                        Log.i("addGeofence", "onFailure: " + errorMessage);
+                        Log.i("addGeofence", "onFailure: " + e);
                     }
                 });
     }
@@ -1282,31 +1293,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         }, 3000);
     }
 
-    private void toggleViewNoQrScanned() {
-
-        // UI when the COMMUTER is still waiting for a bus and has NOT scanned an operator's QR code
-        etOrigin.setEnabled(false);
-        etOrigin.setClickable(false);
-        etOrigin.setFocusable(false);
-        etOrigin.setFocusableInTouchMode(false);
-        selectOrigin.setEnabled(false);
-        selectOrigin.setClickable(false);
-        selectOrigin.setFocusable(false);
-        selectOrigin.setFocusableInTouchMode(false);
-        etDestination.setEnabled(false);
-        etDestination.setClickable(false);
-        etDestination.setFocusable(false);
-        etDestination.setFocusableInTouchMode(false);
-        selectDestination.setEnabled(false);
-        selectDestination.setClickable(false);
-        selectDestination.setFocusable(false);
-        selectDestination.setFocusableInTouchMode(false);
-        btnSetRoute.setVisibility(View.GONE);
-        btnDisembarked.setVisibility(View.VISIBLE);
-        btnSetHome.setVisibility(View.GONE);
-        btnSetWork.setVisibility(View.GONE);
-        btnScanQr.setVisibility(View.VISIBLE);
-    }
 
  // Function to remove commuter visibility on the map
     public void removeCommuterVisibility() {
@@ -1385,7 +1371,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         Log.i(TAG, "deleteCommuterData: wheelchair " + wheelchair_user);
         Log.i(TAG, "deleteCommuterData: origin " + chosenOrigin);
 
-
+        String origin = chosenOrigin.replaceAll("[^a-zA-Z0-9]", " ");
         // Check if user has wheelchair
         if (wheelchair_user) {
             Log.i(TAG, "deleteCommuterData: deleting from has_wheelchair...");
@@ -1393,12 +1379,12 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             DatabaseReference drCommInGeofence = FirebaseDatabase.getInstance().getReference("Commuter_in_Geofence");
             Log.i(TAG, "deleteCommuterData: dbReference " + drCommInGeofence);
 
-            drCommInGeofence.child(chosenOrigin).child("has_wheelchair").child(uid).removeValue();
+            drCommInGeofence.child(origin).child("has_wheelchair").child(uid).removeValue();
         } else {
             Log.i(TAG, "deleteCommuterData: deleting from no_wheelchair");
             DatabaseReference drCommInGeofence = FirebaseDatabase.getInstance().getReference("Commuter_in_Geofence");
             Log.i(TAG, "deleteCommuterData: dbReference " + drCommInGeofence);
-            drCommInGeofence.child(chosenOrigin).child("no_wheelchair").child(uid).removeValue();
+            drCommInGeofence.child(origin).child("no_wheelchair").child(uid).removeValue();
         }
     }
 
@@ -1418,7 +1404,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                     Log.i(TAG, "onComplete: OPERATOR ID " + dsp.getKey()); {
                         if (dsp.child("current_trip").exists()) {
                             Log.i(TAG, "onComplete: THIS OPERATOR HAS AN ONGOING TRIP");
-                            getOperatorTripInformation(dsp.getKey());   // Get the current trip of the operator with this ID
+                            // Get the current trip of the operator with this ID
+                            getOperatorTripInformation(dsp.getKey());
                         }
                     }
                 }
@@ -1444,9 +1431,45 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 if (task.isComplete()) {
                     try {
                         for (DataSnapshot dsp : task.getResult().getChildren()) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName());
+                            if (wheelchair_user) {
+                                dbCommuter.child("has_wheelchair").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        for (DataSnapshot dsp : task.getResult().getChildren()) {
+                                            chosenOrigin = dsp.child("current_stop").getValue().toString();
+                                            Log.i(TAG, "onComplete: chosen origin changed");
+                                            Log.i(TAG, "onComplete: " + chosenOrigin);
+                                        }
+                                    }
+                                });
+                            } else {
+                                dbCommuter.child("no_wheelchair").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        for (DataSnapshot dsp : task.getResult().getChildren()) {
+                                            chosenOrigin = dsp.child("current_stop").getValue().toString();
+                                            Log.i(TAG, "onComplete: chosen origin changed");
+                                            Log.i(TAG, "onComplete: " + chosenOrigin);
+                                        }
+                                    }
+                                });
+                            }
+                            Log.i(TAG, "onComplete: commuter's route " + currentRoute);
+                            Log.i(TAG, "onComplete: commuter's origin " + chosenOrigin);
+
+                            // check if the current stop is equal to the chosen origin
                             if (dsp.child("current_stop").getValue().toString().equals(chosenOrigin)) {
                                 Log.i(TAG, "onComplete: THE BUS IS IN THE SAME STOP");
-                                showOperatorLocation(dsp.getKey(), Double.parseDouble(dsp.child("current_lat").getValue().toString()), Double.parseDouble(dsp.child("current_long").getValue().toString()));
+                                showOperatorLocation(dsp.getKey(), Double.parseDouble(dsp.child("current_lat").getValue().toString()), Double.parseDouble(dsp.child("current_long").getValue().toString()), dsp.child("current_stop").exists());
+                            } else {
+                                for (int i = 0; i < busInBusStop.size(); i++) {
+                                    Log.i(TAG, "showOperatorLocation: markers " + busInBusStop.get(i));
+                                    Log.i(TAG, "showOperatorLocation: removing markers");
+                                    busInBusStop.get(i).remove();
+                                    busInBusStop.remove(i);
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -1455,23 +1478,25 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+
     }
 
-    private void showOperatorLocation(String key, Double current_lat, Double current_long) {
+    private void showOperatorLocation(String key, Double current_lat, Double current_long, boolean current_stopExists) {
         String TAG = "showOperatorLocation";
         Log.i(TAG, "showOperatorLocation: is running");
 
         LatLng busLocation = new LatLng(current_lat, current_long);
 
         for (int i = 0; i < busInBusStop.size(); i++) {
+            Log.i(TAG, "showOperatorLocation: markers " + busInBusStop.get(i));
             Log.i(TAG, "showOperatorLocation: removing markers");
             busInBusStop.get(i).remove();
             busInBusStop.remove(i);
         }
+
         Log.i(TAG, "showOperatorLocation: number of bus stop markers in area " + busInBusStop.size());
         busInBusStop.add(mGoogleMap.addMarker(new MarkerOptions()
-        .position(busLocation)
-        .title(key)));
+        .position(busLocation)));
 
     }
 
@@ -1520,6 +1545,10 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
             }
             Log.i("Debug", qrResultsOperatorUID);
             addCurrentTripToOperator();
+        } else {
+            Intent intent = new Intent(getActivity(), CommMainActivity.class);
+            startActivity(intent);
+            getActivity().finish();
         }
     }
 
@@ -1529,7 +1558,9 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
 
+
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+//        DatabaseReference dbInput = db.child("Operator").child(qrResultsOperatorUID).child("current_trip").child("passenger_list").child(uid);
         DatabaseReference dbInput = db.child("Operator").child(qrResultsOperatorUID).child("current_trip").child("passenger_list").child(uid);
 
         dbInput.child("username").setValue(usernameDb);
@@ -1548,13 +1579,18 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         checkForOngoingTrip();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
+        try {
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference dbInput = db.child("Commuter").child(uid).child("current_trip");
+            Log.i("TESTING", "addOperatorIDToCommuterCurrentTrip: " + dbInput.getKey());
+            dbInput.child("operator_id").setValue(qrResultsOperatorUID);
 
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference dbInput = db.child("Commuter").child(uid).child("current_trip").child(currentRouteKey);
+            toggleOnGoingTripView();
+        } catch (Exception e){
+            Log.e("ERROR", "addOperatorIDToCommuterCurrentTrip: exception ",e );
+        }
 
-        dbInput.child("operator_id").setValue(qrResultsOperatorUID);
 
-        toggleOnGoingTripView();
     }
 
     private void toggleOnGoingTripView() {
@@ -1564,4 +1600,35 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         btnDisembarked.setText("Para! BABABA");
         btnScanQr.setVisibility(View.GONE);
     }
+    private void toggleViewNoQrScanned() {
+
+        // UI when the COMMUTER is still waiting for a bus and has NOT scanned an operator's QR code
+        etOrigin.setEnabled(false);
+        etOrigin.setClickable(false);
+        etOrigin.setFocusable(false);
+        etOrigin.setFocusableInTouchMode(false);
+        selectOrigin.setEnabled(false);
+        selectOrigin.setClickable(false);
+        selectOrigin.setFocusable(false);
+        selectOrigin.setFocusableInTouchMode(false);
+        etDestination.setEnabled(false);
+        etDestination.setClickable(false);
+        etDestination.setFocusable(false);
+        etDestination.setFocusableInTouchMode(false);
+        selectDestination.setEnabled(false);
+        selectDestination.setClickable(false);
+        selectDestination.setFocusable(false);
+        selectDestination.setFocusableInTouchMode(false);
+        btnSetRoute.setVisibility(View.GONE);
+        btnDisembarked.setVisibility(View.VISIBLE);
+        btnSetHome.setVisibility(View.GONE);
+        btnSetWork.setVisibility(View.GONE);
+        btnScanQr.setVisibility(View.VISIBLE);
+    }
+
+    private void toggleViewQRScanned() {
+        Toast.makeText(commGeofenceHelper, "Ride has started.", Toast.LENGTH_SHORT).show();
+        btnScanQr.setVisibility(View.GONE);
+    }
+
 }

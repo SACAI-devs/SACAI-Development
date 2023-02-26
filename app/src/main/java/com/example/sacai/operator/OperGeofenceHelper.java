@@ -29,7 +29,7 @@ public class OperGeofenceHelper extends ContextWrapper {
 
         return new GeofencingRequest.Builder()
                 .addGeofence(geofence)
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_DWELL)
                 .build();
 
     }
@@ -43,10 +43,9 @@ public class OperGeofenceHelper extends ContextWrapper {
                 .setCircularRegion(latLng.latitude, latLng.longitude, radius)
                 .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
-                .setLoiteringDelay(5000)    // Time delay between determining whether you've entered a geofence to be considered DWELLING in the geofence
-                .setExpirationDuration(60 * 10)
+                .setLoiteringDelay(500)    // Time delay between determining whether you've entered a geofence to be considered DWELLING in the geofence
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
-
     }
 
     // Function to return a pending intent

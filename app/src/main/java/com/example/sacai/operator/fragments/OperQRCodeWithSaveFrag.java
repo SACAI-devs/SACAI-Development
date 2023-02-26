@@ -114,6 +114,11 @@ public class OperQRCodeWithSaveFrag extends Fragment {
         return bitmap;
     }
 
+    private boolean isExternalStorageWritable() {
+        return Environment.getExternalStorageState().equals(Environment.DIRECTORY_PICTURES);
+    }
+
+
     public void saveQRCodeToDevice() {
 
         BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
@@ -121,8 +126,19 @@ public class OperQRCodeWithSaveFrag extends Fragment {
 
         FileOutputStream outStream = null;
         File sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        Log.i("QRSaving", "saveQRCodeToDevice: testing sdCard " + sdCard);
+        Log.i("QRSaving", "saveQRCodeToDevice: check for external mounted storage" + sdCard.canWrite());
+        Log.i("QRSaving", "saveQRCodeToDevice: isExternalStorageWritable " + isExternalStorageWritable());
+        Log.i("MountedMedia", Environment.getExternalStorageDirectory().toString());
+
         File dir = new File(sdCard.getAbsolutePath() + "/SACAI");
-        dir.mkdirs();
+//        dir.mkdirs();
+        if (dir == null || !dir.mkdirs()) {
+            Log.e("File", "Directory not created");
+        }
+
+
         String fileName = String.format("%d.jpg", System.currentTimeMillis());
         File outFile = new File(dir, fileName);
 

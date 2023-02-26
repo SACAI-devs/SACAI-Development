@@ -43,10 +43,6 @@ public class OperPassengerListFrag extends Fragment {
     }
 
 
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,7 +54,7 @@ public class OperPassengerListFrag extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.recyclerPassengers);
-        recyclerView.setHasFixedSize(true);;
+        recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
