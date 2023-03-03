@@ -720,63 +720,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
             }
         });
-
-
-//        final DatabaseReference[] db = {FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName())};
-//        Log.i(TAG, "saveLocationToDatabase: verify database reference " + db);
-//
-//        db[0].child(user.getUid()).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                String id = "";
-//                String route_name = "";
-//                String origin_stop = "";
-//                String destination_stop = "";
-//                String current_stop = "";
-//                String current_lat = "";
-//                String current_long = "";
-//                String passenger_list_id = "";
-//                if (task.isSuccessful()) {
-//                    if (task.getResult().exists()) {
-//                        try {
-//                            for (DataSnapshot dsp : task.getResult().getChildren()) {
-//                                Log.i(TAG, "onDataChange: dsp.getKey " + dsp.getKey());
-//                                id = dsp.getKey();
-//                                route_name = dsp.child("route_name").getValue().toString();
-//                                origin_stop = dsp.child("origin_stop").getValue().toString();
-//                                destination_stop = dsp.child("destination_stop").getValue().toString();
-//                                current_stop = dsp.child("current_stop").getValue().toString();
-//                                current_lat = dsp.child("current_lat").getValue().toString();
-//                                current_long = dsp.child("current_long").getValue().toString();
-//                                passenger_list_id = dsp.child("passenger_list_id").getValue().toString();
-//                            }
-//                        } catch (Exception e) {
-//                            Log.e(TAG, "onDataChange: exception ", e);
-//                        }
-//
-//                        // Save information into firebase via a hashmap
-//                        HashMap Trip = new HashMap();
-//                        Operator_Trip operatorTrip = new Operator_Trip(id, route_name, origin_stop, destination_stop,current_stop,current_lat,current_long,passenger_list_id);
-//                        Trip.put("id", operatorTrip.getId());
-//                        Trip.put("route_name", operatorTrip.getRoute_name());
-//                        Trip.put("origin_stop", operatorTrip.getOrigin_stop());
-//                        Trip.put("destination_stop", operatorTrip.getDestination_stop());
-//                        Trip.put("current_stop", operatorTrip.getCurrent_stop());
-//                        Trip.put("current_lat", latitude);
-//                        Trip.put("current_long", longitude);
-//                        Trip.put("passenger_list_id", operatorTrip.getPassenger_list_id());
-//
-//                        db[0] = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip").child(id);
-//                        Log.i(TAG, "onDataChange: " + db[0]);
-//                        db[0].updateChildren(Trip);
-//                    } else {
-//                        Log.i(TAG, "onComplete: record does not exist");
-//                    }
-//                } else {
-//                    Log.i(TAG, "onComplete: record retrieval does not exist");
-//                }
-//            }
-//        });
     }
 
     // FUNCTIONS FOR GEOFENCING

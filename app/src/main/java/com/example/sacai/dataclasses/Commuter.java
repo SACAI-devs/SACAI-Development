@@ -11,14 +11,13 @@ public class Commuter {
     private boolean wheelchair;
     private String homeAddress;
     private String workAddress;
-    private String uid;
     private Commuter_Trip current_ride;
     private Commuter_Trip ride_history;
 
     public Commuter() {
     }
 
-    public Commuter(String firstname, String lastname, String email, String username, boolean mobility, boolean auditory, boolean wheelchair, String homeAddress, String workAddress, String uid) {
+    public Commuter(String firstname, String lastname, String email, String username, boolean mobility, boolean auditory, boolean wheelchair, String homeAddress, String workAddress) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -28,7 +27,7 @@ public class Commuter {
         this.wheelchair = wheelchair;
         this.homeAddress = homeAddress;
         this.workAddress = workAddress;
-        this.uid = uid;
+
     }
 
     public String getFirstname() {
@@ -101,14 +100,6 @@ public class Commuter {
 
     public void setWorkAddress(String workAddress) {
         this.workAddress = workAddress;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public Commuter_Trip getCurrent_ride() {

@@ -11,7 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sacai.R;
+import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_Trip;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -54,13 +59,20 @@ public class CommRideHistoryAdapter extends RecyclerView.Adapter<CommRideHistory
 
     @Override
     public void onBindViewHolder(@NonNull CommRideHistoryAdapter.ViewHolder viewHolder, int position) {
+
+
         viewHolder.itemView.setTag(commuterTrip.get(position));
         viewHolder.tvDate.setText(commuterTrip.get(position).getDate());
-        viewHolder.tvOrigin.setText(commuterTrip.get(position).getPickup_station());
-        viewHolder.tvDestination.setText(commuterTrip.get(position).getDropoff_station());
+        viewHolder.tvOrigin.setText(commuterTrip.get(position).getOrigin_stop());
+        viewHolder.tvDestination.setText(commuterTrip.get(position).getDestination_stop());
         viewHolder.tvTimeEnd.setText(commuterTrip.get(position).getTime_ended());
         viewHolder.tvTimeStart.setText(commuterTrip.get(position).getTime_started());
-        viewHolder.tvTripId.setText(commuterTrip.get(position).getId());
+
+        // get commuter's trip id
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("ride_history");
+        Log.i("COMMUTER TRIP KEY", "onBindViewHolder: trip id" + dbCommuter.getKey());
+        //        viewHolder.tvTripId.setText(commuterTrip.get(position).getId());
     }
 
     @Override

@@ -22,11 +22,11 @@ public class DAOCommuter {
         databaseReference = db.getReference(Commuter.class.getSimpleName());
     }
 
-    public boolean add(Commuter commuter) {
-        if ((databaseReference.child(commuter.getUid()).setValue(commuter)).isSuccessful()){
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    public boolean add(Commuter commuter) {
+//        if ((databaseReference.child(commuter.getUid()).setValue(commuter)).isSuccessful()){
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 }

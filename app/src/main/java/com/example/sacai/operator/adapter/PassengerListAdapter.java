@@ -54,7 +54,7 @@ public class PassengerListAdapter extends RecyclerView.Adapter<PassengerListAdap
         viewHolder.itemView.setTag(passenger.get(position));
         viewHolder.tvUsername.setText(passenger.get(position).getUsername());
         viewHolder.tvOrigin.setText(passenger.get(position).getDestination());
-        viewHolder.tvUid.setText(passenger.get(position).getUid());
+//        viewHolder.tvUid.setText(passenger.get(position).getUid());
     }
 
     @Override

@@ -92,7 +92,7 @@
     <string name="geofence_transition_dwell">Dwelling in geofence.</string>
     <string name="geofence_unknown_transition">Geofence transition unknown.</string>
     <string name="msg_makes_sure_you_are_near_a_bus_stop">Make sure you are near the bus stop.</string>
-    <string name="label_PARA_SASAKAY">PARA Sasakay</string>
+    <string name="label_PARA_SASAKAY">PARA! Sasakay</string>
     <string name="label_work">Work</string>
     <string name="msg_please_select_origin_bus_stop">Please select an origin bus stop.</string>
     <string name="msg_your_selected_destination_not_within_route_of_origin">Your chosen destination is not within the route of your selected origin.</string>
@@ -102,4 +102,5 @@
     <string name="label_upload_id">Upload PWD id</string>
     <string name="label_QRCode">QR Code</string>
     <string name="label_saveQR">Save to Device</string>
+    <string name="label_para_bababa">PARA! Bababa</string>
 </resources>

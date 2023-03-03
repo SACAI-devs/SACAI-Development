@@ -2,33 +2,30 @@ package com.example.sacai.dataclasses;
 
 public class Commuter_Trip {
     // Important trip information
-    private String id;              // uid of the trip
     private String date;            // date of the trip
     private String time_started;    // what time did the user embark a bus
     private String time_ended;      // what time did the user disembark the bus
-    private String pickup_station;  // where did they embark
-    private String dropoff_station; // where did they disembark
+    private String origin_stop;  // where did they embark
+    private String destination_stop; // where did they disembark
     private String operator_id;     // track the operator of the bus
 
     public Commuter_Trip() {
     }
 
-    public Commuter_Trip(String id, String date, String time_started, String time_ended, String pickup_station, String dropoff_station, String operator_id) {
-        this.id = id;
+    public Commuter_Trip(String date, String time_started, String origin_stop, String destination_stop) {
+        this.date = date;
+        this.time_started = time_started;
+        this.origin_stop = origin_stop;
+        this.destination_stop = destination_stop;
+    }
+
+    public Commuter_Trip(String date, String time_started, String time_ended, String origin_stop, String destination_stop, String operator_id) {
         this.date = date;
         this.time_started = time_started;
         this.time_ended = time_ended;
-        this.pickup_station = pickup_station;
-        this.dropoff_station = dropoff_station;
+        this.origin_stop = origin_stop;
+        this.destination_stop = destination_stop;
         this.operator_id = operator_id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getDate() {
@@ -55,22 +52,21 @@ public class Commuter_Trip {
         this.time_ended = time_ended;
     }
 
-    public String getPickup_station() {
-        return pickup_station;
+    public String getOrigin_stop() {
+        return origin_stop;
     }
 
-    public void setPickup_station(String pickup_station) {
-        this.pickup_station = pickup_station;
+    public void setOrigin_stop(String origin_stop) {
+        this.origin_stop = origin_stop;
     }
 
-    public String getDropoff_station() {
-        return dropoff_station;
+    public String getDestination_stop() {
+        return destination_stop;
     }
 
-    public void setDropoff_station(String dropoff_station) {
-        this.dropoff_station = dropoff_station;
+    public void setDestination_stop(String destination_stop) {
+        this.destination_stop = destination_stop;
     }
-
     public String getOperator_id() {
         return operator_id;
     }

@@ -1,7 +1,6 @@
 package com.example.sacai.dataclasses;
 
 public class Commuter_in_Geofence {
-    private String uid;
     private String username;
     private String mobile_impairment;
     private String auditory_impairment;
@@ -12,7 +11,6 @@ public class Commuter_in_Geofence {
     }
 
     public Commuter_in_Geofence(String username, String mobile_impairment, String auditory_impairment, String origin, String destination) {
-
         this.username = username;
         this.mobile_impairment = mobile_impairment;
         this.auditory_impairment = auditory_impairment;
@@ -20,13 +18,6 @@ public class Commuter_in_Geofence {
         this.destination = destination;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
 
     public String getUsername() {
         return username;

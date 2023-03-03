@@ -8,12 +8,12 @@ public class Operator_Trip {
     private String current_stop;
     private String current_lat;
     private String current_long;
-    private String passenger_list_id;
+    private String passenger_list;
 
     public Operator_Trip() {
     }
 
-    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, String passenger_list_id) {
+    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, String passenger_list) {
         this.id = id;
         this.route_name = route_name;
         this.origin_stop = origin_stop;
@@ -21,7 +21,7 @@ public class Operator_Trip {
         this.current_stop = current_stop;
         this.current_lat = current_lat;
         this.current_long = current_long;
-        this.passenger_list_id = passenger_list_id;
+        this.passenger_list = passenger_list;
     }
 
     public String getId() {
@@ -64,12 +64,12 @@ public class Operator_Trip {
         this.current_stop = current_stop;
     }
 
-    public String getPassenger_list_id() {
-        return passenger_list_id;
+    public String getPassenger_list() {
+        return passenger_list;
     }
 
-    public void setPassenger_list_id(String passenger_list_id) {
-        this.passenger_list_id = passenger_list_id;
+    public void setPassenger_list(String passenger_list) {
+        this.passenger_list = passenger_list;
     }
 
     public String getCurrent_lat() {

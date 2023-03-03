@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.example.sacai.operator.OperSignupActivity;
 import com.example.sacai.R;
-import com.example.sacai.commuter.dao.DAOCommuter;
 import com.example.sacai.databinding.ActivityCommSignup2Binding;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.User;
@@ -20,13 +19,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class CommSignup2Activity extends AppCompatActivity {
     // Bind activity to layout
     ActivityCommSignup2Binding binding;
     private FirebaseAuth mAuth;
-    DAOCommuter daoCommuter = new DAOCommuter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,8 +134,9 @@ public class CommSignup2Activity extends AppCompatActivity {
                                                 // If USER CREATION is SUCCESSFUL then it sends a verification email
                                                 if (task.isSuccessful()) {
                                                         // Adds a new commuter record
-                                                        Commuter commuter = new Commuter(firstname, lastname, email,firstname+lastname, mobility, auditory, wheelchair,"", "", currentUser.getUid());
-                                                        daoCommuter.add(commuter);
+                                                        Commuter commuter = new Commuter(firstname, lastname, email,firstname+lastname, mobility, auditory, wheelchair,"", "");
+                                                        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference("Commuter");
+                                                        dbCommuter.child(currentUser.getUid()).setValue(commuter);
                                                         sendVerificationEmail(email, password);
                                                         Toast.makeText(CommSignup2Activity.this, R.string.msg_checkEmailForVerifyLink, Toast.LENGTH_LONG).show();
                                                         showCommLogin();

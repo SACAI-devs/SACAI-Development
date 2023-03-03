@@ -8,7 +8,6 @@
     tools:context=".commuter.fragments.CommMapFrag"
     >
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -103,12 +102,20 @@
                     android:text="@string/label_PARA_SASAKAY"/>
 
                 <Button
-                    android:id="@+id/btnDisembarked"
+                    android:id="@+id/btnCancelPara"
                     style="@style/PrimaryBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/label_cancel_para" />
+
+                <Button
+                    android:id="@+id/btnParaBababa"
+                    style="@style/PrimaryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/label_para_bababa" />
 
                 <Button
                     android:id="@+id/btnScanQr"

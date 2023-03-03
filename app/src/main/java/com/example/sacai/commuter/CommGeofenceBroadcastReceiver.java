@@ -1,32 +1,22 @@
 package com.example.sacai.commuter;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
     CommGeofenceActions action = new CommGeofenceActions();
     String triggered_geofence;
-
+    AlertDialog.Builder builder;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,6 +24,8 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         String TAG = "onReceive";
         Log.i("ClassCall", "onReceive: is running");
+
+        builder = new AlertDialog.Builder(context);
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         try {
@@ -56,20 +48,37 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.i(TAG, "onReceive: user entered the geofence");
+                action.commuterEntersGeofence(triggered_geofence);
                 Toast.makeText(context, "You are now approaching bus stop .", Toast.LENGTH_SHORT).show();
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.i(TAG, "onReceive: user is in geofence");
-                action.setCommuterVisibility(triggered_geofence);
+                action.commuterEntersGeofence(triggered_geofence);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
-                action.removeCommuterVisibility();
+                action.commuterLeavesGeofence();
+
                 Toast.makeText(context, "You are not within the range of a bus stop. Go to the nearest bus stop so operators in the area can be notified.", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    public void alertLeaveGeofence() {
+        String TAG = "alertLeaveGeofence";
+        Log.i("ClassCalled", "alertLeaveGeofence: is running");
+        builder.setTitle("You are leaving a bus stop!")
+                .setMessage("We can't inform Operators if you're too far from your origin bus stop.")
+                .setCancelable(false)
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: user clicked okay");
+                    }
+                })
+                .show();
     }
 
 
