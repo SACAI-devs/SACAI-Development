@@ -41,7 +41,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" /> <!-- ========================================================= -->
+            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" /> <!-- ========================================================= -->
         <!-- ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS====== -->
         <!-- ========================================================= -->
         <!-- LANDING ACTIVITY -->
@@ -68,7 +68,7 @@
         </activity> <!-- MAPS API KEY -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" /> <!-- ========================================================= -->
+            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" /> <!-- ========================================================= -->
         <!-- =========END OF NON-USER SPECIFIC CONFIGURATIONS========= -->
         <!-- ========================================================= -->
         <!-- ========================================================= -->

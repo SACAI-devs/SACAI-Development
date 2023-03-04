@@ -775,7 +775,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         try {
             for (int i = 0; i < stationMarkers.size(); i++) {
                 addGeofence(stationInBusStopName.get(i), new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude), GEOFENCE_RADIUS);
-                addCircle(new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude),GEOFENCE_RADIUS);
+//                addCircle(new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude),GEOFENCE_RADIUS);
             }
             Log.i(TAG, "tryAddingGeofences: stations in route geofences added");
 //            startLocationUpdates();

@@ -667,6 +667,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                                                         Log.i(TAG, "onComplete: " + dspCurrentTrip.getKey());
                                                         deleteCommuterInGeofence(dspCurrentTrip.child("origin_stop").getValue().toString());
                                                     }
+                                                    deleteCurrentTrip();
                                                 } catch (Exception e) {
                                                     Log.e(TAG, "onComplete: ", e);
                                                 }
@@ -1149,6 +1150,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                         Log.i("saveRideHistory", "onComplete: data from record does not exist");
                     }
+                    deleteCurrentTrip();
                 } else {
                     Toast.makeText(getActivity(), R.string.err_unknown, Toast.LENGTH_SHORT).show();
                     Log.i("saveRideHistory", "onComplete: retrieve data could not be completed");
@@ -1525,7 +1527,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
         Log.i(TAG, "deleteCommuterData: commuter record in geofence removed");
         stopLocationUpdates();
-        deleteCurrentTrip();
+//        deleteCurrentTrip();
     }
 
     // Function to find all operators in the same bus stop
