@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,8 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sacai.R;
 import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Commuter_Trip;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -27,17 +31,17 @@ public class CommRideHistoryAdapter extends RecyclerView.Adapter<CommRideHistory
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tvPlate, tvDate, tvOrigin, tvDestination, tvTimeStart, tvTimeEnd, tvTripId;
+        TextView tvOperatorId, tvDate, tvOrigin, tvDestination, tvTimeStart, tvTimeEnd, tvTripId;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvPlate = itemView.findViewById(R.id.tvPlateNumber);
+            tvTripId = itemView.findViewById(R.id.tvTripId);
             tvDate = itemView.findViewById(R.id.tvDate);
             tvOrigin = itemView.findViewById(R.id.tvOrigin);
             tvDestination = itemView.findViewById(R.id.tvDestination);
             tvTimeStart = itemView.findViewById(R.id.tvTimeStart);
             tvTimeEnd = itemView.findViewById(R.id.tvTimeEnd);
-            tvTripId = itemView.findViewById(R.id.tvTripId);
+            tvOperatorId = itemView.findViewById(R.id.tvOperatorId);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,17 +66,14 @@ public class CommRideHistoryAdapter extends RecyclerView.Adapter<CommRideHistory
 
 
         viewHolder.itemView.setTag(commuterTrip.get(position));
+        viewHolder.tvTripId.setText(commuterTrip.get(position).getId());
         viewHolder.tvDate.setText(commuterTrip.get(position).getDate());
         viewHolder.tvOrigin.setText(commuterTrip.get(position).getOrigin_stop());
         viewHolder.tvDestination.setText(commuterTrip.get(position).getDestination_stop());
         viewHolder.tvTimeEnd.setText(commuterTrip.get(position).getTime_ended());
         viewHolder.tvTimeStart.setText(commuterTrip.get(position).getTime_started());
+        viewHolder.tvOperatorId.setText(commuterTrip.get(position).getOperator_id());
 
-        // get commuter's trip id
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("ride_history");
-        Log.i("COMMUTER TRIP KEY", "onBindViewHolder: trip id" + dbCommuter.getKey());
-        //        viewHolder.tvTripId.setText(commuterTrip.get(position).getId());
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.sacai.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -46,24 +47,18 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.i(TAG, "onReceive: user entered the geofence");
-                Toast.makeText(context, "You are now approaching the following station/s" , Toast.LENGTH_SHORT).show();
-                String gf;
-                for (Geofence geofence : geofenceList) {
-                    gf = geofence.getRequestId();
-                    Toast.makeText(context, gf + " station", Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(context, R.string.msg_you_are_now_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
+                action.updateCurrentStop(geofenceList, triggered_geofences);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.i(TAG, "onReceive: user is in geofence");
-                Log.i(TAG, "onReceive: triggered geofences " + triggered_geofences);
-
                 action.updateCurrentStop(geofenceList, triggered_geofences);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
-                Toast.makeText(context, "You are not within the range of a bus stop.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.msg_you_are_not_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
                 action.updateCurrentStop(geofenceList, "");
                 break;
         }

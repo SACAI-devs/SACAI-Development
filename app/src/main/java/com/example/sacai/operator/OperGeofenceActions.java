@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.sacai.dataclasses.Commuter;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.dataclasses.Operator_Trip;
 import com.google.android.gms.location.Geofence;
@@ -54,59 +55,54 @@ public class OperGeofenceActions {
                 });
             }
         };
-        timer.schedule(timerTask, 10000);
+        timer.schedule(timerTask, 20000);
     }
 
     private void updateStop (String current_stop) {
         String TAG = "updateStop";
         Log.i("ClassCalled", "updateStop: is running");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // Get the operator's route information
-        // Get the current geofence that it is in
-        // Update current trip
-        // Add current geofence to current_stop
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip");
-        Log.i(TAG, "setOperatorVisibility: db reference " + db);
-        Log.i(TAG, "updateCurrentStop: geofence list overlap check");
+        String uid = user.getUid();
 
-        Operator_Trip trip = new Operator_Trip();
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(uid).child("current_trip");
         db.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isComplete()) {
-                    if (task.isSuccessful()) {
+                try {
+                    for (DataSnapshot dspOperator : task.getResult().getChildren()) {
+                        current_trip_id = dspOperator.getKey();
+                        Log.i(TAG, "onComplete: CHECKING TRIP ID...");
+                        Log.i(TAG, "onComplete: current_trip_id " + dspOperator.getKey());
                         try {
-                            for (DataSnapshot dsp : task.getResult().getChildren()) {
-                                current_trip_id = dsp.getKey();
-                                if (dsp.child("current_stop").getValue().toString().isEmpty()) {
-                                    db.child(dsp.getKey()).child("current_stop").setValue(current_stop);
-                                    Log.i(TAG, "onComplete: dsp.current_stop " + dsp.child("current_stop"));
-                                } else {
-                                    timer = new Timer();
-                                    TimerTask timerTask = new TimerTask() {
-                                        public void run() {
-                                            handler.post(new Runnable() {
-                                                public void run(){
-                                                    Log.i(TAG, "run: waiting...");
-                                                    db.child(dsp.getKey()).child("current_stop").setValue(current_stop);
-                                                    Log.i(TAG, "onComplete: dsp.current_stop " + dsp.child("current_stop"));
-                                                }
-                                            });
-                                        }
-                                    };
-                                    timer.schedule(timerTask, 300000);
-                                }
+                            if (dspOperator.child("current_stop").exists()) {
+                                timer = new Timer();
+                                TimerTask timerTask = new TimerTask() {
+                                    public void run() {
+                                        handler.post(new Runnable() {
+                                            public void run(){
+                                                Log.i(TAG, "run: WAITING...");
+                                                db.child(dspOperator.getKey()).child("current_stop").setValue(current_stop);
+                                                Log.i(TAG, "run: CHECKING VALUES...");
+                                                Log.i(TAG, "onComplete: dsp.current_stop " + dspOperator.child("current_stop"));
+                                            }
+                                        });
+                                    }
+                                };
+                                timer.schedule(timerTask, 5000);
 
+                            } else {
+                                Log.i(TAG, "onComplete: CHECKING VALUES...");
+                                Log.i(TAG, "onComplete: dsp.current_stop " + dspOperator.child("current_stop").getValue());
+
+                                db.child(dspOperator.getKey()).child("current_stop").setValue(current_stop);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "onComplete: exception ", e);
                         }
 
-                    } else {
-                        Log.i(TAG, "onComplete: not successful");
                     }
-                } else {
-                    Log.i(TAG, "onComplete: cannot be completed");
+                } catch (Exception e) {
+                    Log.e(TAG, "onComplete: exception ", e);
                 }
             }
         });

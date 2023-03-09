@@ -12,11 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentOperPassengerListBinding;
 import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.example.sacai.dataclasses.Operator;
+import com.example.sacai.dataclasses.Passenger_List;
+import com.example.sacai.operator.adapter.PassengerListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,8 +38,16 @@ public class OperPassengerListFrag extends Fragment {
     RecyclerView.Adapter passengerListAdapter;
     RecyclerView.LayoutManager layoutManager;
 
-    ArrayList<Commuter_in_Geofence> passenger;   // Commuter's information as a passenger
+    ArrayList<Passenger_List> passenger;   // Commuter's information as a passenger
 
+    private String id;          // ID of the commuter in the passengerlist
+    private String username;    // Commuter username
+    private String mobility;    // Commuter mobility needs
+    private String auditory;    // Commuter auditory needs
+    private String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
+    private String origin;      // Commuter origin bus stop
+    private String destination; // Commuter destination bus stop
+    private String para_status; // Commuter if sasakay or bababa
 
     public OperPassengerListFrag() {
         // Required empty public constructor
@@ -53,7 +64,7 @@ public class OperPassengerListFrag extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recyclerView = view.findViewById(R.id.recyclerPassengers);
+        recyclerView = view.findViewById(R.id.passengerList);
         recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(getActivity());
@@ -73,29 +84,41 @@ public class OperPassengerListFrag extends Fragment {
         String TAG = "readData";
         Log.i("ClassCalled", "readData: is running");
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
-        databaseReference.child(uid).addValueEventListener(new ValueEventListener() {
+        DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(uid).child("current_trip");
+        dbOperator.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String id;          // ID of the commuter in the passengerlist
-                String username;    // Commuter username
-                String mobility;    // Commuter mobility needs
-                String auditory;    // Commuter auditory needs
-                String wheelchair;  // Commuter wheelchair needs    // TODO: Determine if this is necessary to add
-                String origin;      // Commuter origin bus stop
-                String destination; // Commuter destination bus stop
                 passenger = new ArrayList<>();
 
-                for (DataSnapshot dsp : snapshot.getChildren()) {
+                for (DataSnapshot dspCurrentTrip : snapshot.getChildren()) {
+                    Log.i(TAG, "onDataChange: CHECKING VALUES...");
+                    Log.i(TAG, "onDataChange: dspCurrentTrip.getKey " + dspCurrentTrip.getKey());
+                    Log.i(TAG, "onDataChange: CHECKING VALUES...");
+                    Log.i(TAG, "onDataChange: dspCurrentTrip.child().getChildren " + dspCurrentTrip.child("passenger_list").getChildrenCount());
                     try {
-                        id = "Trip Tracking ID: " + dsp.getKey();
-                        username = "Username: " + dsp.child("username");
-//                        origin = dsp.child("pickup_station")
-                        // TODO Add adapter
+                        if (dspCurrentTrip.child("passenger_list").exists()) {
+                            for (DataSnapshot dspPassengers : dspCurrentTrip.child("passenger_list").getChildren()) {
+                                Log.i(TAG, "onDataChange: CHECKING VALUES...");
+                                Log.i(TAG, "onDataChange: passenger.getkey " + dspPassengers.getKey());
+                                id = dspPassengers.getKey();
+                                username = dspPassengers.child("username").getValue().toString();
+                                auditory = dspPassengers.child("auditory").getValue().toString();
+                                mobility = dspPassengers.child("mobility").getValue().toString();
+                                wheelchair = dspPassengers.child("wheelchair").getValue().toString();
+                                origin = dspPassengers.child("origin").getValue().toString();
+                                destination = dspPassengers.child("destination").getValue().toString();
+                                if (dspPassengers.child("para").getValue().equals("true")) {
+                                    para_status = "PARA! Bababa.";
+                                    Toast.makeText(getActivity(), username + getString(R.string.msg_para_bababa), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    para_status = "Waiting...";
+                                }
 
-                        Log.i(TAG, "onDataChange: id " + id);
-                        Log.i(TAG, "onDataChange: date " + id);
+                                passenger.add(new Passenger_List(id, username, auditory, mobility, wheelchair, origin, destination, para_status));
+                                passengerListAdapter = new PassengerListAdapter(getActivity(), passenger);
+                            }
+                        }
                     } catch (Exception e) {
                         Log.e(TAG, "onDataChange: exception ", e);
                     }

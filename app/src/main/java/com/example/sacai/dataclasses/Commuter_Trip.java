@@ -2,14 +2,36 @@ package com.example.sacai.dataclasses;
 
 public class Commuter_Trip {
     // Important trip information
+    private String plate_number;
     private String date;            // date of the trip
     private String time_started;    // what time did the user embark a bus
     private String time_ended;      // what time did the user disembark the bus
     private String origin_stop;  // where did they embark
     private String destination_stop; // where did they disembark
     private String operator_id;     // track the operator of the bus
+    private String id;
 
     public Commuter_Trip() {
+    }
+
+//    public Commuter_Trip(String plate_number, String date, String time_started, String time_ended, String origin_stop, String destination_stop, String operator_id) {
+//        this.plate_number = plate_number;
+//        this.date = date;
+//        this.time_started = time_started;
+//        this.time_ended = time_ended;
+//        this.origin_stop = origin_stop;
+//        this.destination_stop = destination_stop;
+//        this.operator_id = operator_id;
+//    }
+
+    public Commuter_Trip( String date, String time_started, String time_ended, String origin_stop, String destination_stop, String operator_id, String id) {
+        this.date = date;
+        this.time_started = time_started;
+        this.time_ended = time_ended;
+        this.origin_stop = origin_stop;
+        this.destination_stop = destination_stop;
+        this.operator_id = operator_id;
+        this.id = id;
     }
 
     public Commuter_Trip(String date, String time_started, String origin_stop, String destination_stop) {
@@ -26,6 +48,14 @@ public class Commuter_Trip {
         this.origin_stop = origin_stop;
         this.destination_stop = destination_stop;
         this.operator_id = operator_id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDate() {

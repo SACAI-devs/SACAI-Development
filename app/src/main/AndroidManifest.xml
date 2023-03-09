@@ -11,7 +11,10 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <!--Storage Permissions for QR Code Generator-->
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:remove="android:maxSdkVersion"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -41,7 +44,9 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" /> <!-- ========================================================= -->
+            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" />
+
+        <!-- ========================================================= -->
         <!-- ======BEGINNING OF NON-USER SPECIFIC CONFIGURATIONS====== -->
         <!-- ========================================================= -->
         <!-- LANDING ACTIVITY -->
@@ -68,7 +73,9 @@
         </activity> <!-- MAPS API KEY -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" /> <!-- ========================================================= -->
+            android:value="AIzaSyBAS7gUb0v1ND8_EKfbwy7ZpCQ789cnMYs" />
+
+        <!-- ========================================================= -->
         <!-- =========END OF NON-USER SPECIFIC CONFIGURATIONS========= -->
         <!-- ========================================================= -->
         <!-- ========================================================= -->

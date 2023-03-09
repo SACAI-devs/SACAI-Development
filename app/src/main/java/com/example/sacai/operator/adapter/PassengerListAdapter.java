@@ -13,24 +13,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sacai.R;
 import com.example.sacai.dataclasses.Commuter_in_Geofence;
+import com.example.sacai.dataclasses.Passenger_List;
 
 import java.util.ArrayList;
 
 public class PassengerListAdapter extends RecyclerView.Adapter<PassengerListAdapter.ViewHolder> {
-    private ArrayList<Commuter_in_Geofence> passenger;
-    public PassengerListAdapter(Context context, ArrayList<Commuter_in_Geofence> list) {
+    private ArrayList<Passenger_List> passenger;
+    public PassengerListAdapter(Context context, ArrayList<Passenger_List> list) {
         passenger = list;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvUsername, tvOrigin, tvDestination, tvUid;
+        TextView tvUsername, tvOrigin, tvDestination, tvUid, tvParaStatus;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvUsername = itemView.findViewById(R.id.tvUsername);
+            tvUid = itemView.findViewById(R.id.tvUserId);
+            tvParaStatus = itemView.findViewById(R.id.tvParaStatus);
             tvOrigin = itemView.findViewById(R.id.tvSource);
             tvDestination = itemView.findViewById(R.id.tvDestination);
-            tvUid = itemView.findViewById(R.id.tvUserId);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,13 +55,15 @@ public class PassengerListAdapter extends RecyclerView.Adapter<PassengerListAdap
     public void onBindViewHolder(@NonNull PassengerListAdapter.ViewHolder viewHolder, int position) {
         viewHolder.itemView.setTag(passenger.get(position));
         viewHolder.tvUsername.setText(passenger.get(position).getUsername());
-        viewHolder.tvOrigin.setText(passenger.get(position).getDestination());
-//        viewHolder.tvUid.setText(passenger.get(position).getUid());
+        viewHolder.tvParaStatus.setText(passenger.get(position).getPara_status());
+        viewHolder.tvOrigin.setText(passenger.get(position).getOrigin());
+        viewHolder.tvDestination.setText(passenger.get(position).getDestination());
+        viewHolder.tvUid.setText(passenger.get(position).getId());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return passenger.size();
     }
 
 

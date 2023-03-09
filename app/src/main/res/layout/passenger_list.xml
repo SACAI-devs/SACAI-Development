@@ -42,7 +42,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:text="" />
+                    android:text="Commuter ID" />
+
+                <TextView
+                    android:id="@+id/tvParaStatus"
+                    style="@style/EmphasizedTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="Para Bababa!"
+                    android:textColor="#6CB367" />
                 <!--NEEDS LIST-->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerNeeds"

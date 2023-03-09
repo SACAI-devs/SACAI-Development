@@ -1,5 +1,7 @@
 package com.example.sacai.dataclasses;
 
+import java.util.ArrayList;
+
 public class Operator_Trip {
     private String id;
     private String route_name;
@@ -8,12 +10,16 @@ public class Operator_Trip {
     private String current_stop;
     private String current_lat;
     private String current_long;
-    private String passenger_list;
+    private ArrayList <String> passenger_list;
 
     public Operator_Trip() {
     }
 
-    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, String passenger_list) {
+    public Operator_Trip(String route_name) {
+        this.route_name = route_name;
+    }
+
+    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, ArrayList<String> passenger_list) {
         this.id = id;
         this.route_name = route_name;
         this.origin_stop = origin_stop;
@@ -64,11 +70,11 @@ public class Operator_Trip {
         this.current_stop = current_stop;
     }
 
-    public String getPassenger_list() {
+    public ArrayList<String> getPassenger_list() {
         return passenger_list;
     }
 
-    public void setPassenger_list(String passenger_list) {
+    public void setPassenger_list(ArrayList<String> passenger_list) {
         this.passenger_list = passenger_list;
     }
 

@@ -36,7 +36,7 @@
                     android:text="@string/label_passengerList" />
                 <!--PASSENGER LIST-->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerPassengers"
+                    android:id="@+id/passengerList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp" />

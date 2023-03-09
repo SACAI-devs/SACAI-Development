@@ -103,4 +103,13 @@
     <string name="label_QRCode">QR Code</string>
     <string name="label_saveQR">Save to Device</string>
     <string name="label_para_bababa">PARA! Bababa</string>
+    <string name="msg_you_are_now_within_range_of_a_bus_stop">You are now within the range of a bus stop.</string>
+    <string name="msg_you_are_not_within_range_of_a_bus_stop">You are not within the range of a bus stop.</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="msg_do_you_want_to_disembark_at_the_nearest_bus_stop">Do you want to disembark at the next nearest bus stop?</string>
+    <string name="msg_alerting_operator_of_para">Alerting operator of disembark request</string>
+    <string name="msg_para_bababa">\" said PARA! Bababa.\"</string>
+    <string name="msg_user_has_successfully_disembarked_from_bus">A user has disemabarked successfully from the bus.</string>
+    <string name="label_change_profile_picture">Change Profile Picture</string>
 </resources>
