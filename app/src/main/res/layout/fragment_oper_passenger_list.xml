@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".operator.fragments.OperPassengerListFrag" >
-    <LinearLayout
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
@@ -35,12 +36,15 @@
                     android:paddingVertical="20dp"
                     android:text="@string/label_passengerList" />
                 <!--PASSENGER LIST-->
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/passengerList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp" />
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
 </FrameLayout>

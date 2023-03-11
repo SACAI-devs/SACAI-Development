@@ -205,6 +205,24 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         getRoutes();
 
+        Log.i(TAG, "onMapReady: removing existing geofences...");
+        geofencingClient.removeGeofences(operGeofenceHelper.getPendingIntent())
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Remove Geofences", "onSuccess: geofences removed");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
+
         // TODO check for ongoing trips
         mGoogleMap.setMyLocationEnabled(true);
 
@@ -219,7 +237,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
                 //From onItemClickListener > matchRouteNames > acquireBusStopsUnderRoutes > matchBusStopsUnderBusStops > generateRouteMarkers
                 matchRouteNames();
-
 
                 Log.i("VerifyValueLatitude", latitude.toString());
                 Log.i("OnClick", "User has selected");
@@ -337,10 +354,17 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 try {
                     for (DataSnapshot dspCommuter : task.getResult().getChildren()) {
                         if (dspCommuter.child("current_trip").exists()) {
-                            for (DataSnapshot dspCurrentTrip : dspCommuter.getChildren()) {
+                            Log.i(TAG, "onComplete: dspCommuter.key " + dspCommuter.getKey());
+                            for (DataSnapshot dspCurrentTrip : dspCommuter.child("current_trip").getChildren()) {
+                                Log.i(TAG, "onComplete: dspCurrentTrip.key " + dspCurrentTrip.getKey());
+                                Log.i(TAG, "onComplete: dspCurrentTrip.current_stop " + dspCurrentTrip.child("current_stop").getValue().toString());
                                 if (dspCurrentTrip.child("current_stop").getValue().toString().equals(current_stop)) {
                                     Log.i(TAG, "onComplete: current_stop matches");
-                                    Commuters.add(dspCommuter.getKey());
+                                    for (int i = 0; i < Commuters.size(); i++) {
+                                        if (!Commuters.get(i).equals(dspCurrentTrip.child("current_stop").getValue().toString())) {
+                                            Commuters.add(dspCommuter.getKey());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -355,33 +379,33 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     private Timer updateCommuters = new Timer();
     private TimerTask timerTask2;
-    private void stopUpdates() {
-        if(updateCommuters != null){
-            updateCommuters.cancel();
-            updateCommuters.purge();
-            Log.i("ClassCalled", "stopUpdates: timer loop stopped");
-            Commuters.clear();
-        }
-    }
-
-    private void updateCommutersInStop() {
-        String TAG = "updateCommutersInStop";
-        Log.i("ClassCalled", "updateCommutersInStop: is running");
-
-
-        timerTask2 = new TimerTask() {
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run(){
-                        //update commuters in stop
-                        getCurrentStop();
-                        Log.i(TAG, "run: location updated");
-                    }
-                });
-            }
-        };
-        updateCommuters.schedule(timerTask2, 500, 5000);
-    }
+//    private void stopUpdates() {
+//        if(updateCommuters != null){
+//            updateCommuters.cancel();
+//            updateCommuters.purge();
+//            Log.i("ClassCalled", "stopUpdates: timer loop stopped");
+//            Commuters.clear();
+//        }
+//    }
+//
+//    private void updateCommutersInStop() {
+//        String TAG = "updateCommutersInStop";
+//        Log.i("ClassCalled", "updateCommutersInStop: is running");
+//
+//
+//        timerTask2 = new TimerTask() {
+//            public void run() {
+//                handler.post(new Runnable() {
+//                    public void run(){
+//                        //update commuters in stop
+//                        getCurrentStop();
+//                        Log.i(TAG, "run: location updated");
+//                    }
+//                });
+//            }
+//        };
+//        updateCommuters.schedule(timerTask2, 5000, 5000);
+//    }
 
     private void generateRouteMarkers() {
         Log.i("ClassCalled", "generateReouteMarkers is running");
@@ -389,7 +413,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         mGoogleMap.clear(); // Clear existing markers
         BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
         Bitmap iconified = bus_icon.getBitmap();
-        updateCommutersInStop();
+
 
         // Generate new markers for each station
         for (int i = 0; i < stationInBusStopID.size(); i++) {
@@ -715,6 +739,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private void stopLocationUpdates(){
         String TAG = "stopTimer";
         Log.i("ClassCalled", "stopTimer: is running");
+
         if(timer != null){
             timer.cancel();
             timer.purge();
@@ -735,14 +760,17 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         //update location every set interval
                         updateLocation();
                         updatePassengerList();
+                        getCurrentStop();
                         Log.i(TAG, "run: location updated");
                     }
                 });
             }
         };
-        timer.schedule(timerTask, 500, 5000);
+        timer.schedule(timerTask, 500, 30000);
     }
 
+
+    String passenger_list_id;
     // Function for updating operator that commuter wants to para
     private void updatePassengerList() {
 
@@ -856,9 +884,11 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 addGeofence(stationInBusStopID.get(i), new LatLng(stationMarkers.get(i).getPosition().latitude, stationMarkers.get(i).getPosition().longitude), GEOFENCE_RADIUS);
             }
             Log.i(TAG, "tryAddingGeofences: stations in route geofences added");
+//            updateCommutersInStop();
         } catch (Exception e) {
             Log.e(TAG, "tryAddingGeofences: exception ", e);
         }
+
     }
 
 
@@ -931,6 +961,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         etRouteSelects.setEnabled(true);
         etRouteSelects.setFocusableInTouchMode(true);
         routeSelects.setText(null);
+//        stopUpdates();
     }
     private void toggleViewTripStarted() {
         btnEndRoute.setVisibility(View.VISIBLE);

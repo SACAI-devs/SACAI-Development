@@ -19,6 +19,7 @@
             android:orientation="horizontal" >
             <!--COMMUTER IMAGE PLACEHOLDER-->
             <ImageView
+                android:id="@+id/profPic"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/ic_commuter"
@@ -79,7 +80,28 @@
                     android:drawableLeft="@drawable/ic_destination"
                     android:drawablePadding="5dp"
                     android:text="Destination" />
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pwd_id_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
+
+        <ImageView
+            android:id="@+id/pwd_id"
+            android:layout_width="350dp"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

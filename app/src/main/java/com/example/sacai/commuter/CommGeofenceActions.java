@@ -48,64 +48,64 @@ public class CommGeofenceActions {
             }
         });
 //
-//        // Get record of user
-//        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
-//
-//        // Check if the user has a scanned operator_id in their current_trip
-//        dbCommuter.child(uid).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
-//                    try {
-//                        if (dspCurrentTrip.child("operator_id").exists()) {
-//                            Log.i(TAG, "onComplete: this commuter has already embarked on a bus");
-//                            Log.i(TAG, "onComplete: logging current_stop to current_trip...");
-//                            dbCommuter.child(uid).child("current_trip").child(dspCurrentTrip.getKey()).child("current_stop").setValue(triggered_geofence);
-//                        }
-//
-//                        Log.i(TAG, "onComplete: this commuter is not embarked on a bus");
-//                        // Get user information
-//                        dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                                try {
-//                                    for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
-//                                        if (uid.equals(dspCurrentTrip.getKey())) {
-//                                            commuter.setUsername(String.valueOf(dspCurrentTrip.child("username").getValue()));
-//                                            commuter.setMobile_impairment(String.valueOf(dspCurrentTrip.child("mobility").getValue()));
-//                                            commuter.setAuditory_impairment(String.valueOf(dspCurrentTrip.child("auditory").getValue()));
-//                                            wheelchair_user = (boolean) dspCurrentTrip.child("wheelchair").getValue();
-//                                        }
-//                                    }
-//                                } catch (Exception e) {
-//                                    Log.i(TAG, "onDataChange: exception " + e);
-//                                }
-//
-//                                // Getting origin and destinaiton from current_trip
-//                                DatabaseReference drTripInformation = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(uid).child("current_trip");
-//                                drTripInformation.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                                        try {
-//                                            for (DataSnapshot dsp : task.getResult().getChildren()) {
-//                                                commuter.setOrigin(dsp.child("origin_stop").getValue().toString());
-//                                                commuter.setDestination(dsp.child("destination_stop").getValue().toString());
-//                                            }
-//                                            addCommuterData(triggered_geofence);
-//                                            return;
-//                                        } catch (Exception e) {
-//                                            Log.i(TAG, "onDataChange: exception " + e);
-//                                        }
-//                                    }
-//                                });
-//                            }
-//                        });
-//                    } catch (Exception e) {
-//                        Log.e(TAG, "onComplete: exception ", e);
-//                    }
-//                }
-//            }
-//        });
+        // Get record of user
+        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+
+        // Check if the user has a scanned operator_id in their current_trip
+        dbCommuter.child(uid).child("current_trip").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
+                    try {
+                        if (dspCurrentTrip.child("operator_id").exists()) {
+                            Log.i(TAG, "onComplete: this commuter has already embarked on a bus");
+                            Log.i(TAG, "onComplete: logging current_stop to current_trip...");
+                            dbCommuter.child(uid).child("current_trip").child(dspCurrentTrip.getKey()).child("current_stop").setValue(triggered_geofence);
+                        }
+
+                        Log.i(TAG, "onComplete: this commuter is not embarked on a bus");
+                        // Get user information
+                        dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                try {
+                                    for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
+                                        if (uid.equals(dspCurrentTrip.getKey())) {
+                                            commuter.setUsername(String.valueOf(dspCurrentTrip.child("username").getValue()));
+                                            commuter.setMobile_impairment(String.valueOf(dspCurrentTrip.child("mobility").getValue()));
+                                            commuter.setAuditory_impairment(String.valueOf(dspCurrentTrip.child("auditory").getValue()));
+                                            wheelchair_user = (boolean) dspCurrentTrip.child("wheelchair").getValue();
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    Log.i(TAG, "onDataChange: exception " + e);
+                                }
+
+                                // Getting origin and destinaiton from current_trip
+                                DatabaseReference drTripInformation = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(uid).child("current_trip");
+                                drTripInformation.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        try {
+                                            for (DataSnapshot dsp : task.getResult().getChildren()) {
+                                                commuter.setOrigin(dsp.child("origin_stop").getValue().toString());
+                                                commuter.setDestination(dsp.child("destination_stop").getValue().toString());
+                                            }
+                                            addCommuterData(triggered_geofence);
+                                            return;
+                                        } catch (Exception e) {
+                                            Log.e(TAG, "onDataChange: exception ", e);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e(TAG, "onComplete: exception ", e);
+                    }
+                }
+            }
+        });
     }
 
     public void addCommuterData(String triggered_geofence) {
@@ -118,22 +118,48 @@ public class CommGeofenceActions {
         if (wheelchair_user) {
             Log.i(TAG, "addCommuterData: Commuter HAS WHEELCHAIR");
             dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("has_wheelchair").child(user.getUid());
-        } else {
-            Log.i(TAG, "addCommuterData: Commuter HAS NO WHEELCHAIR");
-            dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid());
-        }
-
-        try {
             Log.i(TAG, "addCommuterData: adding commuter information to geofence record");
             dbCommuter.child("username").setValue(commuter.getUsername());
             dbCommuter.child("origin_stop").setValue(commuter.getOrigin());
             dbCommuter.child("destination_stop").setValue(commuter.getDestination());
             dbCommuter.child("mobility").setValue(commuter.getMobile_impairment());
             dbCommuter.child("auditory").setValue(commuter.getAuditory_impairment());
-        } catch (Exception e) {
-            Log.i(TAG, "addCommuterData: could not add commuter information to goefence record");
-            Log.e(TAG, "addCommuterData: exception ", e);
+        } else {
+            Log.i(TAG, "addCommuterData: Commuter HAS NO WHEELCHAIR");
+            dbCommuter = FirebaseDatabase.getInstance().getReference();
+//            dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid());
+            Log.i(TAG, "addCommuterData: adding commuter information to geofence record");
+            Log.i(TAG, "addCommuterData: CHECKING DATABASE REFERENCE...");
+            Log.i(TAG, "addCommuterData: " + dbCommuter);
+            dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    try {
+                        Log.i(TAG, "addCommuterData: " + dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("username"));
+                        dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("username").setValue(commuter.getUsername());
+                        dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("origin_stop").setValue(commuter.getOrigin());
+                        dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("destination_stop").setValue(commuter.getDestination());
+                        dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("mobility").setValue(commuter.getMobile_impairment());
+                        dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(triggered_geofence).child("no_wheelchair").child(user.getUid()).child("auditory").setValue(commuter.getAuditory_impairment());
+                    } catch (Exception e) {
+                        Log.e(TAG, "onComplete: exception ", e);
+                    }
+
+                }
+            });
         }
+
+//        try {
+//            Log.i(TAG, "addCommuterData: adding commuter information to geofence record");
+//            dbCommuter.child("username").setValue(commuter.getUsername());
+//            dbCommuter.child("origin_stop").setValue(commuter.getOrigin());
+//            dbCommuter.child("destination_stop").setValue(commuter.getDestination());
+//            dbCommuter.child("mobility").setValue(commuter.getMobile_impairment());
+//            dbCommuter.child("auditory").setValue(commuter.getAuditory_impairment());
+//        } catch (Exception e) {
+//            Log.i(TAG, "addCommuterData: could not add commuter information to goefence record");
+//            Log.e(TAG, "addCommuterData: exception ", e);
+//        }
 
     }
 

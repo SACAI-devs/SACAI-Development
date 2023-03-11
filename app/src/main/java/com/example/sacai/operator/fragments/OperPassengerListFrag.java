@@ -1,5 +1,6 @@
 package com.example.sacai.operator.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,7 +38,7 @@ public class OperPassengerListFrag extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.Adapter passengerListAdapter;
     RecyclerView.LayoutManager layoutManager;
-
+    AlertDialog.Builder builder;
     ArrayList<Passenger_List> passenger;   // Commuter's information as a passenger
 
     private String id;          // ID of the commuter in the passengerlist
@@ -53,7 +54,6 @@ public class OperPassengerListFrag extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,6 +66,7 @@ public class OperPassengerListFrag extends Fragment {
 
         recyclerView = view.findViewById(R.id.passengerList);
         recyclerView.setHasFixedSize(true);
+        builder = new AlertDialog.Builder (getActivity());
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -115,7 +116,7 @@ public class OperPassengerListFrag extends Fragment {
                                     para_status = "Waiting...";
                                 }
 
-                                passenger.add(new Passenger_List(id, username, auditory, mobility, wheelchair, origin, destination, para_status));
+                                passenger.add(new Passenger_List(id, username, auditory, mobility, wheelchair, origin, destination, para_status, false));
                                 passengerListAdapter = new PassengerListAdapter(getActivity(), passenger);
                             }
                         }

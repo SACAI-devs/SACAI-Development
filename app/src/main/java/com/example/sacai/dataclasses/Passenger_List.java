@@ -9,11 +9,12 @@ public class Passenger_List {
     private String origin;      // Commuter origin bus stop
     private String destination; // Commuter destination bus stop
     private String para_status; // Commuter if sasakay or bababa
+    private boolean visibility;
 
     private Passenger_List () {
     }
 
-    public Passenger_List(String id, String username, String mobility, String auditory, String wheelchair, String origin, String destination, String para_status) {
+    public Passenger_List(String id, String username, String mobility, String auditory, String wheelchair, String origin, String destination, String para_status, boolean visibility) {
         this.id = id;
         this.username = username;
         this.mobility = mobility;
@@ -22,6 +23,7 @@ public class Passenger_List {
         this.origin = origin;
         this.destination = destination;
         this.para_status = para_status;
+        this.visibility = visibility;
     }
 
     public String getId() {
@@ -86,5 +88,13 @@ public class Passenger_List {
 
     public void setPara_status(String para_status) {
         this.para_status = para_status;
+    }
+
+    public boolean isVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 }
