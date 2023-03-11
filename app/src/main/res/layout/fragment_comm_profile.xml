@@ -125,7 +125,8 @@
                             android:id="@+id/etHomeAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none" />
+                            android:inputType="none"
+                            android:textColor="@color/black"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!--INPUT WORK ADDRESS-->
@@ -140,7 +141,8 @@
                             android:id="@+id/etWorkAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none" />
+                            android:inputType="none"
+                            android:textColor="@color/black"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!--NEEDS ASSESSMENT-->

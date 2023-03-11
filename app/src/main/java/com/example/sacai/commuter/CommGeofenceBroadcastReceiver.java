@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.sacai.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -48,8 +49,8 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.i(TAG, "onReceive: user entered the geofence");
+                Toast.makeText(context, R.string.msg_you_are_now_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
                 action.commuterEntersGeofence(triggered_geofence);
-                Toast.makeText(context, "You are now approaching bus stop .", Toast.LENGTH_SHORT).show();
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
@@ -59,9 +60,8 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
+                Toast.makeText(context, R.string.msg_you_are_not_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
                 action.commuterLeavesGeofence();
-
-                Toast.makeText(context, "You are not within the range of a bus stop. Go to the nearest bus stop so operators in the area can be notified.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

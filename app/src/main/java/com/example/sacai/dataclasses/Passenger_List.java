@@ -11,7 +11,7 @@ public class Passenger_List {
     private String para_status; // Commuter if sasakay or bababa
     private boolean visibility;
 
-    private Passenger_List () {
+    public Passenger_List () {
     }
 
     public Passenger_List(String id, String username, String mobility, String auditory, String wheelchair, String origin, String destination, String para_status, boolean visibility) {

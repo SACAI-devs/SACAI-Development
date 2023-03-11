@@ -93,11 +93,11 @@ public class PassengerListAdapter extends RecyclerView.Adapter<PassengerListAdap
 
     private void loadID(ImageView id, int position) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
-        StorageReference pwdID = storageRef.child("ID_Uploads/" + passenger.get(position) + "/");
+//        Log.i("PWD ID", "loadID: " + passenger.get(position));
+        StorageReference pwdID = storageRef.child("ID_Uploads/" + passenger.get(position).getId() + "/");
         Log.i("loadID", "loadID: storage ref " + pwdID);
         try {
-            File localfile = File.createTempFile("tempfile", ".jpg");
+            File localfile = File.createTempFile("tempfile2", ".jpg");
             pwdID.getFile(localfile)
                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override

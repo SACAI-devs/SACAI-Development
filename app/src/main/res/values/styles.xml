@@ -134,6 +134,7 @@
         <item name="boxCornerRadiusTopEnd">10dp</item>
         <item name="boxCornerRadiusBottomStart">10dp</item>
         <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="UserImgBtn">

@@ -127,7 +127,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
     // CONSTANTS
     private int MAP_ZOOM = 20;
-    private float GEOFENCE_RADIUS = 100; // TODO: QUERY FROM FIREBASE
+    private float GEOFENCE_RADIUS = 250; // TODO: QUERY FROM FIREBASE
     private int width = 100;
     private int height = 100;
     private long PERIOD = 15000;
@@ -750,8 +750,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 
     // Function to set the current trip of the commuter
     private void paraSasakay() {
-        Log.i("ClassCalled", "setCurrentTrip is running");
-        String TAG = "setCurrentTrip";
+        Log.i("ClassCalled", "paraSasakay is running");
+        String TAG = "paraSasakay";
         // Get the current date and time
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
@@ -761,7 +761,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         // Get the values from the dropdown menu
         chosenOrigin = etOrigin.getText().toString();
         chosenDestination = etDestination.getText().toString();
-
 
 
         findMidpoint(chosenOrigin, chosenDestination); // Finding the midpoint between the pickup and drop off
@@ -799,6 +798,21 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             Log.i(TAG, "onComplete: current trip information has been added to the database");
 
+                            DatabaseReference dbCurrentTrip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+                            dbCurrentTrip.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    try {
+                                        for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
+
+                                            dbCurrentTrip.child(dspCurrentTrip.getKey()).child("current_stop").setValue(dspCurrentTrip.child("origin_stop").getValue().toString());
+                                        }
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "onComplete: exception ", e);
+                                    }
+                                }
+                            });
+
                             // Configure UI to disable when trip has started
                             toggleWaitingView();
 
@@ -821,20 +835,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 //        if (Build.VERSION.SDK_INT <= 28)
 //        {
 //            Log.i(TAG, "saveRideHistory: SDK is under minimum target SDK");
-//            DatabaseReference dbCurrentTrip = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
-//            dbCurrentTrip.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                    try {
-//                        for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
-//
-//                            dbCurrentTrip.child(dspCurrentTrip.getKey()).child("current_stop").setValue(dspCurrentTrip.child("origin_stop").getValue().toString());
-//                        }
-//                    } catch (Exception e) {
-//                        Log.e(TAG, "onComplete: exception ", e);
-//                    }
-//                }
-//            });
+
 //        }
 //        else
 //        {

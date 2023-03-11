@@ -30,12 +30,15 @@
                     android:layout_height="match_parent"
                     android:hint="@string/hint_location"
                     android:id="@+id/etRouteSelect"
-                    android:textColorHint="@color/grey">
+                    android:textColorHint="@color/grey"
+                    >
                     <AutoCompleteTextView
                         android:id="@+id/routeSelect"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="none" />
+                        android:inputType="none"
+                        android:textColor="@color/black"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
                 <!-- BUTTON SELECT ROUTE -->
                 <Button

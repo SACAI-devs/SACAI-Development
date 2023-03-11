@@ -2,7 +2,9 @@ package com.example.sacai.operator.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -79,7 +81,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     View mView;
     FusedLocationProviderClient fusedLocationProviderClient;
-
+    AlertDialog.Builder builder;
 
     // Gobal Variables
     private GeofencingClient geofencingClient;
@@ -124,7 +126,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private int MAP_ZOOM = 14;
     private int width = 100;
     private int height = 100;
-    private int GEOFENCE_RADIUS = 150;
+    private int GEOFENCE_RADIUS = 300;
 
     // Required public constructor
     public OperMapFrag() {
@@ -158,7 +160,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         btnStartRoute = mView.findViewById(R.id.btnStartRoute);
         btnEndRoute = mView.findViewById(R.id.btnEndRoute);
 
-
+        builder = new AlertDialog.Builder (getActivity());
 
         mMapView = (MapView) mView.findViewById(R.id.operator_map);
         if (mMapView != null) {
@@ -669,33 +671,32 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                     if (task.getResult().exists()) {
                         String id = "";
                         String route = "";
-                        String origin = "";
-                        String destination = "";
                         String current_stop = "";
-                        String current_lat = "";
-                        String current_long = "";
-                        ArrayList <String> passenger_list = new ArrayList<>();  // Must get passenger list but temporarily empty
-
+                        Passenger_List passenger = new Passenger_List();
+                    try {
                         for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
                             id = dspCurrentTrip.getKey();
                             route = dspCurrentTrip.child("route_name").getValue().toString();
                             current_stop = dspCurrentTrip.child("current_stop").getValue().toString();
 
-
-
                             Log.i(TAG, "onComplete: CHECKING NUMBER OF PASSENGERS...");
                             Log.i(TAG, "onComplete: " + dspCurrentTrip.child("passenger_list").getChildrenCount());
+
                             for (DataSnapshot dspPassengerList : dspCurrentTrip.child("passenger_list").getChildren()) {
                                 Log.i(TAG, "onComplete: CHECKING PASSENGER LIST...");
                                 Log.i(TAG, "onComplete: " + dspPassengerList.getKey());
-                                passenger_list.add(dspPassengerList.getKey());
+                                passenger.setId(dspPassengerList.getKey());
                             }
                         }
                         DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("ride_history").child(id);
 
                         dbOperator.child("route_name").setValue(route);
-                        dbOperator.child("passenger_list").setValue(passenger_list);
+                        dbOperator.child("passenger_list").setValue(passenger);
                         dbOperator.child("last_stop").setValue(current_stop);
+                    } catch (Exception e) {
+                        Log.e(TAG, "onComplete: exception ", e);
+                    }
+
                     } else {
                         Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "onComplete: data does not exist");
@@ -773,7 +774,48 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     String passenger_list_id;
     // Function for updating operator that commuter wants to para
     private void updatePassengerList() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.i("SEE HERE","Update Passenger List is working");
 
+        // This method gets the route drawings from Firebase
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Operator").child(user.getUid()).child("current_trip");
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Get data under child
+                for (DataSnapshot getPassengerSnapshot : dataSnapshot.getChildren()) {
+                    Log.i("SEE HERE",getPassengerSnapshot.child("para").toString() );
+                    for (DataSnapshot getPassengerListSnapshot : getPassengerSnapshot.getChildren()) {
+                        // if test is true
+                        if (getPassengerListSnapshot.child("para").toString() == "true") {
+                            Log.i("SEE HERE", getPassengerListSnapshot.child("para").toString());
+                            builder.setTitle("PARA! Bababa")
+                                    .setMessage("Someone wants to disembark. Please assist passengers at the designated bus stop.")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            startLocationUpdates();
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .setNegativeButton("", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     // Function to update location in firebase every set time interval
