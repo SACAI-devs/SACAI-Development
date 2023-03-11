@@ -108,7 +108,7 @@ public class CommSignup2Activity extends AppCompatActivity {
         String email = intent.getStringExtra(CommSignupActivity.EXTRA_EMAIL);
         String password = intent.getStringExtra(CommSignupActivity.EXTRA_PASS);
         String userType = getString(R.string.userCommuter);
-
+        String username = getFirstThreeCharacters(firstname) + getFirstThreeCharacters(lastname);
         boolean mobility = binding.cbMobility.isChecked();
         boolean auditory = binding.cbAuditory.isChecked();
         boolean wheelchair = binding.cbWheelchair.isChecked();
@@ -134,7 +134,7 @@ public class CommSignup2Activity extends AppCompatActivity {
                                                 // If USER CREATION is SUCCESSFUL then it sends a verification email
                                                 if (task.isSuccessful()) {
                                                         // Adds a new commuter record
-                                                        Commuter commuter = new Commuter(firstname, lastname, email,firstname+lastname, mobility, auditory, wheelchair,"", "");
+                                                        Commuter commuter = new Commuter(firstname, lastname, email,username, mobility, auditory, wheelchair,"", "");
                                                         DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference("Commuter");
                                                         dbCommuter.child(currentUser.getUid()).setValue(commuter);
                                                         sendVerificationEmail(email, password);
@@ -152,6 +152,14 @@ public class CommSignup2Activity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private String getFirstThreeCharacters(String str) {
+        int len = str.length();
+        if(len >= 3)
+            return (str.substring(0, 3));
+        else
+            return ((str.charAt(0)+"##"));
     }
 
     private void sendVerificationEmail(String email, String password) {
