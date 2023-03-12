@@ -83,6 +83,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     FusedLocationProviderClient fusedLocationProviderClient;
     AlertDialog.Builder builder;
 
+
     // Gobal Variables
     private GeofencingClient geofencingClient;
     private OperGeofenceHelper operGeofenceHelper;
@@ -104,6 +105,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     //String routeSnapID; // Store station name in the Routes branch
     String selectedRouteName;
     String chosenRoute;
+    String existingCurrentRoute;
+
 
 
     // Arrays
@@ -126,7 +129,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private int MAP_ZOOM = 14;
     private int width = 100;
     private int height = 100;
-    private int GEOFENCE_RADIUS = 300;
+    private int GEOFENCE_RADIUS = 150;
 
     // Required public constructor
     public OperMapFrag() {
@@ -163,13 +166,14 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         builder = new AlertDialog.Builder (getActivity());
 
         mMapView = (MapView) mView.findViewById(R.id.operator_map);
+
         if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
 
-        toggleViewNoTripStarted();
+        checkForCurrentTrip();
 
         btnStartRoute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,13 +191,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 endCurrentTrip();
             }
         });
-
-
-
-
     }
-
-
 
     // Custom map logic and configuration
     @SuppressLint("MissingPermission")
@@ -274,6 +272,44 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     }
 
+    private void checkForCurrentTrip() {
+        // This method gets the operator current trip registered from Firebase
+        Log.i("ClassCalled", "checkForCurrentTrip is running");
+        FirebaseUser operatorUID = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Operator").child(operatorUID.getUid()).child("current_trip");
+
+        Log.i("Existing Current Route", dbRef.toString());
+
+        if (dbRef.getKey() != null) {
+            toggleViewNoTripStarted();
+        }
+
+        //Get existing current trip
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    Log.i("Existing Current Route", dsp.child("route_name").getValue().toString());
+                    if (dsp.hasChild("route_name")) {
+                        existingCurrentRoute = dsp.child("route_name").getValue().toString();
+                        routeSelects.setText(existingCurrentRoute);
+                        Log.i("Existing Current Route", existingCurrentRoute);
+                        toggleViewTripStarted();
+                        startLocationUpdates();
+                    }
+                    else {
+                        Log.i("Existing Current Route", "No existing current route");
+                        toggleViewNoTripStarted();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Couldn't retrieve any existing trip. Please refresh.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     // FUNCTIONS FOR SELECTING, AND VIEWING A ROUTE
     // First, get the Route again that is equivalent to the option that the user chose [Routes node]
@@ -333,7 +369,9 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 try {
                     for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
-                        current_stop = dspCurrentTrip.child("current_stop").getValue().toString();
+                        if (dspCurrentTrip.child("current_stop").exists()) {
+                            current_stop = dspCurrentTrip.child("current_stop").getValue().toString();
+                        }
                     }
                 } catch (Exception e) {
                     Log.e("GETCURRENTROUTE", "onComplete: ", e);
@@ -671,32 +709,34 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                     if (task.getResult().exists()) {
                         String id = "";
                         String route = "";
+                        String origin = "";
+                        String destination = "";
                         String current_stop = "";
-                        Passenger_List passenger = new Passenger_List();
-                    try {
+                        String current_lat = "";
+                        String current_long = "";
+                        ArrayList <String> passenger_list = new ArrayList<>();  // Must get passenger list but temporarily empty
+
                         for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
                             id = dspCurrentTrip.getKey();
                             route = dspCurrentTrip.child("route_name").getValue().toString();
-                            current_stop = dspCurrentTrip.child("current_stop").getValue().toString();
+
+                            if (dspCurrentTrip.child("current_stop").exists()) {
+                                current_stop = dspCurrentTrip.child("current_stop").getValue().toString();
+                            }
 
                             Log.i(TAG, "onComplete: CHECKING NUMBER OF PASSENGERS...");
                             Log.i(TAG, "onComplete: " + dspCurrentTrip.child("passenger_list").getChildrenCount());
-
                             for (DataSnapshot dspPassengerList : dspCurrentTrip.child("passenger_list").getChildren()) {
                                 Log.i(TAG, "onComplete: CHECKING PASSENGER LIST...");
                                 Log.i(TAG, "onComplete: " + dspPassengerList.getKey());
-                                passenger.setId(dspPassengerList.getKey());
+                                passenger_list.add(dspPassengerList.getKey());
                             }
                         }
                         DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("ride_history").child(id);
 
                         dbOperator.child("route_name").setValue(route);
-                        dbOperator.child("passenger_list").setValue(passenger);
+                        dbOperator.child("passenger_list").setValue(passenger_list);
                         dbOperator.child("last_stop").setValue(current_stop);
-                    } catch (Exception e) {
-                        Log.e(TAG, "onComplete: exception ", e);
-                    }
-
                     } else {
                         Toast.makeText(getActivity(), R.string.err_failedToReadData, Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "onComplete: data does not exist");
@@ -734,6 +774,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         // Stop looping location updates
         Log.i(TAG, "endCurrentRoute: stopping location updates...");
         stopLocationUpdates();
+        toggleViewNoTripStarted();
     }
 
     // FUNCTIONS FOR LOCATION UPDATES
@@ -745,7 +786,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             timer.cancel();
             timer.purge();
             Log.i(TAG, "stopTimer: timer loop stopped");
-            toggleViewNoTripStarted();
+            //toggleViewNoTripStarted();
         }
     }
 
@@ -784,28 +825,38 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //Get data under child
                 for (DataSnapshot getPassengerSnapshot : dataSnapshot.getChildren()) {
-                    Log.i("SEE HERE",getPassengerSnapshot.child("para").toString() );
-                    for (DataSnapshot getPassengerListSnapshot : getPassengerSnapshot.getChildren()) {
-                        // if test is true
-                        if (getPassengerListSnapshot.child("para").toString() == "true") {
-                            Log.i("SEE HERE", getPassengerListSnapshot.child("para").toString());
-                            builder.setTitle("PARA! Bababa")
-                                    .setMessage("Someone wants to disembark. Please assist passengers at the designated bus stop.")
-                                    .setCancelable(false)
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            startLocationUpdates();
-                                            dialogInterface.dismiss();
-                                        }
-                                    })
-                                    .setNegativeButton("", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.dismiss();
-                                        }
-                                    })
-                                    .show();
+                    if (getPassengerSnapshot.hasChild("passenger_list")) {
+                        Log.i("SEE HERE", "Passenger list exists");
+                        Log.i("SEE HERE", getPassengerSnapshot.getValue().toString());
+                        DataSnapshot passengerListDSP = getPassengerSnapshot.child("passenger_list");
+                        for (DataSnapshot getPassengerListSnapshot : passengerListDSP.getChildren()) {
+                            // if test is true
+                            if (getPassengerListSnapshot.child("para").exists()) {
+                                Log.i("SEE HERE", "Para Exists");
+                                Log.i("SEE HERE", getPassengerListSnapshot.child("para").toString());
+                                Log.i("SEE HERE", getPassengerListSnapshot.child("para").getValue().toString());
+                                if (getPassengerListSnapshot.child("para").getValue().toString().equals("true")) {
+                                    Log.i("SEE HERE", "Para is now true");
+                                    Log.i("SEE HERE", getPassengerListSnapshot.child("para").toString());
+                                    builder.setTitle("PARA! Bababa")
+                                            .setMessage("Someone wants to disembark. Please assist passengers at the designated bus stop.")
+                                            .setCancelable(false)
+                                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    startLocationUpdates();
+                                                    dialogInterface.dismiss();
+                                                }
+                                            })
+                                            .setNegativeButton("", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            })
+                                            .show();
+                                }
+                            }
                         }
                     }
                 }
@@ -823,7 +874,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private void updateLocation() {
         String TAG = "updateLocation";
         Log.i("ClassCalled", "updateLocation: is running");
-
 
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
@@ -968,7 +1018,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         } catch (Exception e) {
             Log.e("findMidpoint", "Exception ", e);
         }
-
     }
 
     private void zoomToUserLocation() {
@@ -986,7 +1035,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Please turn on your location services", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }

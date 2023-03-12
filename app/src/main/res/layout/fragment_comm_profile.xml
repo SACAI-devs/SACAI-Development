@@ -41,8 +41,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:paddingHorizontal="40dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingHorizontal="40dp">
 
                     <ImageView
                         android:id="@+id/imageProfile"
@@ -50,9 +50,10 @@
                         android:layout_height="100dp"
                         android:layout_marginVertical="10dp"
                         android:src="@drawable/ic_commuter" />
+
                     <Button
-                        style="@style/OutlineBtn"
                         android:id="@+id/btnUploadProfile"
+                        style="@style/OutlineBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="40dp"
@@ -64,7 +65,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_firstName" >
+                        android:hint="@string/hint_firstName">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etFirstname"
                             style="@style/InputTxt"
@@ -77,10 +79,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_lastName" >
+                        android:hint="@string/hint_lastName">
+
                         <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
                             android:id="@+id/etLastname"
+                            style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -90,10 +93,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_userName" >
+                        android:hint="@string/hint_userName">
+
                         <com.google.android.material.textfield.TextInputEditText
-                            style="@style/InputTxt"
                             android:id="@+id/etUsername"
+                            style="@style/InputTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -103,7 +107,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:hint="@string/hint_email" >
+                        android:hint="@string/hint_email">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etEmail"
                             style="@style/InputTxt"
@@ -116,33 +121,35 @@
                     <!--INPUT HOME ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/containerSetHomeAddress"
+                        style="@style/AutoCompleteDropDown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_homeAddress"
-                        android:textColorHint="@color/grey"
-                        style="@style/AutoCompleteDropDown" >
+                        android:textColorHint="@color/grey">
+
                         <AutoCompleteTextView
                             android:id="@+id/etHomeAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:textColor="@color/black"/>
+                            android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!--INPUT WORK ADDRESS-->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/containerSetDestinationAddress"
+                        style="@style/AutoCompleteDropDown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_workAddress"
-                        android:textColorHint="@color/grey"
-                        style="@style/AutoCompleteDropDown" >
+                        android:textColorHint="@color/grey">
+
                         <AutoCompleteTextView
                             android:id="@+id/etWorkAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:textColor="@color/black"/>
+                            android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!--NEEDS ASSESSMENT-->
@@ -154,29 +161,28 @@
                         android:text="@string/label_needs" />
                     <!--MOBILITY IMPAIRMENT-->
                     <CheckBox
-                        style="@style/Checkbox"
                         android:id="@+id/cbMobility"
+                        style="@style/Checkbox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
                         android:text="@string/label_mobility" />
                     <!--AUDITORY IMPAIRMENT-->
                     <CheckBox
-                        style="@style/Checkbox"
                         android:id="@+id/cbAuditory"
+                        style="@style/Checkbox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
                         android:text="@string/label_auditory" />
                     <!--WHEELCHAIR NEED-->
                     <CheckBox
-                        style="@style/Checkbox"
                         android:id="@+id/cbWheelchair"
+                        style="@style/Checkbox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="12dp"
                         android:text="@string/label_wheelchair" />
-
 
 
                     <!--UPLOAD PWD ID PHOTO-->
@@ -187,30 +193,40 @@
                         android:src="@android:drawable/ic_menu_gallery" />
 
                     <Button
-                        style="@style/OutlineBtn"
                         android:id="@+id/btnUploadId"
+                        style="@style/OutlineBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
                         android:layout_marginHorizontal="20dp"
+                        android:layout_marginTop="30dp"
                         android:text="@string/label_upload_id" />
+
+                    <!--UPDATE PASSWORD BUTTON-->
 
                     <!--UPDATE EMAIL BUTTON-->
                     <Button
+                        android:id="@+id/btnUpdatePass"
                         style="@style/OutlineBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/label_update_password" />
+
+                    <Button
                         android:id="@+id/btnUpdateEmail"
+                        style="@style/OutlineBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:text="@string/label_update_email" />
                     <!--SAVE BUTTON-->
                     <Button
-                        style="@style/PrimaryBtn"
                         android:id="@+id/btnSave"
+                        style="@style/PrimaryBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="30dp"
                         android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="30dp"
                         android:text="@string/label_save" />
                 </LinearLayout>
             </LinearLayout>

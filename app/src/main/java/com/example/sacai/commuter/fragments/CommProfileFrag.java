@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.commuter.CommUpdateEmailActivity;
+import com.example.sacai.commuter.CommUpdatePassword;
 import com.example.sacai.databinding.FragmentCommProfileBinding;
 import com.example.sacai.dataclasses.Commuter;
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -144,8 +144,6 @@ public class CommProfileFrag extends Fragment {
             }
         });
 
-
-
         // Save changes to profile when btn is clicked
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +174,14 @@ public class CommProfileFrag extends Fragment {
                 }
             }
         });
+
+        binding.btnUpdatePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showUpdatePassword();
+            }
+        });
+
         binding.btnUploadProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -362,6 +368,11 @@ public class CommProfileFrag extends Fragment {
 
     private void showUpdateEmail() {
         Intent intent = new Intent(getActivity(), CommUpdateEmailActivity.class);
+        startActivity(intent);
+    }
+
+    private void showUpdatePassword() {
+        Intent intent = new Intent(getActivity(), CommUpdatePassword.class);
         startActivity(intent);
     }
 

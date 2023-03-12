@@ -106,5 +106,15 @@ public class OperGeofenceActions {
                 }
             }
         });
+
+        DatabaseReference dbPassengers = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
+        dbPassengers.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dspCommuters : task.getResult().getChildren()) {
+                    Log.i("CHECK PASSENGERS", "getCurrentStop: dbPassengers.getKey(); " + dspCommuters.getKey());
+                }
+            }
+        });
     }
 }

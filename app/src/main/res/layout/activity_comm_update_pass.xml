@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".commuter.CommUpdateEmailActivity" >
+    <!--TOOLBAR-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/BasicToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/app_name"
+        app:navigationIcon="@drawable/ic_back" />
+
+    <!--FORM LABEL-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/teal_100"
+        android:paddingVertical="32dp"
+        android:orientation="vertical">
+        <TextView
+            style="@style/TitleTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_update_password" />
+        <TextView
+            style="@style/BodyTxt"
+            android:id="@+id/tvChangeEmailInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:gravity="center"
+            android:text="@string/msg_enter_your_email_so_we_can_send_a_link_to_reset_your_password" />
+    </LinearLayout>
+
+    <!--FORM GROUP-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="40dp">
+        <!--INPUT CURRENT EMAIL-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                style="@style/InputTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--INPUT NEW EMAIL-->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/BasicInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_new_email" >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNewEmail"
+                style="@style/InputTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--SUBMIT BUTTON-->
+        <Button
+            android:id="@+id/btnSubmit"
+            style="@style/PrimaryBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/label_change_password"
+            android:visibility="visible" />
+
+        <!--SAVE BUTTON-->
+        <Button
+            android:id="@+id/btnSave"
+            style="@style/PrimaryBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/label_save"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>
