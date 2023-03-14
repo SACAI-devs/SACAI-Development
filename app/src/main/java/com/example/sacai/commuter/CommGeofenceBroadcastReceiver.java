@@ -61,7 +61,7 @@ public class CommGeofenceBroadcastReceiver extends BroadcastReceiver {
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
                 Toast.makeText(context, R.string.msg_you_are_not_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
-                action.commuterLeavesGeofence();
+                action.commuterLeavesGeofence(triggered_geofence);
                 break;
         }
     }

@@ -3,12 +3,24 @@ package com.example.sacai.operator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.metrics.LogSessionId;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.sacai.R;
+import com.example.sacai.dataclasses.Commuter;
+import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -49,6 +61,7 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
                 Log.i(TAG, "onReceive: user entered the geofence");
                 Toast.makeText(context, R.string.msg_you_are_now_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
                 action.updateCurrentStop(geofenceList, triggered_geofences);
+                showCommutersInGeofence(context);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
@@ -62,5 +75,25 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
                 action.updateCurrentStop(geofenceList, "");
                 break;
         }
+
+    }
+
+    private void showCommutersInGeofence(Context context) {
+        String TAG = "showCommutersInGeofence";
+        Log.i(TAG, "showCommutersInGeofence: is running");
+        DatabaseReference dbGeofence = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName());
+        dbGeofence.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dspCommuters : task.getResult().getChildren()) {
+                    Log.i(TAG, "onDataChange: GETTING KEY...");
+                    Log.i(TAG, "onDataChange: key " + dspCommuters.getKey());
+                }
+                Toast.makeText(context, "YEY", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
     }
 }

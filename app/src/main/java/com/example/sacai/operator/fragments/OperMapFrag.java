@@ -680,6 +680,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(getActivity(), "Couldn't retrieve bus stops. Please refresh.", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     // FUNCTIONS FOR MANAGING A TRIP

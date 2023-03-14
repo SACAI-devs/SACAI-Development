@@ -1720,8 +1720,12 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 boolean wheelchair = false;
                 for (DataSnapshot dspCommuter : task.getResult().getChildren()){
                     try {
+                        Log.i(TAG, "onComplete: GETTING GEOFENCE KEY");
+                        Log.i(TAG, "onComplete: get key " + dspCommuter.getKey());
                         if (dspCommuter.getKey().equals(user.getUid())){
                             wheelchair = (boolean) dspCommuter.child("wheelchair").getValue();
+                            Log.i(TAG, "onComplete: GETTING GEOFENCE KEY");
+                            Log.i(TAG, "onComplete: get wheelchair " + dspCommuter.child("wheelchair"));
                             DatabaseReference dbCommuterInGeofence = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(origin);
                             // Deleting Commuter_In_Geofence record
                             if (wheelchair) {

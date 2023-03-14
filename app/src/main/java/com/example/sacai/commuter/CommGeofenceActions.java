@@ -88,23 +88,23 @@ public class CommGeofenceActions {
         if (wheelchair) {
             Log.i(TAG, "addCommuterData: COMMUTER HAS A WHEELCHAIR, ADDING TO GEOFENCE...");
 
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("has_wheelchair").child(uid).child("mobility").setValue(mobility);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("has_wheelchair").child(uid).child("auditory").setValue(auditory);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("has_wheelchair").child(uid).child("destination").setValue(destination);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("has_wheelchair").child(uid).child("username").setValue(username);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("has_wheelchair").child(uid).child("mobility").setValue(mobility);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("has_wheelchair").child(uid).child("auditory").setValue(auditory);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("has_wheelchair").child(uid).child("destination").setValue(destination);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("has_wheelchair").child(uid).child("username").setValue(username);
 
         } else {
             Log.i(TAG, "addCommuterData: Commuter HAS NO WHEELCHAIR, ADDING TO GEOFENCE...");
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("no_wheelchair").child(uid).child("mobility").setValue(mobility);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("no_wheelchair").child(uid).child("auditory").setValue(auditory);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("no_wheelchair").child(uid).child("destination").setValue(destination);
-            dbCommuter.child("Commuter_In_Geofence").child(current_stop).child("no_wheelchair").child(uid).child("username").setValue(username);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("no_wheelchair").child(uid).child("mobility").setValue(mobility);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("no_wheelchair").child(uid).child("auditory").setValue(auditory);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("no_wheelchair").child(uid).child("destination").setValue(destination);
+            dbCommuter.child(Commuter_in_Geofence.class.getSimpleName()).child(current_stop).child("no_wheelchair").child(uid).child("username").setValue(username);
         }
 
     }
 
     // Function to remove commuter visibility on the map
-    public void commuterLeavesGeofence() {
+    public void commuterLeavesGeofence(String current_stop) {
         Log.i("ClassCalled", "removeCommuterVisibility: is running...");
         String TAG = "commuterLeavesGeofence";
 
@@ -115,6 +115,7 @@ public class CommGeofenceActions {
                 try {
                     for (DataSnapshot dspCommuter : task.getResult().getChildren()) {
                         dbCurrentTrip.child(dspCommuter.getKey()).child("current_stop").removeValue();
+                        deleteCommuterData(current_stop);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "onComplete: exception ", e);
@@ -124,32 +125,37 @@ public class CommGeofenceActions {
 
     }
 
-    public void deleteCommuterData() {
+    public void deleteCommuterData(String stop) {
         String TAG = "deleteCommuterData";
         Log.i("ClassCalled", "deleteCommuterData: is running");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
 
         // Get commuter information
-        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
         dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 boolean wheelchair = false;
-                String origin = "";
                 for (DataSnapshot dspCommuter : task.getResult().getChildren()){
                     try {
-                        wheelchair = (boolean) dspCommuter.child("wheelchair").getValue();
-                        origin = dspCommuter.child("origin_stop").getValue().toString();
-                        DatabaseReference dbCommuterInGeofence = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(origin);
-                        // Deleting Commuter_In_Geofence record
-                        if (wheelchair) {
-                            dbCommuterInGeofence.child("has_wheelchair").child(user.getUid()).removeValue();
-                            Log.i(TAG, "onComplete: removing wheelchair user from database... " + dbCommuterInGeofence);
-                        } else {
-                            dbCommuterInGeofence.child("no_wheelchair").child(user.getUid()).removeValue();
-                            Log.i(TAG, "onComplete: removing non wheelchair user from database...");
+                        Log.i(TAG, "onComplete: GETTING GEOFENCE KEY");
+                        Log.i(TAG, "onComplete: get key " + dspCommuter.getKey());
+                        if (dspCommuter.getKey().equals(uid)){
+                            wheelchair = (boolean) dspCommuter.child("wheelchair").getValue();
+                            Log.i(TAG, "onComplete: GETTING GEOFENCE KEY");
+                            Log.i(TAG, "onComplete: get wheelchair " + dspCommuter.child("wheelchair"));
+                            DatabaseReference dbCommuterInGeofence = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName()).child(stop);
+                            // Deleting Commuter_In_Geofence record
+                            if (wheelchair) {
+                                dbCommuterInGeofence.child("has_wheelchair").child(uid).removeValue();
+                                Log.i(TAG, "onComplete: removing wheelchair user from database... " + dbCommuterInGeofence);
+                            } else {
+                                dbCommuterInGeofence.child("no_wheelchair").child(uid).removeValue();
+                                Log.i(TAG, "onComplete: removing non wheelchair user from database...");
+                            }
                         }
+//
                     } catch (Exception e) {
                         Log.e(TAG, "onComplete: exception ", e);
                     }
