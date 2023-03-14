@@ -847,6 +847,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                                                     startLocationUpdates();
                                                     dialogInterface.dismiss();
                                                 }
+
                                             })
                                             .setNegativeButton("", new DialogInterface.OnClickListener() {
                                                 @Override

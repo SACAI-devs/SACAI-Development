@@ -121,6 +121,16 @@
                         android:layout_marginTop="30dp"
                         android:layout_marginHorizontal="20dp"
                         android:text="@string/label_update_email" />
+
+                    <!--UPDATE PASSWORD BUTTON-->
+                    <Button
+                        style="@style/OutlineBtn"
+                        android:id="@+id/btnUpdatePassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/label_update_password" />
+
                     <!--SAVE CHANGES BUTTON-->
                     <Button
                         style="@style/PrimaryBtn"

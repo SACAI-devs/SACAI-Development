@@ -98,7 +98,11 @@
         </activity>
         <activity
             android:name=".operator.OperUpdateEmailActivity"
-            android:exported="false" /> <!-- ========================================================= -->
+            android:exported="false" />
+        <activity
+            android:name=".operator.OperUpdatePassword"
+            android:exported="false" />
+        <!-- ========================================================= -->
         <!-- ======BEGINNING OF COMMUTER SPECIFIC CONFIGURATIONS====== -->
         <!-- ========================================================= -->
         <activity

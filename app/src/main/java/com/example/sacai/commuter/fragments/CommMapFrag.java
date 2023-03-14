@@ -1740,7 +1740,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
-
+        Log.i(TAG, "deleteCommuterInGeofence: STOPPING LOCATION UPDATES...");
         stopLocationUpdates();
     }
 
@@ -1848,6 +1848,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     // FUNCTIONS FOR LOCATION UPDATES
     private void stopLocationUpdates(){
         String TAG = "stopTimer";
+        Log.i(TAG, "stopLocationUpdates: ========================================================");
         Log.i("ClassCalled", "stopTimer: is running");
         if(timer != null){
             timer.cancel();
@@ -1964,6 +1965,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                             String key = dspCurrentTrip.getKey();
                             dbInput.child(key).child("operator_id").setValue(qrResultsOperatorUID);
                         }
+                        Log.i(TAG, "onComplete: REMOVING COMMUTER FROM GEOFENCE...");
                         removeCommuterFromGeofence();
                     } catch (Exception e) {
                         Log.e(TAG, "onComplete: exception ", e);

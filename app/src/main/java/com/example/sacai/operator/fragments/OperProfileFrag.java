@@ -16,6 +16,7 @@ import com.example.sacai.R;
 import com.example.sacai.databinding.FragmentOperProfileBinding;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.operator.OperUpdateEmailActivity;
+import com.example.sacai.operator.OperUpdatePassword;
 import com.example.sacai.operator.viewmodels.OperMainViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -71,7 +72,19 @@ public class OperProfileFrag extends Fragment {
             }
         });
 
+        binding.btnUpdatePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showUpdatePass();
+            }
+        });
     }
+
+    private void showUpdatePass() {
+        Intent intent = new Intent(getActivity(), OperUpdatePassword.class);
+        startActivity(intent);
+    }
+
     private void showUpdateEmail() {
         Intent intent = new Intent(getActivity(), OperUpdateEmailActivity.class);
         startActivity(intent);
