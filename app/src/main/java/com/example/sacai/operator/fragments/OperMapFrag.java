@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,16 +26,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.sacai.R;
 import com.example.sacai.dataclasses.Commuter;
-import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.example.sacai.dataclasses.Operator;
 import com.example.sacai.dataclasses.Operator_Trip;
-import com.example.sacai.dataclasses.Passenger_List;
 import com.example.sacai.operator.OperGeofenceHelper;
-import com.example.sacai.operator.adapter.PassengerListAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -70,7 +67,6 @@ import com.google.maps.android.PolyUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -100,6 +96,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     AutoCompleteTextView routeSelects;
     TextInputLayout etRouteSelects;
     Button btnStartRoute, btnEndRoute;
+    Switch switchSeating;
 
     String routeIDWithNoBrackets;
     //String routeSnapID; // Store station name in the Routes branch
@@ -162,6 +159,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         etRouteSelects = (TextInputLayout) mView.findViewById(R.id.etRouteSelect);
         btnStartRoute = mView.findViewById(R.id.btnStartRoute);
         btnEndRoute = mView.findViewById(R.id.btnEndRoute);
+        switchSeating = mView.findViewById(R.id.toggleSeating);
 
         builder = new AlertDialog.Builder (getActivity());
 
@@ -188,9 +186,69 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         btnEndRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                endCurrentTrip();
+               showEndTripDialog();
             }
         });
+
+        switchSeating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleSeatingAvailability();
+            }
+        });
+    }
+
+    private void showEndTripDialog () {
+        String TAG = "showCancelPara";
+        Log.i("ClassCalled", "showCancelPara: is running...");
+        builder.setTitle("Ending current trip")
+                .setMessage("Would you like to end your current trip? \n\n" +
+                        "Make sure you no longer have passengers in your list.")
+                .setCancelable(false)
+                .setPositiveButton(R.string.label_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: commuter is cancelling PARA request");
+                        endCurrentTrip();
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.label_no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(TAG, "onClick: commuter is not cancelling PARA request");
+                        dialogInterface.cancel();
+                    }
+                })
+                .show();
+
+    }
+
+    private void toggleSeatingAvailability() {
+        String TAG = "toggleSeatingAvailability";
+        Log.i(TAG, "toggleSeatingAvailability: is running...");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        // Get current key id
+        DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
+        dbOperator.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+               for (DataSnapshot dspOperator : task.getResult().getChildren()) {
+                   if (dspOperator.getKey().equals(uid)) {
+                       for (DataSnapshot dspCurrentTrip : dspOperator.child("current_trip").getChildren()) {
+                           dbOperator.child(uid).child("current_trip").child(dspCurrentTrip.getKey()).child("seating_availability").setValue(switchSeating.isChecked());
+                       }
+                   }
+               }
+            }
+        });
+        if (switchSeating.isChecked()) {
+            Toast.makeText(getActivity(), R.string.msg_you_are_now_visible, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), R.string.msg_you_are_no_longer_visible, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     // Custom map logic and configuration
@@ -447,6 +505,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 //        updateCommuters.schedule(timerTask2, 5000, 5000);
 //    }
 
+
+
     private void generateRouteMarkers() {
         Log.i("ClassCalled", "generateReouteMarkers is running");
         Log.i("VerifyValueLatitude", latitude.toString());
@@ -654,9 +714,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         // Find the midpoint of two stations
         findMidPoint();
-
-        Operator_Trip current_trip = new Operator_Trip(chosenRoute);
-
+        Operator_Trip current_trip = new Operator_Trip(chosenRoute, true);
+        switchSeating.setChecked(true);
         // Saving the current trip into the database
         DatabaseReference db = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
         Log.i(TAG, "setCurrentRide: verify database " + db);
@@ -671,6 +730,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
         DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(user.getUid()).child("current_trip");
         dbOperator.push().setValue(current_trip);
+
         toggleViewTripStarted();
         // try adding geofences
         try {
@@ -691,6 +751,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         } catch (Exception e) {
             Log.e(TAG, "onComplete: ", e);
         }
+
+
         tryAddingGeofences();
     }
 
@@ -1041,6 +1103,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     }
 
     private void toggleViewNoTripStarted() {
+        switchSeating.setVisibility(View.GONE);
+        switchSeating.setChecked(false);
         btnStartRoute.setVisibility(View.VISIBLE);
         btnEndRoute.setVisibility(View.GONE);
         routeSelects.setFocusable(true);
@@ -1055,6 +1119,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 //        stopUpdates();
     }
     private void toggleViewTripStarted() {
+        switchSeating.setVisibility(View.VISIBLE);
         btnEndRoute.setVisibility(View.VISIBLE);
         btnStartRoute.setVisibility(View.GONE);
         routeSelects.setFocusable(false);
