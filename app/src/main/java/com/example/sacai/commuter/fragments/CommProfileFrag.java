@@ -263,6 +263,7 @@ public class CommProfileFrag extends Fragment {
 
 
         startActivityForResult(intent, 100);
+//        startActivityForResult(i, 100);
     }
 
     private void choosePhotoFromGallery() {
@@ -274,7 +275,7 @@ public class CommProfileFrag extends Fragment {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-
+//        startActivityForResult(i, 101);
         startActivityForResult(intent, 101);
     }
 

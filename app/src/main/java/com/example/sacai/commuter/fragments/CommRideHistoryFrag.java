@@ -96,7 +96,7 @@ public class CommRideHistoryFrag extends Fragment {
                         date = String.valueOf(dsp.child("date").getValue());
                         time_started = "Started: " + dsp.child("time_started").getValue();
                         time_ended= "Ended: " + dsp.child("time_ended").getValue();
-                        operatorid = dsp.child("operator_id").getValue().toString();
+                        operatorid = "Operator ID: \n" + dsp.child("operator_id").getValue().toString();
 
                         for (int i = 0; i < stopName.size(); i++) {
                             if (stopId.get(i).equals(dsp.child("origin").getValue().toString())) {
