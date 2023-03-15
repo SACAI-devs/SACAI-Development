@@ -232,7 +232,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                 String TAG = "btnCancelPara";
                 Log.i(TAG, "onClick: is running...");
                 showCancelParaDialog();
-
+                etOrigin.setText(null);
             }
         });
 
@@ -593,7 +593,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                             "You have not scanned an Operator QR. \n" +
                             "Scan an operator QR code near your seat to start your trip tracking.")
                 .setCancelable(true)
-                .setPositiveButton("OO, kanselahin", new DialogInterface.OnClickListener() {
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Log.i(TAG, "onClick: commuter is cancelling PARA request");
@@ -602,7 +602,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         dialogInterface.dismiss();
                     }
                 })
-                .setNegativeButton("'WAG kanselahin", new DialogInterface.OnClickListener() {
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Log.i(TAG, "onClick: commuter is not cancelling PARA request");
@@ -2223,11 +2223,11 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         btnSetWork.setVisibility(View.VISIBLE);
         btnSetHome.setVisibility(View.VISIBLE);
         
+        etOrigin.setText(null);
         etOrigin.setEnabled(true);
         etOrigin.setClickable(true);
         etOrigin.setFocusable(true);
         etOrigin.setFocusableInTouchMode(true);
-        etOrigin.setText(null);
 
         selectOrigin.setEnabled(true);
         selectOrigin.setClickable(true);

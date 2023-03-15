@@ -117,4 +117,5 @@
     <string name="label_change_password">Change password</string>
     <string name="msg_you_are_now_visible">You are now visible to commuters.</string>
     <string name="msg_you_are_no_longer_visible">You are not visible to commuters.</string>
+    <string name="label_commuters_in_bus_stop">Commuters in Bus Stop: </string>
 </resources>

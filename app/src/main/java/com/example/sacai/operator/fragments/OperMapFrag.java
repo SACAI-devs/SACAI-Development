@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sacai.R;
@@ -96,6 +97,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     // Components
     AutoCompleteTextView routeSelects;
     TextInputLayout etRouteSelects;
+    TextView commuterCount;
     Button btnStartRoute, btnEndRoute;
     Switch switchSeating;
 
@@ -161,6 +163,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         btnStartRoute = mView.findViewById(R.id.btnStartRoute);
         btnEndRoute = mView.findViewById(R.id.btnEndRoute);
         switchSeating = mView.findViewById(R.id.toggleSeating);
+        commuterCount = mView.findViewById(R.id.tvCommuterCount);
+
 
         builder = new AlertDialog.Builder (getActivity());
 
@@ -342,12 +346,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         if (dbRef.getKey() != null) {
             toggleViewNoTripStarted();
         }
-
-        //Get existing current trip
-        dbRef.addValueEventListener(new ValueEventListener() {
+        dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dsp : task.getResult().getChildren()) {
                     try {
                         Log.i("Existing Current Route", dsp.child("route_name").getValue().toString());
                         if (dsp.hasChild("route_name")) {
@@ -357,8 +359,8 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                             switchSeating.isChecked();
                             mGoogleMap.clear();
                             toggleViewTripStarted();
-                            startLocationUpdates();
                             checkForExistingRouteValues();
+                            startLocationUpdates();
                             drawRoutes();
 //                        tryAddingGeofences();
                         }
@@ -369,15 +371,45 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                     } catch (Exception e) {
                         Log.e("CHECK FOR CURRENT TRIP", "onDataChange: exception ", e);
                     }
-
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "Couldn't retrieve any existing trip. Please refresh.", Toast.LENGTH_SHORT).show();
-            }
         });
+
+        //Get existing current trip
+//        dbRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+//                    try {
+//                        Log.i("Existing Current Route", dsp.child("route_name").getValue().toString());
+//                        if (dsp.hasChild("route_name")) {
+//                            existingCurrentRoute = dsp.child("route_name").getValue().toString();
+//                            selectedRouteName = existingCurrentRoute;
+//                            routeSelects.setText(existingCurrentRoute);
+//                            switchSeating.isChecked();
+//                            mGoogleMap.clear();
+//                            toggleViewTripStarted();
+//                            checkForExistingRouteValues();
+//                            startLocationUpdates();
+//                            drawRoutes();
+////                        tryAddingGeofences();
+//                        }
+//                        else {
+//                            Log.i("Existing Current Route", "No existing current route");
+//                            toggleViewNoTripStarted();
+//                        }
+//                    } catch (Exception e) {
+//                        Log.e("CHECK FOR CURRENT TRIP", "onDataChange: exception ", e);
+//                    }
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(), "Couldn't retrieve any existing trip. Please refresh.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     ArrayList<String> busStopNameExistingRoute = new ArrayList<>();
@@ -437,7 +469,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
                             currentMarkers.add(mGoogleMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(Double.valueOf(currLat), Double.valueOf(currLong)))
-                                    .title(String.valueOf(Commuters.size()))
+                                    .title(dsp.child("busStopName").getValue().toString())
                                     .icon(BitmapDescriptorFactory.fromBitmap(iconified))));
                         }
                     }
@@ -536,17 +568,6 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         String TAG = "getCommutersInCurrentStop";
         Log.i(TAG, "getCommutersInCurrentStop: is running");
 
-//        DatabaseReference dbGeofence = FirebaseDatabase.getInstance().getReference(Commuter_in_Geofence.class.getSimpleName());
-//        dbGeofence.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                for (DataSnapshot dspCommuter : task.getResult().getChildren()) {
-//                    if (dspCommuter.getKey())
-//                }
-//            }
-//        })
-
-
 
         DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName());
         dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -559,24 +580,22 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                             for (DataSnapshot dspCurrentTrip : dspCommuter.child("current_trip").getChildren()) {
                                 Log.i(TAG, "onComplete: dspCurrentTrip.key " + dspCurrentTrip.getKey());
                                 Log.i(TAG, "onComplete: dspCurrentTrip.current_stop " + dspCurrentTrip.child("current_stop").getValue().toString());
+                                Log.i(TAG, "onComplete: current_stop " + current_stop);
                                 if (dspCurrentTrip.child("current_stop").getValue().toString().equals(current_stop)) {
                                     Log.i(TAG, "onComplete: current_stop matches");
-
                                     Log.i(TAG, "onComplete: commuter key " + dspCommuter.getKey());
-                                    
-                                    for (int i = 0; i < Commuters.size(); i++) {
-                                        if (!Commuters.contains(dspCommuter.getKey())) {
-                                            Log.i(TAG, "onComplete: not yet added");
-                                            Commuters.add(dspCommuter.getKey());
-                                        } else {
-                                            Log.i(TAG, "onComplete: already added");
-                                        }
+
+                                    if (!Commuters.contains(dspCommuter.getKey())) {
+                                        Commuters.add(dspCommuter.getKey());
                                     }
-                                        Log.i(TAG, "onComplete: Commuters in Current Stop = " + Commuters.size());
+                                    Log.i(TAG, "onComplete: Commuters in Current Stop = " + Commuters.size());
                                 }
                             }
                         }
                     }
+//                    Toast.makeText(getActivity(), "There are " + Commuters.size() + " in this bus stop.", Toast.LENGTH_SHORT).show();
+                    commuterCount.setText(getString(R.string.label_commuters_in_bus_stop) + Commuters.size());
+                    Commuters.clear();
                 } catch (Exception e) {
                     Log.e(TAG, "onComplete: exception", e);
                 }
@@ -975,12 +994,13 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                         updateLocation();
                         updatePassengerList();
                         getCurrentStop();
+
                         Log.i(TAG, "run: location updated");
                     }
                 });
             }
         };
-        timer.schedule(timerTask, 500, 30000);
+        timer.schedule(timerTask, 500, 10000);
     }
 
 
@@ -1221,9 +1241,10 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
 
     private void toggleViewNoTripStarted() {
         switchSeating.setVisibility(View.GONE);
-        switchSeating.setChecked(false);
+        commuterCount.setVisibility(View.GONE);
         btnStartRoute.setVisibility(View.VISIBLE);
         btnEndRoute.setVisibility(View.GONE);
+        switchSeating.setChecked(false);
         routeSelects.setFocusable(true);
         routeSelects.setClickable(true);
         routeSelects.setEnabled(true);
@@ -1233,12 +1254,14 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
         etRouteSelects.setEnabled(true);
         etRouteSelects.setFocusableInTouchMode(true);
         routeSelects.setText(null);
+
 //        stopUpdates();
     }
     private void toggleViewTripStarted() {
         switchSeating.setVisibility(View.VISIBLE);
         btnEndRoute.setVisibility(View.VISIBLE);
         btnStartRoute.setVisibility(View.GONE);
+        commuterCount.setVisibility(View.VISIBLE);
         routeSelects.setFocusable(false);
         routeSelects.setClickable(false);
         routeSelects.setFocusableInTouchMode(false);

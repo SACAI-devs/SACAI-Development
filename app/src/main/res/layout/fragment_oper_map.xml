@@ -23,11 +23,20 @@
                 android:padding="20dp"
                 android:orientation="vertical"
                 android:background="@color/teal_100">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Commuters in Bus Stop: "
+                    android:textColor="@color/black"
+                    android:id="@+id/tvCommuterCount"
+                    >
+                </TextView>
                 <Switch
                     android:id="@+id/toggleSeating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Seating Availability"
+                    android:textColor="@color/black"
                     tools:ignore="UseSwitchCompatOrMaterialXml"
                     />
                 <!--INPUT LOCATION-->
