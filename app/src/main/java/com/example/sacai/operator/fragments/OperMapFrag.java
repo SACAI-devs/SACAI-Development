@@ -1074,21 +1074,25 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
     private void updateLocation() {
         String TAG = "updateLocation";
         Log.i("ClassCalled", "updateLocation: is running");
-
-        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isComplete()) {
-                    if (task.isSuccessful()) {
-                        Log.i(TAG, "onComplete: " + task.getResult());
-                        lastLocation[0] = new Location(task.getResult());
-                        Log.i(TAG, "verify latitude: " + lastLocation[0].getLatitude());
-                        Log.i(TAG, "verify longitude: " + lastLocation[0].getLongitude());
-                        saveLocationToDatabase(lastLocation[0].getLatitude(), lastLocation[0].getLongitude());
+        try {
+            fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isComplete()) {
+                        if (task.isSuccessful()) {
+                            Log.i(TAG, "onComplete: " + task.getResult());
+                            lastLocation[0] = new Location(task.getResult());
+                            Log.i(TAG, "verify latitude: " + lastLocation[0].getLatitude());
+                            Log.i(TAG, "verify longitude: " + lastLocation[0].getLongitude());
+                            saveLocationToDatabase(lastLocation[0].getLatitude(), lastLocation[0].getLongitude());
+                        }
                     }
                 }
-            }
-        });
+            });
+        }  catch (Exception e) {
+            Log.e("CRASH", "updateLocation: ", e);
+        }
+
 
     }
 
