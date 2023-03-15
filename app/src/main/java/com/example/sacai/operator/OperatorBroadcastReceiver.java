@@ -61,18 +61,22 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
                 Log.i(TAG, "onReceive: user entered the geofence");
                 Toast.makeText(context, R.string.msg_you_are_now_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
                 action.updateCurrentStop(geofenceList, triggered_geofences);
+//                action.addOperatorInGeofence(triggered_geofences);
                 showCommutersInGeofence(context);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.i(TAG, "onReceive: user is in geofence");
                 action.updateCurrentStop(geofenceList, triggered_geofences);
+//                action.addOperatorInGeofence(triggered_geofences);
+//                showCommutersInGeofence(context);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.i(TAG, "onReceive: user exited geofence");
                 Toast.makeText(context, R.string.msg_you_are_not_within_range_of_a_bus_stop, Toast.LENGTH_SHORT).show();
-                action.updateCurrentStop(geofenceList, "");
+//                action.updateCurrentStop(triggered_geofences);
+                action.removeOperatorStop(triggered_geofences);
                 break;
         }
 
@@ -85,11 +89,12 @@ public class OperatorBroadcastReceiver extends BroadcastReceiver {
         dbGeofence.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
+                Log.i(TAG, "onComplete: CHECKING FOR COMMUTERS IN THE GEOFENCE....");
                 for (DataSnapshot dspCommuters : task.getResult().getChildren()) {
                     Log.i(TAG, "onDataChange: GETTING KEY...");
                     Log.i(TAG, "onDataChange: key " + dspCommuters.getKey());
                 }
-                Toast.makeText(context, "YEY", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, " " + dspCommuters Toast.LENGTH_SHORT).show();
             }
         });
 

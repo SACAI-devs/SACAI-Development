@@ -1,13 +1,12 @@
 package com.example.sacai.operator;
 
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.sacai.dataclasses.Commuter;
+import com.example.sacai.dataclasses.Commuter_in_Geofence;
 import com.example.sacai.dataclasses.Operator;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +29,9 @@ public class OperGeofenceActions {
     public OperGeofenceActions() {
     }
 
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String uid = user.getUid();
+
     public void updateCurrentStop(List<Geofence> geofenceList, String current_stop) {
 
         Log.i("Number of triggered geofences ", "updateCurrentStop: " +geofenceList.size());
@@ -38,6 +40,7 @@ public class OperGeofenceActions {
             waitTime(current_stop);
         } else if (geofenceList.size() == 1){
             Log.i("Hello", "updateCurrentStop: we're not delaying this");
+
             updateStop(current_stop);
 //            whenStopsOverlap(current_stop);
         }
@@ -48,8 +51,8 @@ public class OperGeofenceActions {
         String TAG = "updateStop";
         Log.i(TAG, "updateStop: ============================================");
         Log.i(TAG, "updateStop: is running...");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
+
+
         DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
         dbOperator.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -67,6 +70,73 @@ public class OperGeofenceActions {
                 }
             }
         });
+
+    }
+
+    public void removeOperatorStop (String current_stop) {
+        Log.i("ClassCalled", "removeCommuterVisibility: is running...");
+        String TAG = "removeOperatorStop";
+
+        DatabaseReference dbCurrentTrip = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName()).child(uid).child("current_trip");
+        dbCurrentTrip.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                try {
+                    for (DataSnapshot dspOperator : task.getResult().getChildren()) {
+                        dbCurrentTrip.child(dspOperator.getKey()).child("current_stop").removeValue();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "onComplete: exception ", e);
+                }
+            }
+        });
+
+    }
+
+    boolean wheelchair;
+    String operator_id;
+    String route_name;
+    String plate;
+    public void addOperatorInGeofence(String current_stop) {
+        String TAG = "addOperatorInGeofence";
+        Log.i("ClassCalled", "addOperatorInGeofence: is running");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference dbOperator;
+
+        dbOperator = FirebaseDatabase.getInstance().getReference();
+        Log.i(TAG, "addOperatorInGeofence: dbOPerator " + dbOperator);
+        dbOperator.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                for (DataSnapshot dsp : task.getResult().getChildren()) {
+                    if (dsp.getKey().equals(user.getUid())) {
+                        wheelchair = (boolean) dsp.child("wheelchairCapacity").getValue();
+                        operator_id = user.getUid();
+                        plate = dsp.child("plate").getValue().toString();
+                        for (DataSnapshot dspCurrentTrip : dsp.child("current_trip").getChildren()) {
+                            route_name = dspCurrentTrip.child("route_name").getValue().toString();
+                        }
+                    }
+                }
+                if (wheelchair) {
+                    Log.i(TAG, "addCommuterData: COMMUTER HAS A WHEELCHAIR, ADDING TO GEOFENCE...");
+                    dbOperator.child("Operator_in_Geofence").child(current_stop).child("has_wheelchair").child(user.getUid()).child("plate").setValue(plate);
+                    dbOperator.child("Operator_in_Geofence").child(current_stop).child("has_wheelchair").child(user.getUid()).child("route").setValue(route_name);
+
+
+                } else {
+                    Log.i(TAG, "addCommuterData: Commuter HAS NO WHEELCHAIR, ADDING TO GEOFENCE...");
+                    dbOperator.child("Operator_in_Geofence").child(current_stop).child("no_wheelchair").child(user.getUid()).child("plate").setValue(plate);
+                    dbOperator.child("Operator_in_Geofence").child(current_stop).child("no_wheelchair").child(user.getUid()).child("route").setValue(route_name);
+                }
+                Log.i(TAG, "onComplete: plate " + plate);
+                Log.i(TAG, "onComplete: plate " + route_name);
+            }
+        });
+
+
+
     }
 
     //To start timer

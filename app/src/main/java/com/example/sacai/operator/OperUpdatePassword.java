@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.sacai.databinding.ActivityCommUpdatePassBinding;
 import com.example.sacai.databinding.ActivityOperUpdatePasswordBinding;
@@ -42,5 +43,17 @@ public class OperUpdatePassword extends AppCompatActivity {
                         });
             }
         });
+
+        // Toolbar action handling
+        Toolbar toolbar = (Toolbar) binding.toolbar;
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
     }
 }

@@ -92,9 +92,9 @@ public class OperMainActivity extends AppCompatActivity {
             case R.id.action_showEditProfile:
                 replaceFragment(new OperProfileFrag());
                 return true;
-            case R.id.action_showRideHistory:
-                replaceFragment(new OperRideHistoryFrag());
-                return true;
+//            case R.id.action_showRideHistory:
+//                replaceFragment(new OperRideHistoryFrag());
+//                return true;
             case R.id.action_showPassengerList:
                 replaceFragment(new OperPassengerListFrag());
                 return true;
