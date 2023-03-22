@@ -44,7 +44,7 @@
                     style="@style/AutoCompleteDropDown"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/hint_location"
+                    android:hint="Select Route"
                     android:id="@+id/etRouteSelect"
                     android:textColorHint="@color/grey"
                     >

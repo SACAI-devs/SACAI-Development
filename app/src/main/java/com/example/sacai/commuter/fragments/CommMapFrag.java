@@ -666,6 +666,12 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private void removeFromOperator() {
         String TAG = "removeFromOperator";
         Log.i("ClassCalled", "removeFromOperator: is running");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        String date = sdf.format(c.getTime());
+        String time = String.valueOf(Calendar.getInstance().getTime());
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
         dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -680,7 +686,11 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                             public void onComplete(@NonNull Task<DataSnapshot> task) {
                                 for (DataSnapshot dspCurrentTrip : task.getResult().getChildren()) {
                                     try {
-                                        dbOperator.child(dspCurrentTrip.getKey()).child("passenger_list").child(user.getUid()).removeValue();
+                                        dbOperator.child(dspCurrentTrip.getKey()).child("passenger_list").child(user.getUid()).child("has_disembarked").setValue(true);
+                                        dbOperator.child(dspCurrentTrip.getKey()).child("passenger_list").child(user.getUid()).child("times_disembarked").push().setValue(time);
+                                        dbOperator.child(dspCurrentTrip.getKey()).child("passenger_list").child(user.getUid()).child("para").removeValue();
+
+//                                        dbOperator.child(dspCurrentTrip.getKey()).child("passenger_list").child(user.getUid()).removeValue();
                                         saveRideHistory();
                                         Toast.makeText(commGeofenceHelper, R.string.msg_user_has_successfully_disembarked_from_bus, Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {
@@ -1328,22 +1338,26 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     // Function to zoom into the user's current location (not the built in zoom to location)
     private void zoomToUserLocation() {
         Log.i("ClassCall", "zoomToUserLocation: is running");
+        try {
+            // get the last location of the user (SUPPRESSED BECAUSE WE SHOULD ALREADY HAVE THAT EXECUTE IN THE FUNCTION THAT WOULD CALL IT)`
+            @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    try {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
+                        Log.i("zoomToUserLocation", "onSuccess: camera moved to user location");
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(), "Please turn on your location services", Toast.LENGTH_SHORT).show();
+                    }
 
-        // get the last location of the user (SUPPRESSED BECAUSE WE SHOULD ALREADY HAVE THAT EXECUTE IN THE FUNCTION THAT WOULD CALL IT)`
-        @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
-        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                try {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
-                    Log.i("zoomToUserLocation", "onSuccess: camera moved to user location");
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), "Please turn on your location services", Toast.LENGTH_SHORT).show();
                 }
+            });
+        } catch (Exception e) {
+            Log.e("CRASH", "zoomToUserLocation: ", e);
+        }
 
-            }
-        });
     }
 
     // Function that draws a circle to indicate the geofence boundaries of a bus stop
@@ -1408,13 +1422,6 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         Log.i(TAG, "onComplete: adding geofences...");
                         // Generate geofence for every stop between the two stations
 
-//                    for (int i = 0; i < inBetweenStops.size(); i++) {
-//                        addGeofence(stopName.get(i), new LatLng(inBetweenStops.get(i).getPosition().latitude, inBetweenStops.get(i).getPosition().longitude), GEOFENCE_RADIUS);
-//                    }
-//                    generateRouteMarkers(origin, destination);
-//                    for (int i = 0; i < stopName.size(); i++) {
-//                        addGeofence(stopName.get(i), new LatLng(latitude.get(i), longitude.get(i)), GEOFENCE_RADIUS);
-//                    }
                         addGeofence(origin, new LatLng(originMark.getPosition().latitude, originMark.getPosition().longitude), GEOFENCE_RADIUS);                     // make a geofence at the origin of the trip
                         addGeofence(destination   , new LatLng(destinationMark.getPosition().latitude, destinationMark.getPosition().longitude), GEOFENCE_RADIUS);      // make a geofence at the destination of the trip
                         startLocationUpdates();
@@ -1472,58 +1479,7 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                         .icon(BitmapDescriptorFactory.fromBitmap(iconified))));
             }
         }
-//        BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus_stop);
-//        Bitmap iconified = bus_icon.getBitmap();
 //
-//
-//        Log.i(TAG, "generateRouteMarkers: ======================");
-//        Log.i(TAG, "generateRouteMarkers: stopsInRoute " + stopsInRoute);
-//        ArrayList<String> busStop = new ArrayList<>();
-//
-//
-//        // Get bus stops in route
-//        DatabaseReference dbRoutes = FirebaseDatabase.getInstance().getReference("Routes");
-//        dbRoutes.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                try {
-//                    for (DataSnapshot dspRoutes : task.getResult().getChildren()) {
-//                        Log.i(TAG, "onComplete: dspRoutes.getKey " + dspRoutes.getKey());
-//                        for (int i = 1; i <= (task.getResult().getChildrenCount()); i++) {
-//                            String temp = "stop" + i;
-//                            Log.i(TAG, "onComplete: temp " + temp);
-//                            Log.i(TAG, "onComplete: " + dspRoutes.child(temp).child("busStopName").getValue());
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    Log.e(TAG, "onComplete: exception ", e);
-//                }
-//
-//            }
-//        });
-////        for (int i = 0; i < stopsInRoute.size(); i++) {
-////            if (stopId.get(i).equals(origin)) {
-////                startPosition = i;
-////            }
-////            if (stopId.get(i).equals(destination)) {
-////                endPosition = i;
-////            }
-////        }
-////        Log.i(TAG, "onComplete: startpoint " + startPosition);
-////        Log.i(TAG, "onComplete: endpoint " + endPosition);
-////        Log.i(TAG, "onComplete: startpoint " + origin);
-////        Log.i(TAG, "onComplete: endpoint " + destination);
-////
-//////        Log.i(TAG, "generateRouteMarkers: stops in route " + stopsInRoute);
-////        // Generate geofence for every stop between the two stations
-//        for (int i = (startPosition+1); i < endPosition; i++) {
-//            Log.i(TAG, "generateRouteMarkers: ");
-//            Log.i(TAG, "generateRouteMarkers: STOP " + stopsInRoute.get(i));
-//            inBetweenStops.add(mGoogleMap.addMarker(new MarkerOptions()
-//                    .position(new LatLng(latitude.get(i),longitude.get(i)))
-//                    .title(String.valueOf(stopId.get(i)))
-//                    .icon(BitmapDescriptorFactory.fromBitmap(iconified))));
-//        }
     }
 
     // Function to add a geofence
@@ -1772,26 +1728,29 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
     private void getCurrentStopInformation() {
         String TAG = "getCurrentStopInformation";
         Log.i("ClassCalled", "getCurrentStop: is running");
-
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
-        dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                try {
-                    String current_stop = "";
-                    for (DataSnapshot dspCommuter : task.getResult().getChildren()) {
-                        Log.i(TAG, "onComplete: dspCommuter.getkey " + dspCommuter.getKey());
-                        Log.i(TAG, "onComplete: current_stop for commuters " + dspCommuter.child("current_stop").getValue());
-                        current_stop = dspCommuter.child("current_stop").getValue().toString();
-                        showOperatorInBusStop(current_stop);
+        try {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference dbCommuter = FirebaseDatabase.getInstance().getReference(Commuter.class.getSimpleName()).child(user.getUid()).child("current_trip");
+            dbCommuter.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    try {
+                        String current_stop = "";
+                        for (DataSnapshot dspCommuter : task.getResult().getChildren()) {
+                            Log.i(TAG, "onComplete: dspCommuter.getkey " + dspCommuter.getKey());
+                            Log.i(TAG, "onComplete: current_stop for commuters " + dspCommuter.child("current_stop").getValue());
+                            current_stop = dspCommuter.child("current_stop").getValue().toString();
+                            showOperatorInBusStop(current_stop);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "onComplete: exception ", e);
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, "onComplete: exception ", e);
                 }
-            }
-        });
+            });
+        } catch (Exception e ){
+            Log.e("CRASH", "getCurrentStopInformation: ", e);
+        }
+
     }
 
 

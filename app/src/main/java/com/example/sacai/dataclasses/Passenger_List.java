@@ -1,5 +1,7 @@
 package com.example.sacai.dataclasses;
 
+import java.util.ArrayList;
+
 public class Passenger_List {
     private String id;          // ID of the commuter in the passengerlist
     private String username;    // Commuter username
@@ -10,6 +12,7 @@ public class Passenger_List {
     private String destination; // Commuter destination bus stop
     private String para_status; // Commuter if sasakay or bababa
     private boolean visibility;
+    private ArrayList<String> times_disembarked;
 
     public Passenger_List () {
     }
@@ -24,6 +27,17 @@ public class Passenger_List {
         this.destination = destination;
         this.para_status = para_status;
         this.visibility = visibility;
+    }
+
+    public Passenger_List(String id, String username, String mobility, String auditory, String wheelchair, String origin, String destination, ArrayList<String> times_disembarked) {
+        this.id = id;
+        this.username = username;
+        this.mobility = mobility;
+        this.auditory = auditory;
+        this.wheelchair = wheelchair;
+        this.origin = origin;
+        this.destination = destination;
+        this.times_disembarked = times_disembarked;
     }
 
     public String getId() {
@@ -96,5 +110,13 @@ public class Passenger_List {
 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+    }
+
+    public ArrayList<String> getTimes_disembarked() {
+        return times_disembarked;
+    }
+
+    public void setTimes_disembarked(ArrayList<String> times_disembarked) {
+        this.times_disembarked = times_disembarked;
     }
 }

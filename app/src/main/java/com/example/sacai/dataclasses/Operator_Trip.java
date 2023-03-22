@@ -10,7 +10,7 @@ public class Operator_Trip {
     private String current_stop;
     private String current_lat;
     private String current_long;
-    private ArrayList <String> passenger_list;
+    private Passenger_List passenger_list;
     private boolean seating_availability;
 
     public Operator_Trip() {
@@ -20,7 +20,7 @@ public class Operator_Trip {
         this.route_name = route_name;
     }
 
-    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, ArrayList<String> passenger_list, boolean seating_availability) {
+    public Operator_Trip(String id, String route_name, String origin_stop, String destination_stop, String current_stop, String current_lat, String current_long, Passenger_List passenger_list, boolean seating_availability) {
         this.id = id;
         this.route_name = route_name;
         this.origin_stop = origin_stop;
@@ -77,11 +77,11 @@ public class Operator_Trip {
         this.current_stop = current_stop;
     }
 
-    public ArrayList<String> getPassenger_list() {
+    public Passenger_List getPassenger_list() {
         return passenger_list;
     }
 
-    public void setPassenger_list(ArrayList<String> passenger_list) {
+    public void setPassenger_list(Passenger_List passenger_list) {
         this.passenger_list = passenger_list;
     }
 
