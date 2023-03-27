@@ -944,7 +944,7 @@ public class OperMapFrag extends Fragment implements OnMapReadyCallback {
                                 try {
                                     for (DataSnapshot dspTimes : dspPassengerList.child("times_disembarked").getChildren()) {
                                         times_disembarked.add(dspPassengerList.child("times_disembarked").child(dspTimes.getKey()).getValue().toString());
-                                    }
+                                       }
                                     passenger_list.add(new Passenger_List(id, username, auditory, mobility, wheelchair, origin, destination, times_disembarked));
                                 } catch (Exception e) {
                                     Log.e(TAG, "onComplete: CRASHED " , e);

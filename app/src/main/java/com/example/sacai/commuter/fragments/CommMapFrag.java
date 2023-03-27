@@ -1762,6 +1762,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
         String TAG = "showOperatorInBusStop";
         Log.i("ClassCalled", "showOperatorInBusStop: is running");
 
+
+
         DatabaseReference dbOperator = FirebaseDatabase.getInstance().getReference(Operator.class.getSimpleName());
         dbOperator.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -1795,6 +1797,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
 //                                                opPlate.add(dspOperator.child("plate").getValue().toString());
 //                                                opRoute.add(dspOperator.child("route_name").getValue().toString());
                                                 LatLng busLocation = new LatLng(operLat, operLong);
+                                                BitmapDrawable bus_icon = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_bus);
+                                                Bitmap iconified = bus_icon.getBitmap();
 
                                                 Log.i(TAG, "onComplete: showoperatorLocation ");
                                                 for(Marker marker : testMarker)
@@ -1807,7 +1811,8 @@ public class CommMapFrag extends Fragment implements OnMapReadyCallback {
                                                         .title(operPlat +
                                                                 "\n" +
                                                                 operRoute)
-                                                        .position(busLocation));
+                                                        .position(busLocation)
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(iconified)));
                                                 markerVar.showInfoWindow();
                                                 testMarker.add(markerVar);
                                             } else {
